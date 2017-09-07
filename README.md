@@ -2,7 +2,7 @@
 Musiikiesityksien hallinta sovellus
 
 
-##Definition of done:
+## Definition of done:
 
 1. Testit ovat olemassa ja menevät läpi
 2. Testit ovat puskettu Travikselle ja menevät läpi
