@@ -56,5 +56,8 @@ fabric.properties
 # See https://github.com/joeblau/gitignore.io/issues/186 and https://github.com/joeblau/gitignore.io/issues/360
 
 /**/.idea/*
+/**/*.pyc
+.cache/
+**/__pycache__/*
 
 # End of https://www.gitignore.io/api/pycharm+all

@@ -7,5 +7,5 @@ install:
   - pip install Cython --install-option="--no-cython-compile"
   - pip install -r requirements.txt
 # command to run tests
-# script:
-#  - pytest # or py.test for Python versions 3.5 and below
+script:
+ - py.test # or py.test for Python versions 3.5 and below
