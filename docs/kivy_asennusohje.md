@@ -7,3 +7,5 @@ Kivyn asentaminen voi olla haasteellista. Koita pärjätä!
 3. Asenna Kivy komennolla "pip install kivy"
 
 Jos Kivy ei asennu OpenGL-herjojen vuoksi, asenna libgl1-mesa-dev komennolla "libgl1-mesa-dev"
+
+Jos pip ei suostu toimimaan, asenna vaikka [Anaconda tai miniconda](https://www.anaconda.com/)
