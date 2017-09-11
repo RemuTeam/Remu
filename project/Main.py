@@ -10,8 +10,8 @@ import sys
 #############################################
 # Patch-around to enable Twisted with Kivy,
 # Kivy's latest release prevents from using a
-# method in Twisted
-
+# method in Twisted that has been fixed for
+# Python 3
 realVersionInfo = sys.version_info
 
 
@@ -29,7 +29,6 @@ try:
     install_twisted_reactor()
 except:
     pass
-
 ##############################################
 
 
@@ -37,6 +36,8 @@ from twisted.internet import reactor, protocol, endpoints
 from twisted.protocols import basic
 
 
+# Initializes connections between master and slave
+# as well as handles the messages sent
 class RemuProtocol(basic.LineReceiver):
     def __init__(self, factory):
         self.factory = factory
@@ -51,6 +52,7 @@ class RemuProtocol(basic.LineReceiver):
         print(line.decode('ascii'))
 
 
+# Keeps track of the connections made by the slaves and clients
 class RemuFactory(protocol.Factory):
     def __init__(self, app):
         self.clients = set()
