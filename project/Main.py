@@ -3,6 +3,7 @@ import kivy
 kivy.require('1.10.0')
 
 from GUI.GUIFactory import GUIFactory
+from RemuTCP.RemuTCP import RemuTCP
 from kivy.app import App
 
 import sys
@@ -64,12 +65,21 @@ class ReMuApp(App):
 
     guimaker = GUIFactory()
     isMaster = False
+    connection = None
 
     def build(self):
-        print('lol')
-        endpoints.serverFromString(reactor, "tcp:1025:interface=128.214.166.145").listen(RemuFactory(self))
+        self.connection = RemuTCP()
         return self.guimaker.getGUI(self.isMaster)
 
 
 if __name__ == '__main__':
+    args = sys.argv
+
+    address = ''
+    master = True
+
+    if len(args) > 1:
+        master = args[1] == 'master'
+        address = args[2]
+
     ReMuApp().run()
