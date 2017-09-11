@@ -1,13 +1,9 @@
+
 import kivy
+kivy.require('1.10.0')
 
-from project.GUI.GUIFactory import GUIFactory
-
-kivy.require('1.1.0')
-
-
+from GUI.GUIFactory import GUIFactory
 from kivy.app import App
-from kivy.uix.image import Image
-from kivy.uix.behaviors import ButtonBehavior
 
 import sys
 
@@ -16,13 +12,16 @@ import sys
 # Kivy's latest release prevents from using a
 # method in Twisted
 
-realVersionInfo=sys.version_info
+realVersionInfo = sys.version_info
+
 
 class DummyVersionInfo(object):
     def __getitem__(self, index):
-        sys.version_info=realVersionInfo
+        sys.version_info = realVersionInfo
         return 2
-sys.version_info=DummyVersionInfo()
+
+
+sys.version_info = DummyVersionInfo()
 
 
 try:
@@ -33,28 +32,12 @@ except:
 
 ##############################################
 
+
 from twisted.internet import reactor, protocol, endpoints
 from twisted.protocols import basic
 
 
-class MyButton(ButtonBehavior, Image):
-    def __init__(self, **kwargs):
-        super(MyButton, self).__init__(**kwargs)
-        guimaker = GUIFactory()
-        guimaker.hello()
-
-    def on_press(self):
-        self.source = 'a.jpg'
-
-    def on_release(self):
-
-        self.source = ''
-
-    def on_message(self):
-        self.on_press()
-
-
-class PubProtocol(basic.LineReceiver):
+class RemuProtocol(basic.LineReceiver):
     def __init__(self, factory):
         self.factory = factory
 
@@ -66,27 +49,27 @@ class PubProtocol(basic.LineReceiver):
 
     def lineReceived(self, line):
         print(line.decode('ascii'))
-        self.factory.app.button.on_message()
 
 
-class PubFactory(protocol.Factory):
+class RemuFactory(protocol.Factory):
     def __init__(self, app):
         self.clients = set()
         self.app = app
 
     def buildProtocol(self, addr):
-        return PubProtocol(self)
+        return RemuProtocol(self)
 
 
-class MyApp(App):
-    button = None
+class ReMuApp(App):
+
+    guimaker = GUIFactory()
+    isMaster = False
 
     def build(self):
-        endpoints.serverFromString(reactor, "tcp:1025:interface=128.214.166.145").listen(PubFactory(self))
-        self.button = MyButton()
-        return self.button
-
+        print('lol')
+        endpoints.serverFromString(reactor, "tcp:1025:interface=128.214.166.145").listen(RemuFactory(self))
+        return self.guimaker.getGUI(self.isMaster)
 
 
 if __name__ == '__main__':
-    MyApp().run()
+    ReMuApp().run()
