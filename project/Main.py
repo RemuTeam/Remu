@@ -6,7 +6,7 @@ from kivy.app import App
 kivy.require('1.1.0')
 
 
-class MyApp(App):
+class ReMuApp(App):
 
     guimaker = GUIFactory()
     isMaster = False
@@ -16,4 +16,4 @@ class MyApp(App):
 
 
 if __name__ == '__main__':
-    MyApp().run()
+    ReMuApp().run()
