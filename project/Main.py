@@ -1,32 +1,18 @@
 import kivy
 
 from project.GUI.GUIFactory import GUIFactory
+from kivy.app import App
 
 kivy.require('1.1.0')
 
 
-from kivy.app import App
-from kivy.uix.image import Image
-from kivy.uix.behaviors import ButtonBehavior
-
-class MyButton(ButtonBehavior, Image):
-    def __init__(self, **kwargs):
-        super(MyButton, self).__init__(**kwargs)
-        guimaker = GUIFactory()
-        guimaker.hello()
-
-    def on_press(self):
-        self.source = 'a.jpg'
-
-    def on_release(self):
-
-        self.source = ''
-
-
 class MyApp(App):
 
+    guimaker = GUIFactory()
+    isMaster = False
+
     def build(self):
-        return MyButton()
+        return self.guimaker.getGUI(self.isMaster)
 
 
 if __name__ == '__main__':
