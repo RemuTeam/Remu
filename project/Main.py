@@ -2,9 +2,10 @@
 import kivy
 kivy.require('1.10.0')
 
-from GUI.GUIFactory import GUIFactory
+from project.GUI.GUIFactory import GUIFactory
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
+from kivy.lang.builder import Builder
 
 import sys
 
@@ -61,6 +62,8 @@ class RemuFactory(protocol.Factory):
         return RemuProtocol(self)
 
 
+BuildKV = Builder.load_file("remu.kv")
+
 class RemuApp(App):
 
     guimaker = GUIFactory()
@@ -69,7 +72,7 @@ class RemuApp(App):
     def build(self):
         print('lol')
         endpoints.serverFromString(reactor, "tcp:1025:interface=128.214.166.145").listen(RemuFactory(self))
-        return self.guimaker.getMasterSwitchLayout()
+        return BuildKV
 
 
 if __name__ == '__main__':
