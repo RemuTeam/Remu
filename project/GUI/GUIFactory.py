@@ -5,24 +5,22 @@ from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
 
 class GUIFactory:
+    """GUIFactory määrittelee käyttöliittymän komponenttien toiminnallisuuden (= määrittelee metodit)
+       Main kutsuu GUIFactorya tarvittaessa, jolloin GUIFactory luo komponentit ja lataa ulkoasun remu.kv -tiedostosta"""
     def __init__(self):
         pass
 
     def hello(self):
         print("Hello")
 
-    def getMasterSwitchGUI(self):
+    def getMasterSwitchLayout(self):
         return MasterSwitchLayout()
-        #if isMaster:
-        #    return MasterGUI()
-        #else:
-        #    return SlaveGUI()
-
 
 
 class MasterSwitchLayout(BoxLayout):
 
-    pass
+    def hello(self):
+        print("Hello")
 
 
 class MasterGUI(ButtonBehavior, Image):
