@@ -60,7 +60,7 @@ class RemuTCP:
     connection = None
     address = None
 
-    def __init__(self, master, address=None):
+    def __init__(self, master=False, address=None):
         if master:
             self.address = address
             self.connect_to_slave()
@@ -79,8 +79,8 @@ class RemuTCP:
         reactor.listenTCP(8000, RemuSlaveFactory(self))
 
     def on_connection(self, connection):
-         self.handle_message("Connected successfully!")
-         self.connection = connection
+        self.handle_message("Connected successfully!")
+        self.connection = connection
 
     def send_message(self, msg):
         if msg and self.connection:
