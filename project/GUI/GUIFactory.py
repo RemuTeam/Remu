@@ -1,3 +1,5 @@
+# coding: latin-1
+
 from kivy.uix.image import Image
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.button import Button
@@ -5,7 +7,7 @@ from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
 
 class GUIFactory:
-    """GUIFactory m√§√§rittelee k√§ytt√∂liittym√§n komponenttien toiminnallisuuden (= m√§√§rittelee metodit)
+    """GUIFactory m‰‰rittelee k‰yttˆliittym‰n komponenttien toiminnallisuuden (= m‰‰rittelee metodit)
        Main kutsuu GUIFactorya tarvittaessa, jolloin GUIFactory luo komponentit ja lataa ulkoasun remu.kv -tiedostosta"""
     def __init__(self):
         pass
@@ -16,6 +18,14 @@ class GUIFactory:
     def getMasterSwitchLayout(self):
         return MasterSwitchLayout()
 
+    def getMasterGUILayout(self):
+        return MasterGUILayout()
+
+class MasterGUILayout(BoxLayout):
+
+    def send_message_to_slave(self):
+        amount = int(self.messages_sent.text)
+        self.messages_sent.text = str(amount + 1)
 
 class MasterSwitchLayout(BoxLayout):
 

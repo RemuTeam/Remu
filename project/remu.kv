@@ -9,3 +9,22 @@
             text: "Master"
         Button:
             text: "Slave"
+
+<MasterGUILayout>:
+    id: master_layout
+    messages_sent: msg_sent_amount
+    orientation: 'vertical'
+    spacing: 10
+    padding: 10
+
+    Label:
+        text: "Olet master-näkymässä"
+        font_size: 32
+    Label:
+        text: "Viestejä lähetetty: "
+    Label:
+        id: msg_sent_amount
+        text: "0"
+    Button:
+        text: "Lähetä viesti slavelle"
+        on_press: master_layout.send_message_to_slave()
