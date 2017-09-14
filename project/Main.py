@@ -61,7 +61,7 @@ class RemuFactory(protocol.Factory):
         return RemuProtocol(self)
 
 
-class ReMuApp(App):
+class ReMuSlaveApp(App):
 
     guimaker = GUIFactory()
     isMaster = False
@@ -69,6 +69,20 @@ class ReMuApp(App):
 
     def build(self):
         self.connection = RemuTCP()
+        return self.guimaker.getGUI(self.isMaster)
+
+class ReMuMasterApp(App):
+
+    guimaker = GUIFactory()
+    isMaster = True
+    slaves = {}
+
+    def __init__(self, address):
+        self.slaves[address] = RemuTCP(True, address)
+        
+
+    def build(self):
+
         return self.guimaker.getGUI(self.isMaster)
 
 
@@ -82,4 +96,7 @@ if __name__ == '__main__':
         master = args[1] == 'master'
         address = args[2]
 
-    ReMuApp().run()
+    if master:
+        ReMuMasterApp(address).run()
+    else:
+        ReMuSlaveApp().run()

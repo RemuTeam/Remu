@@ -4,7 +4,8 @@ import sys
 #############################################
 # Patch-around to enable Twisted with Kivy,
 # Kivy's latest release prevents from using a
-# method in Twisted
+# method in Twisted that has been fixed for
+# Python 3
 
 realVersionInfo = sys.version_info
 
@@ -35,7 +36,7 @@ class RemuSlave(protocol.Protocol):
         self.factory.app.on_connection(self.transport)
 
     def dataReceived(self, data):
-        self.factory.app.print_message(data.decode('utf-8'))
+        self.factory.app.handle_message(data.decode('utf-8'))
 
 
 
@@ -46,39 +47,44 @@ class RemuSlaveFactory(protocol.ClientFactory):
         self.app = app
 
     def startedConnecting(self, connector):
-        self.app.print_message('Started to connect.')
+        self.app.handle_message('Started to connect.')
 
     def clientConnectionLost(self, connector, reason):
-        self.app.print_message('Lost connection.')
+        self.app.handle_message('Lost connection.')
 
     def clientConnectionFailed(self, connector, reason):
-        self.app.print_message('Connection failed.')
+        self.app.handle_message('Connection failed.')
 
 
 class RemuTCP:
     connection = None
+    address = None
 
-    def __init__(self):
-        self.listen_to_master()
+    def __init__(self, master, address=None):
+        if master:
+            self.address = address
+            self.connect_to_slave()
+        else:
+            self.listen_to_master()
 
     #def build(self):
     #    #self.connect_to_server()
     #    return self
 
-    def connect_to_server(self):
-        reactor.connectTCP('localhost', 8000, RemuSlaveFactory(self))
+    def connect_to_slave(self):
+        reactor.connectTCP(self.address, 8000, RemuSlaveFactory(self))
 
     def listen_to_master(self):
         print("listening")
         reactor.listenTCP(8000, RemuSlaveFactory(self))
 
     def on_connection(self, connection):
-         self.print_message("Connected successfully!")
+         self.handle_message("Connected successfully!")
          self.connection = connection
 
     def send_message(self, msg):
         if msg and self.connection:
             self.connection.write(msg.encode('utf-8'))
 
-    def print_message(self, msg):
-        print("{}\n".format(msg))
+    def handle_message(self, msg):
+        print(msg)
