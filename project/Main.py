@@ -69,11 +69,6 @@ class ReMuSlaveApp(App):
 
     def build(self):
         self.connection = RemuTCP()
-        while True:
-            msg = input("> ")
-            if not input:
-                break;
-            self.connection.send_message(msg)
         return self.guimaker.getGUI(self.isMaster)
 
 class ReMuMasterApp(App):
@@ -82,16 +77,11 @@ class ReMuMasterApp(App):
     isMaster = True
     slaves = {}
 
-    def __init__(self, address):
-        self.slaves[address] = RemuTCP(True, address)
-        
+    def send_msg(self, data):
+        self.slaves[address].send_message(data)
 
     def build(self):
-        while True:
-            msg = input("> ")
-            if not input:
-                break;
-            self.slaves[address].send_message(msg)
+        self.slaves[address] = RemuTCP(True, sys.argv[2])
         return self.guimaker.getGUI(self.isMaster)
 
 
@@ -106,6 +96,6 @@ if __name__ == '__main__':
         address = args[2]
 
     if master:
-        ReMuMasterApp(address).run()
+        ReMuMasterApp().run()
     else:
         ReMuSlaveApp().run()
