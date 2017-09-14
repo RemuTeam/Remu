@@ -68,7 +68,7 @@ class ReMuApp(App):
     def build(self):
         print('lol')
         endpoints.serverFromString(reactor, "tcp:1025:interface=128.214.166.145").listen(RemuFactory(self))
-        return self.guimaker.getGUI(self.isMaster)
+        return self.guimaker.getMasterSwitchGUI()
 
 
 if __name__ == '__main__':
