@@ -11,6 +11,13 @@ class SwitchLayout(Screen):
 
 
 class MasterGUILayout(Screen):
+    msg_sent = 0;
+
+
+    def increment(self):
+        self.msg_sent += 1
+        return str(self.msg_sent)
+
 
     def button_pressed(self):
         self.source = 'a.jpg'
