@@ -2,9 +2,6 @@
 
 from kivy.uix.image import Image
 from kivy.uix.behaviors import ButtonBehavior
-from kivy.uix.button import Button
-from kivy.uix.label import Label
-from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import ScreenManager, Screen
 
 
@@ -19,13 +16,6 @@ class MasterGUILayout(Screen):
     def increment(self):
         self.msg_sent += 1
         return str(self.msg_sent)
-
-
-    def button_pressed(self):
-        self.source = 'a.jpg'
-
-    def button_released(self):
-        self.source = ''
 
 
 class SlaveGUI(ButtonBehavior, Image):
