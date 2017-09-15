@@ -1,3 +1,6 @@
 pygame
 kivy
 twisted
+pytest
+pytest-xdist
+lxml
