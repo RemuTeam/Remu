@@ -15,7 +15,7 @@ class TestMessageMethods(unittest.TestCase):
         json_data = r'{"name": "test", "last": "case"}'
         msg = Message(json_data)
         json_data2 = msg.to_json()
-        self.assertEqual(json_data, json_data2)
+        self.assertDictEqual(json_data, json_data2)
 
 
 if __name__ == '__main__':
