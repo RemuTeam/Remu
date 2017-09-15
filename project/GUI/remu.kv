@@ -13,9 +13,12 @@ ScreenManager:
             orientation: 'horizontal'
             Button:
                 text: "Master"
+                on_press: app.set_master()
+                on_press: app.add_slave("128.214.166.145")
                 on_release: app.root.current = 'master_gui_layout'
             Button:
                 text: "Slave"
+                on_press: app.set_slave()
 
 
 <MasterGUILayout>:
@@ -37,4 +40,5 @@ ScreenManager:
             text: "0"
         Button:
             text: "Lähetä viesti slavelle"
+            on_press: app.send_msg("128.214.166.145", "Mooooi!")
             on_press: msg_sent_amount.text = root.increment()

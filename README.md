@@ -1,5 +1,5 @@
 # Remu [![Build Status](https://travis-ci.org/RemuTeam/Remu.svg?branch=master)](https://travis-ci.org/RemuTeam/Remu)
-Musiikiesityksien hallinta sovellus
+Musiikiesityksien hallintasovellus
 
 
 ## Definition of done:
