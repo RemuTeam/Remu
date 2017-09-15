@@ -71,10 +71,11 @@ BuildKV = Builder.load_file("remu.kv")
 class RemuApp(App):
     guimaker = GUIFactory()
     isMaster = False
-    slaves = None
+    slaves = {}
     master = None
 
     def build(self):
+        self.guimaker.set_parent(self)
         return BuildKV
 
     def set_master(self):

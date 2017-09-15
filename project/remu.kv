@@ -13,9 +13,12 @@ ScreenManager:
             orientation: 'horizontal'
             Button:
                 text: "Master"
+                on_press: app.set_master()
+                on_press: app.add_slave("192.168.1.1")
                 on_release: app.root.current = 'master_gui_layout'
             Button:
                 text: "Slave"
+                on_press: app.set_slave()
 
 
 <MasterGUILayout>:
