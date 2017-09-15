@@ -2,7 +2,7 @@
 import kivy
 kivy.require('1.10.0')
 
-from project.GUI.GUIFactory import GUIFactory
+from GUI.GUIFactory import GUIFactory
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.lang.builder import Builder
@@ -62,7 +62,7 @@ class RemuFactory(protocol.Factory):
         return RemuProtocol(self)
 
 
-BuildKV = Builder.load_file("remu.kv")
+BuildKV = Builder.load_file('GUI/remu.kv')
 
 class RemuApp(App):
 

@@ -1,7 +1,7 @@
 import pytest
-from project.tests.tools import simulate
+from tests.tools import simulate
 
-from project.tests.simulator_fixture import simulator
+from tests.simulator_fixture import simulator
 
 @pytest.mark.parametrize("params", [{}])
 @simulate

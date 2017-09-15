@@ -1,5 +1,5 @@
 import unittest
-from project.GUI.GUIFactory import MasterGUILayout
+from GUI.GUIFactory import MasterGUILayout
 
 class MasterLayoutTests(unittest.TestCase):
 
