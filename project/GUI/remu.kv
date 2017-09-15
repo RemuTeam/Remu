@@ -1,6 +1,7 @@
 ScreenManager:
     SwitchLayout:
     MasterGUILayout:
+    SlaveGUILayout:
 
 <SwitchLayout>:
     name: "switch_layout"
@@ -19,6 +20,7 @@ ScreenManager:
             Button:
                 text: "Slave"
                 on_press: app.set_slave()
+                on_release: app.root.current = 'slave_gui_layout'
 
 
 <MasterGUILayout>:
@@ -42,3 +44,22 @@ ScreenManager:
             text: "Lähetä viesti slavelle"
             on_press: app.send_msg("128.214.166.145", "Mooooi!")
             on_press: msg_sent_amount.text = root.increment()
+
+
+<SlaveGUILayout>:
+    name: "slave_gui_layout"
+    orientation: 'vertical'
+    spacing: 10
+    padding: 10
+
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: "Olet slave-näkymässä"
+            font_size: 32
+        Label:
+        Label:
+        Button:
+            text: "Simuloi master-signaalia"
+            on_press: root.button_pressed()
+            on_release: root.button_released()

@@ -21,14 +21,14 @@ class MasterGUILayout(Screen):
         return str(self.msg_sent)
 
 
-class SlaveGUI(Screen):
+class SlaveGUILayout(Screen):
     def __init__(self, **kwargs):
-        super(SlaveGUI, self).__init__(**kwargs)
+        super(SlaveGUILayout, self).__init__(**kwargs)
 
-    def on_press(self):
+    def button_pressed(self):
         self.source = ''
 
-    def on_release(self):
+    def button_released(self):
         self.source = 'a.jpg'
 
 
