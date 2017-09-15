@@ -71,7 +71,7 @@ BuildKV = Builder.load_file("remu.kv")
 class RemuApp(App):
     guimaker = GUIFactory()
     isMaster = False
-    slaves = {}
+    slaves = None
     master = None
 
     def build(self):
@@ -79,18 +79,18 @@ class RemuApp(App):
         return BuildKV
 
     def set_master(self):
-        self.slaves = {}
         self.isMaster = True
 
     def set_slave(self):
         self.isMaster = False
         self.master = RemuTCP()
 
-    def add_slave(self, address):
-        self.slaves[address] = RemuTCP(True, address)
+    def add_slave(self, slave_address):
+        self.slaves = RemuTCP(True, slave_address)
+        print("Slave added")
 
-    def send_msg(self, address, data):
-        self.slaves[address].send_message(data)
+    def send_msg(self, msg_address, data):
+        self.slaves.send_message(data)
 
 
 if __name__ == '__main__':
