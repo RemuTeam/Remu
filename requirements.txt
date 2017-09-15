@@ -1,2 +1,5 @@
 pygame
 kivy
+pytest
+pytest-xdist
+lxml
