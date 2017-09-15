@@ -3,47 +3,26 @@ from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
-
-class GUIFactory:
-    def __init__(self):
-        pass
-
-    def hello(self):
-        print("Hello")
-
-    def getGUI(self, isMaster):
-        return MenuGUI()
-        #if isMaster:
-        #    return MasterGUI()
-        #else:
-        #    return SlaveGUI()
+from kivy.uix.screenmanager import ScreenManager, Screen
 
 
-
-class MenuGUI(BoxLayout):
-
-    def __init__(self):
-        super(MenuGUI, self).__init__()
-        self.orientation = 'vertical'
-
-        self.add_widget(Label(text="Master vai slave?"))
-
-        box_layout = BoxLayout()
-        box_layout.add_widget(Button(text="Master"))
-        box_layout.add_widget(Button(text="Slave"))
-
-        self.add_widget(box_layout)
+class SwitchLayout(Screen):
+    pass
 
 
-class MasterGUI(ButtonBehavior, Image):
-    def __init__(self, **kwargs):
-        super(MasterGUI, self).__init__(**kwargs)
+class MasterGUILayout(Screen):
+    msg_sent = 0;
 
-    def on_press(self):
+
+    def increment(self):
+        self.msg_sent += 1
+        return str(self.msg_sent)
+
+
+    def button_pressed(self):
         self.source = 'a.jpg'
 
-    def on_release(self):
-
+    def button_released(self):
         self.source = ''
 
 
@@ -56,3 +35,15 @@ class SlaveGUI(ButtonBehavior, Image):
 
     def on_release(self):
         self.source = 'a.jpg'
+
+
+class ScreenManager(ScreenManager):
+    pass
+
+
+class GUIFactory:
+    """GUIFactory määrittelee käyttöliittymän komponenttien toiminnallisuuden (= määrittelee metodit)
+       Main kutsuu GUIFactorya tarvittaessa, jolloin GUIFactory luo komponentit ja lataa ulkoasun remu.kv -tiedostosta"""
+
+    def __init__(self):
+        pass
