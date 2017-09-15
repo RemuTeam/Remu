@@ -4,7 +4,10 @@ kivy.require('1.10.0')
 
 from GUI.GUIFactory import GUIFactory
 from RemuTCP.RemuTCP import RemuTCP
+from GUI.GUIFactory import GUIFactory
 from kivy.app import App
+from kivy.uix.boxlayout import BoxLayout
+from kivy.lang.builder import Builder
 
 import sys
 
@@ -61,15 +64,16 @@ class RemuFactory(protocol.Factory):
         return RemuProtocol(self)
 
 
-class ReMuSlaveApp(App):
+BuildKV = Builder.load_file("remu.kv")
 
+class RemuApp(App):
     guimaker = GUIFactory()
     isMaster = False
     connection = None
 
     def build(self):
         self.connection = RemuTCP()
-        return self.guimaker.getGUI(self.isMaster)
+        return BuildKV
 
 class ReMuMasterApp(App):
 
@@ -95,7 +99,4 @@ if __name__ == '__main__':
         master = args[1] == 'master'
         address = args[2]
 
-    if master:
-        ReMuMasterApp().run()
-    else:
-        ReMuSlaveApp().run()
+    RemuApp().run()

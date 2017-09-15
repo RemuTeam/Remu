@@ -1,0 +1,40 @@
+ScreenManager:
+    SwitchLayout:
+    MasterGUILayout:
+
+<SwitchLayout>:
+    name: "switch_layout"
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: "Choose master or slave"
+
+        BoxLayout:
+            orientation: 'horizontal'
+            Button:
+                text: "Master"
+                on_release: app.root.current = 'master_gui_layout'
+            Button:
+                text: "Slave"
+
+
+<MasterGUILayout>:
+    name: "master_gui_layout"
+    messages_sent: msg_sent_amount
+    orientation: 'vertical'
+    spacing: 10
+    padding: 10
+
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: "Olet master-näkymässä"
+            font_size: 32
+        Label:
+            text: "Viestejä lähetetty: "
+        Label:
+            id: msg_sent_amount
+            text: "0"
+        Button:
+            text: "Lähetä viesti slavelle"
+            on_press: msg_sent_amount.text = root.increment()
