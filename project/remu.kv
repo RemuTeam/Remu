@@ -14,7 +14,7 @@ ScreenManager:
             Button:
                 text: "Master"
                 on_press: app.set_master()
-                on_press: app.add_slave("192.168.1.1")
+                on_press: app.add_slave("192.168.43.189")
                 on_release: app.root.current = 'master_gui_layout'
             Button:
                 text: "Slave"
@@ -40,4 +40,5 @@ ScreenManager:
             text: "0"
         Button:
             text: "Lähetä viesti slavelle"
+            on_press: app.send_msg("192.168.43.189", "Mooooi!")
             on_press: msg_sent_amount.text = root.increment()

@@ -22,7 +22,7 @@ class MasterGUILayout(Screen):
 
     def increment(self):
         self.msg_sent += 1
-        self.gui_factory.remuapp.send_msg("Mooooi!")
+
         return str(self.msg_sent)
 
 
