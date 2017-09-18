@@ -15,3 +15,11 @@ def test_example(simulator):
     simulator.assert_text("//SwitchLayout//Button[2]", "Slave")
 
     simulator.tap("//SwitchLayout//Button[1]")
+
+    simulator.assert_count("//MasterGUILayout//Button", 1)
+
+    simulator.assert_text("//MasterGUILayout//Label[3]", "0")
+
+    simulator.tap("//MasterGUILayout//Button[1]")
+
+    simulator.assert_text("//MasterGUILayout//Label[3]", "1")

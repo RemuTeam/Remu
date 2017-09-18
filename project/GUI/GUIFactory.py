@@ -7,7 +7,7 @@ class SwitchLayout(Screen):
 
     def master_button_pressed(self):
         self.gui_factory.remuapp.set_master()
-        self.gui_factory.remuapp.add_slave("192.168.1.1")
+        # self.gui_factory.remuapp.add_slave("192.168.1.1")
 
     def slave_button_pressed(self):
         self.gui_factory.remuapp.set_slave()
