@@ -33,7 +33,7 @@ except:
 from twisted.internet import reactor, protocol
 
 
-class RemuSlave(protocol.Protocol):
+class RemuProtocol(protocol.Protocol):
     def connectionMade(self):
         self.factory.app.on_connection(self.transport)
 
@@ -43,8 +43,8 @@ class RemuSlave(protocol.Protocol):
             self.transport.write(response.encode('utf-8'))
 
 
-class RemuSlaveFactory(protocol.ClientFactory):
-    protocol = RemuSlave
+class RemuProtocolFactory(protocol.ClientFactory):
+    protocol = RemuProtocol
 
     def __init__(self, app):
         self.app = app
@@ -76,11 +76,11 @@ class RemuTCP:
     #    return self
 
     def connect_to_slave(self):
-        reactor.connectTCP(self.address, 8000, RemuSlaveFactory(self))
+        reactor.connectTCP(self.address, 8000, RemuProtocolFactory(self))
 
     def listen_to_master(self):
         print("listening")
-        reactor.listenTCP(8000, RemuSlaveFactory(self))
+        reactor.listenTCP(8000, RemuProtocolFactory(self))
 
     def on_connection(self, connection):
         print("Connected successfully!")
@@ -92,7 +92,7 @@ class RemuTCP:
 
     def handle_message(self, json_msg):
         msg = Message(json_msg)
-        msg.set_field("sender", self.transport.getHost().host)
+        msg.set_field("sender", self.connection.getPeer().host)
         response = self.app.handle_message(msg)
         if response:
             response.set_field("address", msg.get_field("sender"))

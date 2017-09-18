@@ -1,69 +1,14 @@
 
 import kivy
-kivy.require('1.10.0')
+import sys
 
 from RemuTCP.RemuTCP import RemuTCP
 from GUI.GUIFactory import GUIFactory
 from kivy.app import App
 from kivy.lang.builder import Builder
-
 from Domain.Message import Message
 
-import sys
-
-#############################################
-# Patch-around to enable Twisted with Kivy,
-# Kivy's latest release prevents from using a
-# method in Twisted that has been fixed for
-# Python 3
-realVersionInfo = sys.version_info
-
-
-class DummyVersionInfo(object):
-    def __getitem__(self, index):
-        sys.version_info = realVersionInfo
-        return 2
-
-
-sys.version_info = DummyVersionInfo()
-
-
-try:
-    from kivy.support import install_twisted_reactor
-    install_twisted_reactor()
-except:
-    pass
-##############################################
-
-
-from twisted.internet import reactor, protocol, endpoints
-from twisted.protocols import basic
-
-
-# Initializes connections between master and slave
-# as well as handles the messages sent
-class RemuProtocol(basic.LineReceiver):
-    def __init__(self, factory):
-        self.factory = factory
-
-    def connectionMade(self):
-        self.factory.clients.add(self)
-
-    def connectionLost(self, reason):
-        self.factory.clients.remove(self)
-
-    def lineReceived(self, line):
-        print(line.decode('ascii'))
-
-
-# Keeps track of the connections made by the slaves and clients
-class RemuFactory(protocol.Factory):
-    def __init__(self, app):
-        self.clients = set()
-        self.app = app
-
-    def buildProtocol(self, addr):
-        return RemuProtocol(self)
+kivy.require('1.10.0')
 
 
 BuildKV = Builder.load_file('GUI/remu.kv')
@@ -97,13 +42,15 @@ class RemuApp(App):
         self.slaves.send_message(msg)
 
     def handle_message(self, msg):
-        if msg.get_field("isMaster") == True:
+        if msg.get_field("isMaster"):
+            print()
             print("MASTER")
         print(msg.fields)
         response = None
         if not self.isMaster:
             response = Message()
             response.set_field("text", "OK!")
+            response.set_field("isMaster", self.isMaster)
         return response
 
 if __name__ == '__main__':
