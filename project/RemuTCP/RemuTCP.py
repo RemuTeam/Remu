@@ -38,7 +38,9 @@ class RemuSlave(protocol.Protocol):
         self.factory.app.on_connection(self.transport)
 
     def dataReceived(self, data):
-        self.factory.app.handle_message(data.decode('utf-8'))
+        response = self.factory.app.handle_message(data.decode('utf-8'))
+        if response:
+            self.transport.write(response.encode('utf-8'))
 
 
 class RemuSlaveFactory(protocol.ClientFactory):
@@ -90,5 +92,9 @@ class RemuTCP:
 
     def handle_message(self, json_msg):
         msg = Message(json_msg)
-        msg.set_field("sender", self.connection)
-        self.app.handle_message(msg)
+        msg.set_field("sender", self.transport.getHost().host)
+        response = self.app.handle_message(msg)
+        if response:
+            response.set_field("address", msg.get_field("sender"))
+            return response.to_json()
+        return None

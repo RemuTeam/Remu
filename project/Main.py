@@ -100,6 +100,11 @@ class RemuApp(App):
         if msg.get_field("isMaster") == True:
             print("MASTER")
         print(msg.fields)
+        response = None
+        if not self.isMaster:
+            response = Message()
+            response.set_field("text", "OK!")
+        return response
 
 if __name__ == '__main__':
     args = sys.argv
