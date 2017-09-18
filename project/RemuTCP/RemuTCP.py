@@ -1,5 +1,7 @@
 import sys
 
+from Domain.Message import Message
+
 
 #############################################
 # Patch-around to enable Twisted with Kivy,
@@ -39,7 +41,6 @@ class RemuSlave(protocol.Protocol):
         self.factory.app.handle_message(data.decode('utf-8'))
 
 
-
 class RemuSlaveFactory(protocol.ClientFactory):
     protocol = RemuSlave
 
@@ -47,20 +48,21 @@ class RemuSlaveFactory(protocol.ClientFactory):
         self.app = app
 
     def startedConnecting(self, connector):
-        self.app.handle_message('Started to connect.')
+        print('Started to connect.')
 
     def clientConnectionLost(self, connector, reason):
-        self.app.handle_message('Lost connection.')
+        print('Lost connection.')
 
     def clientConnectionFailed(self, connector, reason):
-        self.app.handle_message('Connection failed.')
+        print('Connection failed.')
 
 
 class RemuTCP:
     connection = None
     address = None
 
-    def __init__(self, master=False, address=None):
+    def __init__(self, app, master=False, address=None):
+        self.app = app
         if master:
             self.address = address
             self.connect_to_slave()
@@ -79,12 +81,14 @@ class RemuTCP:
         reactor.listenTCP(8000, RemuSlaveFactory(self))
 
     def on_connection(self, connection):
-        self.handle_message("Connected successfully!")
+        print("Connected successfully!")
         self.connection = connection
 
     def send_message(self, msg):
         if msg and self.connection:
-            self.connection.write(msg.encode('utf-8'))
+            self.connection.write(msg.to_json().encode('utf-8'))
 
-    def handle_message(self, msg):
-        print(msg)
+    def handle_message(self, json_msg):
+        msg = Message(json_msg)
+        msg.set_field("sender", self.connection)
+        self.app.handle_message(msg)

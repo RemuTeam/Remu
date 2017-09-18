@@ -1,5 +1,6 @@
 import json
 
+
 class Message:
 
     def __init__(self, json_data=None):
@@ -9,6 +10,9 @@ class Message:
 
     def set_field(self, field, data):
         self.fields[field] = data
+
+    def get_field(self, key):
+        return self.fields[key]
 
     def to_json(self):
         return json.dumps(self.fields)

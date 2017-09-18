@@ -7,6 +7,8 @@ from GUI.GUIFactory import GUIFactory
 from kivy.app import App
 from kivy.lang.builder import Builder
 
+from Domain.Message import Message
+
 import sys
 
 #############################################
@@ -81,15 +83,23 @@ class RemuApp(App):
 
     def set_slave(self):
         self.isMaster = False
-        self.master = RemuTCP()
+        self.master = RemuTCP(self)
 
     def add_slave(self, slave_address):
-        self.slaves = RemuTCP(True, slave_address)
+        self.slaves = RemuTCP(self, True, slave_address)
         print("Slave added")
 
     def send_msg(self, msg_address, data):
-        self.slaves.send_message(data)
+        msg = Message()
+        msg.set_field("address", msg_address)
+        msg.set_field("text", data)
+        msg.set_field("isMaster", self.isMaster)
+        self.slaves.send_message(msg)
 
+    def handle_message(self, msg):
+        if msg.get_field("isMaster") == True:
+            print("MASTER")
+        print(msg.fields)
 
 if __name__ == '__main__':
     args = sys.argv

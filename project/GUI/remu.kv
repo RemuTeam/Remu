@@ -15,7 +15,7 @@ ScreenManager:
             Button:
                 text: "Master"
                 on_press: app.set_master()
-                on_press: app.add_slave("128.214.166.145")
+                on_press: app.add_slave("128.214.166.147")
                 on_release: app.root.current = 'master_gui_layout'
             Button:
                 text: "Slave"
@@ -42,7 +42,7 @@ ScreenManager:
             text: "0"
         Button:
             text: "Lähetä viesti slavelle"
-            on_press: app.send_msg("128.214.166.145", "Mooooi!")
+            on_press: app.send_msg("128.214.166.147", "Mooooi!")
             on_press: msg_sent_amount.text = root.increment()
 
 
@@ -57,8 +57,8 @@ ScreenManager:
         Label:
             text: "Olet slave-näkymässä"
             font_size: 32
-        Label:
-        Label:
+        Image:
+            source: None
         Button:
             text: "Simuloi master-signaalia"
             on_press: root.button_pressed()
