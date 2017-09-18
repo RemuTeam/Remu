@@ -18,10 +18,14 @@ class RemuApp(App):
     isMaster = False
     slaves = None
     master = None
+    gui = None
 
     def build(self):
         self.guimaker.set_parent(self)
         return BuildKV
+
+    def set_gui(self, gui):
+        self.gui = gui;
 
     def set_master(self):
         self.isMaster = True
@@ -43,8 +47,7 @@ class RemuApp(App):
 
     def handle_message(self, msg):
         if msg.get_field("isMaster"):
-            print()
-            print("MASTER")
+            self.root.get_screen(self.root.current).button_pressed()
         print(msg.fields)
         response = None
         if not self.isMaster:

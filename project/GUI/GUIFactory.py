@@ -2,7 +2,6 @@
 
 from kivy.uix.screenmanager import ScreenManager, Screen
 
-
 class SwitchLayout(Screen):
 
     def master_button_pressed(self):
@@ -16,20 +15,33 @@ class SwitchLayout(Screen):
 class MasterGUILayout(Screen):
     msg_sent = 0;
 
+    #def __init__(self):
+    #    self.set_app_gui()
+
+    def set_app_gui(self):
+        self.gui_factory.remuapp.set_gui(self)
+
     def increment(self):
         self.msg_sent += 1
         return str(self.msg_sent)
 
 
 class SlaveGUILayout(Screen):
+
     def __init__(self, **kwargs):
         super(SlaveGUILayout, self).__init__(**kwargs)
+        self.showpic = False
+     #   self.set_app_gui()
+
+    #def set_app_gui(self):
+    #    self.gui_factory.remuapp.set_gui(self)
 
     def button_pressed(self):
-        self.source = ''
-
-    def button_released(self):
-        self.source = 'a.jpg'
+        self.showpic = not self.showpic
+        if self.showpic:
+            self.ids.picture.source = 'a.jpg'
+        else:
+            self.ids.picture.source = ''
 
 
 class ScreenManager(ScreenManager):
