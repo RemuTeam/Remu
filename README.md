@@ -1,4 +1,4 @@
-# Remu [![Build Status](https://travis-ci.org/RemuTeam/Remu.svg?branch=master)](https://travis-ci.org/RemuTeam/Remu)
+# Remu [![Build Status](https://travis-ci.org/RemuTeam/Remu.svg?branch=master)](https://travis-ci.org/RemuTeam/Remu) [![Coverage Status](https://coveralls.io/repos/github/RemuTeam/Remu/badge.svg?branch=master)](https://coveralls.io/github/RemuTeam/Remu?branch=master)
 Musiikiesityksien hallintasovellus
 
 

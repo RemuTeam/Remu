@@ -15,6 +15,7 @@ before_script:
 # command to run tests
 script:
  - pytest # or py.test for Python versions 3.5 and below
+ - "cd .."
  - "timeout --preserve-status --signal=SIGTERM 5s coverage run Main.py"
 after_success:
  - coveralls
