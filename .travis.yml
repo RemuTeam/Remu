@@ -6,6 +6,7 @@ python:
 install:
   - pip install Cython --install-option="--no-cython-compile"
   - pip install -r requirements.txt
+  - "sudo apt-get install mtdev-tools"
 before_script:
   - "cd project"
   - "export DISPLAY=:99.0"
