@@ -59,5 +59,6 @@ fabric.properties
 /**/*.pyc
 .cache/
 **/__pycache__/*
+**/.coverage
 
 # End of https://www.gitignore.io/api/pycharm+all
