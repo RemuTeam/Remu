@@ -20,7 +20,12 @@ class TestMessageMethods(unittest.TestCase):
     def test_set_and_get_field(self):
         msg = Message()
         msg.set_field("Test", "Kappa")
-        self.assertEqual(msg.get_field("Test"), "Kappa")
+        self.assertEqual(msg.fields["Test"], "Kappa")
+
+    def test_get_field(self):
+        msg = Message()
+        msg.fields["Test"] = "Kappa"
+        self.assertEquals(msg.fields["Test"], msg.get_field("Test"))
 
 
 if __name__ == '__main__':
