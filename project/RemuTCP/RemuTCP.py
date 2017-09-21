@@ -62,6 +62,7 @@ class RemuProtocolFactory(protocol.ClientFactory):
 class RemuTCP:
     connection = None
     address = None
+    port = None
 
     def __init__(self, app, master=False, address=None):
         self.app = app
@@ -71,6 +72,8 @@ class RemuTCP:
         else:
             self.listen_to_master()
 
+    def stop_listening(self):
+        self.port.stopListening()
     #def build(self):
     #    #self.connect_to_server()
     #    return self
@@ -80,7 +83,7 @@ class RemuTCP:
 
     def listen_to_master(self):
         print("listening")
-        reactor.listenTCP(8000, RemuProtocolFactory(self))
+        self.port = reactor.listenTCP(8000, RemuProtocolFactory(self))
 
     def on_connection(self, connection):
         print("Connected successfully!")

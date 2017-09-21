@@ -20,6 +20,7 @@ class TestRemuAppMethods(unittest.TestCase):
         self.app.set_slave()
         self.assertFalse(self.app.isMaster)
         self.assertNotEquals(self.app.master,None)
+        self.app.master.stop_listening()
 
 
     def test_addSlave(self):
