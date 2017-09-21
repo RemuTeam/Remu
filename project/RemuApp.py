@@ -15,14 +15,11 @@ class RemuApp(App):
     isMaster = False
     slaves = None
     master = None
-    gui = None
+
 
     def build(self):
         self.guimaker.set_parent(self)
         return BuildKV
-
-    def set_gui(self, gui):
-        self.gui = gui;
 
     def set_master(self):
         self.isMaster = True
