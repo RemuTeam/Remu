@@ -17,6 +17,16 @@ class TestMessageMethods(unittest.TestCase):
         json_data2 = msg.to_json()
         self.assertEqual(sorted(json_data), sorted(json_data2))
 
+    def test_set_and_get_field(self):
+        msg = Message()
+        msg.set_field("Test", "Kappa")
+        self.assertEqual(msg.fields["Test"], "Kappa")
+
+    def test_get_field(self):
+        msg = Message()
+        msg.fields["Test"] = "Kappa"
+        self.assertEquals(msg.fields["Test"], msg.get_field("Test"))
+
 
 if __name__ == '__main__':
     unittest.main()
