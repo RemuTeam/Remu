@@ -6,7 +6,7 @@ from kivy.animation import Animation
 from kivy.properties import StringProperty, BooleanProperty
 from kivy.clock import Clock
 
-from tests.tools import execution_step, without_schedule_seconds
+from tests.GUI.tools import execution_step, without_schedule_seconds
 
 
 class Simulator(object):

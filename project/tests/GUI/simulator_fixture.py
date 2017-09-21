@@ -2,14 +2,14 @@ import os
 
 import pytest
 
-from tests.simulation import Simulator
+from tests.GUI.simulation import Simulator
 
 @pytest.fixture
 def simulator(request):
     from Main import RemuApp
     application = RemuApp()
     simulator = Simulator(application)
-    remu_kv_file_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    remu_kv_file_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     remu_kv_file_name = 'GUI/remu.kv'
 
     def fin():
