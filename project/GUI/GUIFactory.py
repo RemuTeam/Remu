@@ -6,17 +6,7 @@ Produces the GUI-layout that allows the user to choose
 between Master- and Slave-mode.
 """
 class SwitchLayout(Screen):
-    """
-    Sets the GUI's layout to MasterGUILayout
-    """
-    def master_button_pressed(self):
-        self.gui_factory.remuapp.set_master()
-
-    """
-    Sets the GUI's layout to SlaveGUILayout
-    """
-    def slave_button_pressed(self):
-        self.gui_factory.remuapp.set_slave()
+    pass
 
 
 """
