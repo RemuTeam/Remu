@@ -4,3 +4,5 @@ twisted
 pytest
 pytest-xdist
 lxml
+coverage
+coveralls
