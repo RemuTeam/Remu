@@ -1,5 +1,7 @@
 import sys
 
+from Domain.Message import Message
+
 
 #############################################
 # Patch-around to enable Twisted with Kivy,
@@ -31,36 +33,38 @@ except:
 from twisted.internet import reactor, protocol
 
 
-class RemuSlave(protocol.Protocol):
+class RemuProtocol(protocol.Protocol):
     def connectionMade(self):
         self.factory.app.on_connection(self.transport)
 
     def dataReceived(self, data):
-        self.factory.app.handle_message(data.decode('utf-8'))
+        response = self.factory.app.handle_message(data.decode('utf-8'))
+        if response:
+            self.transport.write(response.encode('utf-8'))
 
 
-
-class RemuSlaveFactory(protocol.ClientFactory):
-    protocol = RemuSlave
+class RemuProtocolFactory(protocol.ClientFactory):
+    protocol = RemuProtocol
 
     def __init__(self, app):
         self.app = app
 
     def startedConnecting(self, connector):
-        self.app.handle_message('Started to connect.')
+        print('Started to connect.')
 
     def clientConnectionLost(self, connector, reason):
-        self.app.handle_message('Lost connection.')
+        print('Lost connection.')
 
     def clientConnectionFailed(self, connector, reason):
-        self.app.handle_message('Connection failed.')
+        print('Connection failed.')
 
 
 class RemuTCP:
     connection = None
     address = None
 
-    def __init__(self, master=False, address=None):
+    def __init__(self, app, master=False, address=None):
+        self.app = app
         if master:
             self.address = address
             self.connect_to_slave()
@@ -72,19 +76,25 @@ class RemuTCP:
     #    return self
 
     def connect_to_slave(self):
-        reactor.connectTCP(self.address, 8000, RemuSlaveFactory(self))
+        reactor.connectTCP(self.address, 8000, RemuProtocolFactory(self))
 
     def listen_to_master(self):
         print("listening")
-        reactor.listenTCP(8000, RemuSlaveFactory(self))
+        reactor.listenTCP(8000, RemuProtocolFactory(self))
 
     def on_connection(self, connection):
-        self.handle_message("Connected successfully!")
+        print("Connected successfully!")
         self.connection = connection
 
     def send_message(self, msg):
         if msg and self.connection:
-            self.connection.write(msg.encode('utf-8'))
+            self.connection.write(msg.to_json().encode('utf-8'))
 
-    def handle_message(self, msg):
-        print(msg)
+    def handle_message(self, json_msg):
+        msg = Message(json_msg)
+        msg.set_field("sender", self.connection.getPeer().host)
+        response = self.app.handle_message(msg)
+        if response:
+            response.set_field("address", msg.get_field("sender"))
+            return response.to_json()
+        return None
