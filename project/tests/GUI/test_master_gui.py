@@ -1,18 +1,19 @@
 import pytest
-from tests.tools import simulate
+from tests.GUI.tools import simulate
+from tests.GUI.layout_selector import *
 
-from tests.simulator_fixture import simulator
+from tests.GUI.simulator_fixture import simulator
 
 @pytest.mark.parametrize("params", [{}])
 @simulate
-def test_example(simulator):
+def test_master_gui(simulator):
 
     # widgets are selected with xpath
-    simulator.assert_count("//SwitchLayout//Button", 2)
+    simulator.assert_count(switch_layout_buttons(), 2)
 
     # deep tree goes reversed through the tree
-    simulator.assert_text("//SwitchLayout//Button[1]", "Master")
-    simulator.assert_text("//SwitchLayout//Button[2]", "Slave")
+    simulator.assert_text(switch_layout_buttons() + "[1]", "Master")
+    simulator.assert_text(switch_layout_buttons() + "[2]", "Slave")
 
     simulator.tap("//SwitchLayout//Button[1]")
 

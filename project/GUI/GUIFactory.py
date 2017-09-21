@@ -1,40 +1,53 @@
-# coding: latin-1
-
 from kivy.uix.screenmanager import ScreenManager, Screen
 
-class SwitchLayout(Screen):
 
+"""
+Produces the GUI-layout that allows the user to choose
+between Master- and Slave-mode.
+"""
+class SwitchLayout(Screen):
+    """
+    Sets the GUI's layout to MasterGUILayout
+    """
     def master_button_pressed(self):
         self.gui_factory.remuapp.set_master()
-        # self.gui_factory.remuapp.add_slave("192.168.1.1")
 
+    """
+    Sets the GUI's layout to SlaveGUILayout
+    """
     def slave_button_pressed(self):
         self.gui_factory.remuapp.set_slave()
 
 
+"""
+Produces the Master-mode's GUI-layout that allows the
+user to communicate with Slave-devices.
+"""
 class MasterGUILayout(Screen):
+    """
+    A variable for debugging purposes to track the amount
+    of clicks in the GUI
+    """
     msg_sent = 0;
 
-    #def __init__(self):
-    #    self.set_app_gui()
-
-    def set_app_gui(self):
-        self.gui_factory.remuapp.set_gui(self)
-
+    """
+    Increments the amount of clicks and returns the
+    incremented value.
+    """
     def increment(self):
         self.msg_sent += 1
         return str(self.msg_sent)
 
 
+"""
+Produces the Slave-mode's GUI-layout that reacts to
+the Master-devices commands.
+"""
 class SlaveGUILayout(Screen):
 
     def __init__(self, **kwargs):
         super(SlaveGUILayout, self).__init__(**kwargs)
         self.showpic = False
-     #   self.set_app_gui()
-
-    #def set_app_gui(self):
-    #    self.gui_factory.remuapp.set_gui(self)
 
     def button_pressed(self):
         self.showpic = not self.showpic
@@ -48,9 +61,11 @@ class ScreenManager(ScreenManager):
     pass
 
 
+"""
+GUIFactory maarittelee kayttaliittyman komponenttien toiminnallisuuden (= maarittelee metodit)
+Main kutsuu GUIFactorya tarvittaessa, jolloin GUIFactory luo komponentit ja lataa ulkoasun remu.kv -tiedostosta
+"""
 class GUIFactory:
-    """GUIFactory määrittelee käyttöliittymän komponenttien toiminnallisuuden (= määrittelee metodit)
-       Main kutsuu GUIFactorya tarvittaessa, jolloin GUIFactory luo komponentit ja lataa ulkoasun remu.kv -tiedostosta"""
     remuapp = None
 
     def __init__(self):
