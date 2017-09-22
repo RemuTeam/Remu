@@ -71,13 +71,13 @@ class RemuTCP:
     address = None
     port = None
 
-    def __init__(self, app, master=False, address=None):
+    def __init__(self, app, master=False, address=None, port=8000):
         self.app = app
         if master:
             self.address = address
-            self.connect_to_slave()
+            self.connect_to_slave(port)
         else:
-            self.listen_to_master()
+            self.listen_to_master(port)
 
     """
     The slave stops listening to the port in question
@@ -90,21 +90,21 @@ class RemuTCP:
     to slave and sends the message to port 8000
     """
 
-    def connect_to_slave(self):
-        reactor.connectTCP(self.address, 8000, RemuProtocolFactory(self))
+    def connect_to_slave(self, port):
+        reactor.connectTCP(self.address, port, RemuProtocolFactory(self))
     """
     The constructor calls when computer is indentified as a slave. Uses imported reactor to start listening for TCP connection 
     possibility in port 8000
     """
 
-    def listen_to_master(self):
+    def listen_to_master(self, port):
         print("listening")
-        self.port = reactor.listenTCP(8000, RemuProtocolFactory(self))
+        self.port = reactor.listenTCP(port, RemuProtocolFactory(self))
+
     """
     Sets the parameter connection to point to the succesfully made connection
     
     """
-
     def on_connection(self, connection):
         print("Connected successfully!")
         self.connection = connection
