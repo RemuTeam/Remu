@@ -40,5 +40,5 @@ def test_master_button_works(simulator):
 @simulate
 def test_slave_button_works(simulator):
     simulator.tap(switch_layout_button(2))
-
     simulator.assert_text(slave_layout_label(1), "Olet slave-näkymässä")
+    simulator.app.close_connections()

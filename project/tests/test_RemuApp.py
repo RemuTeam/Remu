@@ -8,6 +8,10 @@ class TestRemuAppMethods(unittest.TestCase):
     def setUp(self):
         self.app=RemuApp()
 
+    def tearDown(self):
+        if self.app.master:
+            self.app.master.stop_listening()
+
     def test_setMaster(self):
 
         self.assertFalse(self.app.isMaster)
@@ -24,7 +28,6 @@ class TestRemuAppMethods(unittest.TestCase):
 
 
     def test_addSlave(self):
-
         self.assertEquals(self.app.slaves, None)
         self.app.add_slave('127.0.0.1')
         self.assertNotEquals(self.app.slaves, None)

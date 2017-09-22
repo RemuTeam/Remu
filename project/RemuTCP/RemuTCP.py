@@ -74,9 +74,6 @@ class RemuTCP:
 
     def stop_listening(self):
         self.port.stopListening()
-    #def build(self):
-    #    #self.connect_to_server()
-    #    return self
 
     def connect_to_slave(self):
         reactor.connectTCP(self.address, 8000, RemuProtocolFactory(self))

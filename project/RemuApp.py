@@ -49,3 +49,7 @@ class RemuApp(App):
             response.set_field("text", "OK!")
             response.set_field("isMaster", self.isMaster)
         return response
+
+    def close_connections(self):
+        if self.master:
+            self.master.stop_listening()
