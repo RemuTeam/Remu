@@ -4,11 +4,12 @@ from Domain.Message import Message
 
 
 #############################################
-# Patch-around to enable Twisted with Kivy,
-# Kivy's latest release prevents from using a
-# method in Twisted that has been fixed for
-# Python 3
-
+"""
+ Patch-around to enable Twisted with Kivy,
+ Kivy's latest release prevents from using a
+ method in Twisted that has been fixed for
+ Python 3
+"""
 realVersionInfo = sys.version_info
 
 
@@ -28,8 +29,11 @@ except:
     pass
 
 ##############################################
+"""
+HANDLES THE CONNECTION MAKING BETWEEN MASTER AND SLAVE
 
-
+by using the ClientFactory and Protocol classes from Twisted.
+"""
 from twisted.internet import reactor, protocol
 
 
@@ -57,7 +61,10 @@ class RemuProtocolFactory(protocol.ClientFactory):
 
     def clientConnectionFailed(self, connector, reason):
         print('Connection failed.')
-
+"""
+In constructor checks if the computer is a master, if yes it starts to commect to slave,
+if no it is thus a slave and starts listening.
+"""
 
 class RemuTCP:
     connection = None
@@ -72,27 +79,45 @@ class RemuTCP:
         else:
             self.listen_to_master()
 
+    """
+    The slave stops listening to the port in question
+    """
     def stop_listening(self):
         self.port.stopListening()
-    #def build(self):
-    #    #self.connect_to_server()
-    #    return self
+
+    """
+    The constructor calls when computer is indentified as master. Uses the imported reactor to make a TCP connection
+    to slave and sends the message to port 8000
+    """
 
     def connect_to_slave(self):
         reactor.connectTCP(self.address, 8000, RemuProtocolFactory(self))
+    """
+    The constructor calls when computer is indentified as a slave. Uses imported reactor to start listening for TCP connection 
+    possibility in port 8000
+    """
 
     def listen_to_master(self):
         print("listening")
         self.port = reactor.listenTCP(8000, RemuProtocolFactory(self))
+    """
+    Sets the parameter connection to point to the succesfully made connection
+    
+    """
 
     def on_connection(self, connection):
         print("Connected successfully!")
         self.connection = connection
 
+    """
+    Sends the message given as parameter if the connection is valid and on
+    """
     def send_message(self, msg):
         if msg and self.connection:
             self.connection.write(msg.to_json().encode('utf-8'))
-
+    """
+    Makes a Message from the json message and adds a sender field. 
+    """
     def handle_message(self, json_msg):
         msg = Message(json_msg)
         msg.set_field("sender", self.connection.getPeer().host)

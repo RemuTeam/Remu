@@ -8,6 +8,7 @@ class TestRemuAppMethods(unittest.TestCase):
     def setUp(self):
         self.app=RemuApp()
 
+
     def test_setMaster(self):
 
         self.assertFalse(self.app.isMaster)
