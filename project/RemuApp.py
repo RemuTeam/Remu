@@ -58,7 +58,9 @@ class RemuApp(App):
         msg.set_field("text", data)
         msg.set_field("isMaster", self.isMaster)
         self.slaves.send_message(msg)
-
+    """
+    Opens the message. If the message is sent by master the the first branch activates and we press the button in slave layout
+    """
     def handle_message(self, msg):
         if msg.get_field("isMaster"):
             self.root.get_screen(self.root.current).button_pressed()
