@@ -23,6 +23,7 @@ def simulator(request):
         kivy_style_filename = os.path.join(remu_kv_file_path, remu_kv_file_name)
         if not kivy_style_filename in Builder.files:
             Builder.load_file(kivy_style_filename, rulesonly=False)
+        application.root.current = 'switch_layout'
 
     request.addfinalizer(fin)
     return simulator

@@ -3,3 +3,5 @@ branch = True
 omit =
 	/usr/*
     /home/travis/virtualenv/*
+    project/tests/*
+    project/RemuCoverageTester.py
