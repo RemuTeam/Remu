@@ -48,7 +48,7 @@ ScreenManager:
             TextInput:
                 hint_text: "0.0.0.0:8000"
             Button:
-                text: "Add Slave"
+                text: "Add slave"
         BoxLayout:
             #name: "middle"
         BoxLayout:
@@ -72,13 +72,13 @@ ScreenManager:
     BoxLayout:
         orientation: 'vertical'
         Label:
-            text: "Olet slave-näkymässä"
+            text: "Currently in slave mode"
             font_size: 32
         Image:
             id: picture
             source: None
         Button:
-            text: "Simuloi master-signaalia"
+            text: "Simulate master signal"
             on_press: root.button_pressed()
 
 <Popp>:

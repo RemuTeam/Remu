@@ -29,7 +29,7 @@ def test_master_button_works(simulator):
 @simulate
 def test_slave_button_works(simulator):
     simulator.tap(switch_layout_button(2))
-    simulator.assert_text(slave_layout_label(1), "Olet slave-näkymässä")
+    simulator.assert_text(slave_layout_label(1), "Currently in slave mode")
     simulator.app.close_connections()
 
 @pytest.mark.parametrize("params", [{}])
@@ -42,3 +42,12 @@ def test_master_gui(simulator):
     simulator.tap(master_layout_button(1))
 
     simulator.assert_text(master_layout_label(2), "1")
+
+@pytest.mark.parametrize("params", [{}])
+@simulate
+def test_master_gui_components(simulator):
+    simulator.tap(switch_layout_button(1))
+
+    simulator.assert_text(master_layout_button(1), "Send message to slave")
+    simulator.assert_text(master_layout_button(2), "Back")
+    simulator.assert_text(master_layout_button(3), "Add slave")
