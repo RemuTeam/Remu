@@ -46,7 +46,11 @@ class RemuApp(App):
     You can add slaves to master by using REMUTCP.py 
     """
     def add_slave(self, slave_address):
-        self.slaves = RemuTCP(self, True, slave_address)
+        slave_address_parts = slave_address.split(":")
+        if len(slave_address_parts) == 2:
+            self.slaves = RemuTCP(self, True, slave_address_parts[0], int(slave_address_parts[1]))
+        else:
+            self.slaves = RemuTCP(self, True, slave_address)
         print("Slave added")
 
     """
@@ -58,19 +62,29 @@ class RemuApp(App):
         msg.set_field("text", data)
         msg.set_field("isMaster", self.isMaster)
         self.slaves.send_message(msg)
+
     """
-    Opens the message. If the message is sent by master the the first branch activates and we press the button in slave layout
+    Opens the message. If the message is sent by master the the first branch 
+    activates and we press the button in slave layout. However, if the message
+    contains the text "KILL" and receiver is a slave, the slave will close its connections
     """
     def handle_message(self, msg):
         if msg.get_field("isMaster"):
             self.root.get_screen(self.root.current).button_pressed()
         print(msg.fields)
+        if msg.get_field("text") == "KILL" and self.master:
+            self.close_connections()
+            return None
         response = None
         if not self.isMaster:
             response = Message()
             response.set_field("text", "OK!")
             response.set_field("isMaster", self.isMaster)
         return response
+
+    """
+        Closes all established connections and stops listening to any future connection attempts.
+    """
 
     def close_connections(self):
         if self.master:

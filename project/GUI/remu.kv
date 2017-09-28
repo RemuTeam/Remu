@@ -46,9 +46,12 @@ ScreenManager:
                 text: "Back"
                 on_press: root.show_popup()
             TextInput:
+                id: txt_input
                 hint_text: "0.0.0.0:8000"
             Button:
                 text: "Add Slave"
+                on_press: app.close_connections()
+                on_press: app.add_slave(txt_input.text)
         BoxLayout:
             name: "middle"
         BoxLayout:
@@ -91,6 +94,7 @@ ScreenManager:
             orientation: 'horizontal'
             Button:
                 text: "Yes"
+                on_press: app.close_connections()
                 on_press: root.dismiss()
                 on_release: app.root.current = 'switch_layout'
                 size_hint: 0.3,0.3
