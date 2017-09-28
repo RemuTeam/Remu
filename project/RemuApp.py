@@ -75,3 +75,7 @@ class RemuApp(App):
     def close_connections(self):
         if self.master:
             self.master.stop_listening()
+            if self.master.connection:
+                self.master.connection.loseConnection()
+        if self.slaves and self.slaves.connection:
+            self.slaves.connection.loseConnection()
