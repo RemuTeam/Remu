@@ -4,22 +4,11 @@ from tests.GUI.layout_selector import *
 
 from tests.GUI.simulator_fixture import simulator
 
-@pytest.mark.parametrize("params", [{}])
-@simulate
-def test_master_gui(simulator):
-    simulator.tap(switch_layout_button(1))
-
-    simulator.assert_count(master_layout_buttons(), 1)
-
-    simulator.assert_text(master_layout_label(3), "0")
-
-    simulator.tap(master_layout_button(1))
-
-    simulator.assert_text(master_layout_label(3), "1")
 
 @pytest.mark.parametrize("params", [{}])
 @simulate
 def test_switch_layout_components(simulator):
+
     # widgets are selected with xpath
     simulator.assert_count(switch_layout_buttons(), 2)
 
@@ -33,7 +22,7 @@ def test_switch_layout_components(simulator):
 def test_master_button_works(simulator):
     simulator.tap(switch_layout_button(1))
 
-    simulator.assert_text(master_layout_label(1), "Olet master-näkymässä")
+    simulator.assert_text(master_layout_label(1), "Messages sent: ")
 
 
 @pytest.mark.parametrize("params", [{}])
@@ -42,3 +31,14 @@ def test_slave_button_works(simulator):
     simulator.tap(switch_layout_button(2))
     simulator.assert_text(slave_layout_label(1), "Olet slave-näkymässä")
     simulator.app.close_connections()
+
+@pytest.mark.parametrize("params", [{}])
+@simulate
+def test_master_gui(simulator):
+    simulator.tap(switch_layout_button(1))
+
+    simulator.assert_count(master_layout_buttons(), 3)
+
+    simulator.tap(master_layout_button(1))
+
+    simulator.assert_text(master_layout_label(2), "1")
