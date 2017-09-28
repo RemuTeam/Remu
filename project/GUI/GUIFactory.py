@@ -61,6 +61,7 @@ class SlaveGUILayout(Screen):
         super(SlaveGUILayout, self).__init__(**kwargs)
         self.showpic = False
         self.pic_presentation = PicPresentation()
+        self.pic_presentation.get_filenames()
 
 
 """

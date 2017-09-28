@@ -39,6 +39,8 @@ class PicPresentation:
             if self.filetype_is_supported(relative_filename):
                 self.pic_files.append(relative_filename)
 
+        self.pic_files.sort()
+
     """
     Checks if the filename given as attribute is a pointer to
     a valid image file

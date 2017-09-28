@@ -9,11 +9,11 @@ class PicPresentationTest(unittest.TestCase):
         self.pic_presentation.get_filenames()
 
     def test_get_first_pic(self):
-        self.assertCountEqual(self.pic_presentation.get_next(), 'images/b.jpg')
+        self.assertCountEqual(self.pic_presentation.get_next(), 'images/a.jpg')
 
     def test_get_first_pic(self):
         self.pic_presentation.get_next()
-        self.assertCountEqual(self.pic_presentation.get_next(), 'images/a.jpg')
+        self.assertCountEqual(self.pic_presentation.get_next(), 'images/b.jpg')
 
     def test_no_pics(self):
         self.pic_presentation.get_next()
