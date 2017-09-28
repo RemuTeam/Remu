@@ -97,6 +97,12 @@ class SlaveGUILayout(Screen):
             self.ids.picture.source = ''
             self.get_parent_window().fullscreen = False
 
+"""
+Fullscreen layout for presenting content
+"""
+class PresentationLayout(Screen):
+    pass
+
 
 """
 Provides the GUI-layouts as different screens for the 

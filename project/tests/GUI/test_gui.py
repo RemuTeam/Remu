@@ -55,4 +55,8 @@ def test_slave(simulator):
     simulator.assert_attr("//SlaveGUILayout//Image[1]", "source", None)
     simulator.tap("//SlaveGUILayout//Button[1]")
     simulator.assert_attr("//SlaveGUILayout//Image[1]", "source", "a.jpg")
+    simulator.tap("//SlaveGUILayout//Button[1]")
+    simulator.assert_attr("//SlaveGUILayout//Image[1]", "source", "b.png")
+    simulator.tap("//SlaveGUILayout//Button[1]")
+    simulator.assert_attr("//SlaveGUILayout//Image[1]", "source", "")
     simulator.app.close_connections()
