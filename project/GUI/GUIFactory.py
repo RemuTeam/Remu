@@ -1,5 +1,5 @@
 from kivy.uix.screenmanager import ScreenManager, Screen
-
+from kivy.uix.popup import Popup
 """
 CLASS LIBRARY TO HANDLE THE FUNCTIONALITY OF GUI LAYOUTS
 
@@ -41,6 +41,8 @@ class MasterGUILayout(Screen):
     def increment(self):
         self.msg_sent += 1
         return str(self.msg_sent)
+    def show_popup(self):
+        Popp().open()
 
 
 """
@@ -69,7 +71,8 @@ class SlaveGUILayout(Screen):
         else:
             self.ids.picture.source = ''
 
-
+class Popp(Popup):
+    pass
 """
 Provides the GUI-layouts as different screens for the 
 Kivy-layout file.
