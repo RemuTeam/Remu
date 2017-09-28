@@ -57,23 +57,23 @@ ScreenManager:
         orientation: 'vertical'
         Label:
             text: "Olet slave-näkymässä"
-            cls: 'hidable'
             font_size: 32
-        Image:
-            id: picture
-            source: None
         Button:
-            text: "Simuloi master-signaalia"
-            on_press: root.button_pressed()
+            text: "Siirry esitystilaan"
+            on_press: root.get_parent_window().fullscreen = True
+            on_press: app.root.current = "presentation_layout"
 
 
 <PresentationLayout>:
     name: "presentation_layout"
 
     BoxLayout:
+        orientation: 'vertical'
         Image:
             id: picture
             source: None
         Button:
             text: "Simuloi master-signaalia"
-            on_press: root.button_pressed()
+            font_size: 10
+            size_hint: 1.0, 0.05
+            on_press: root.show_next()

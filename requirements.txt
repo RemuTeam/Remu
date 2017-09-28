@@ -6,3 +6,4 @@ pytest-xdist
 lxml
 coverage
 coveralls
+pillow

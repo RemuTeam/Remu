@@ -1,5 +1,6 @@
 from kivy.uix.screenmanager import ScreenManager, Screen
 from Domain.PicPresentation import PicPresentation
+from kivy.app import App
 
 """
 CLASS LIBRARY TO HANDLE THE FUNCTIONALITY OF GUI LAYOUTS
@@ -61,27 +62,19 @@ class SlaveGUILayout(Screen):
         self.showpic = False
         self.pic_presentation = PicPresentation()
 
-    """
-    Handles the functionality of clicks in the Slave GUI.
-    """
-    def button_pressed(self):
-        self.show_next()
 
+"""
+Fullscreen layout for presenting content
+"""
+class PresentationLayout(Screen):
     """
-    Hides or shows other elements except the image element
+    In the constructor the class and instance are passed
+    to the superclass' __init__ function
     """
-    def show_only_picture(self, show=False):
-        if show:
-            for child in self.children[0].children:
-                print(str(child) + " / " + str(child.cls))
-                if len(child.cls) > 0:
-                    print("was true")
-                    child.y = 6000
-        else:
-            for child in self.children[0].children:
-                if len(child.cls) > 0:
-                    child.y = 0
-
+    def __init__(self, **kwargs):
+        super(PresentationLayout, self).__init__(**kwargs)
+        self.showpic = False
+        self.pic_presentation = PicPresentation()
 
     """
     Shows the next element of the show
@@ -89,19 +82,12 @@ class SlaveGUILayout(Screen):
     def show_next(self):
         next_pic_filename = self.pic_presentation.get_next()
         if next_pic_filename is not None:
-            self.show_only_picture(True)
             self.ids.picture.source = next_pic_filename
-            self.get_parent_window().fullscreen = True
         else:
-            self.show_only_picture(False)
             self.ids.picture.source = ''
-            self.get_parent_window().fullscreen = False
-
-"""
-Fullscreen layout for presenting content
-"""
-class PresentationLayout(Screen):
-    pass
+            self.get_root_window().fullscreen = False
+            self.pic_presentation.reset()
+            App.get_running_app().root.current = "slave_gui_layout"
 
 
 """
@@ -134,3 +120,10 @@ class GUIFactory:
     """
     def set_parent(self, remuapp):
         self.remuapp = remuapp
+
+
+"""
+Image background layout
+"""
+class ImageLayout:
+    pass
