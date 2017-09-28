@@ -2,7 +2,7 @@ ScreenManager:
     SwitchLayout:
     MasterGUILayout:
     SlaveGUILayout:
-    MyPopup:
+
 
 <SwitchLayout>:
     name: "switch_layout"
@@ -14,11 +14,13 @@ ScreenManager:
             orientation: 'horizontal'
             Button:
                 text: "Master"
+                size_hint: 0.3,0.3
                 on_press: app.set_master()
                 on_press: app.add_slave("127.0.0.1")
                 on_release: app.root.current = 'master_gui_layout'
             Button:
                 text: "Slave"
+                size_hint: 0.3,0.3
                 on_press: app.set_slave()
                 on_release: app.root.current = 'slave_gui_layout'
 
@@ -32,22 +34,34 @@ ScreenManager:
 
     BoxLayout:
         orientation: 'vertical'
-        Label:
-            text: "Olet master-näkymässä"
-            font_size: 32
-        Label:
-            text: "Viestejä lähetetty: "
-        Label:
-            id: msg_sent_amount
-            text: "0"
-        Button:
-            text: "Lähetä viesti slavelle"
-            on_press: app.send_msg("127.0.0.1", "Mooooi!")
-            on_press: msg_sent_amount.text = root.increment()
-        Button:
-            text: "Takaisin"
-            on_press: app.root.current = 'switch_layout'
-        
+        BoxLayout:
+            name: "options"
+            orientation: 'horizontal'
+            size_hint: 1, 0.1
+            Button:
+                text: "Send message to slave"
+                on_press: app.send_msg("127.0.0.1", "Mooooi!")
+                on_press: msg_sent_amount.text = root.increment()
+            Button:
+                text: "Back"
+                on_press: root.show_popup()
+            TextInput:
+                hint_text: "0.0.0.0:8000"
+            Button:
+                text: "Add Slave"
+        BoxLayout:
+            name: "middle"
+        BoxLayout:
+            name: "bottom_panel"
+            orientation: 'horizontal'
+            size_hint: 1, 0.1
+            Label:
+                text: "Messages sent: "
+            Label:
+                id: msg_sent_amount
+                text: "0"
+
+
 
 <SlaveGUILayout>:
     name: "slave_gui_layout"
@@ -67,13 +81,20 @@ ScreenManager:
             text: "Simuloi master-signaalia"
             on_press: root.button_pressed()
 
-<MyPopup>:
-    name: "popuppi"
-    auto_dismiss: False
-    Button:
-        text: 'Close me!'
-        on_release: root.dismiss()
-
-    Button:
-        text: 'Open popup'
-        on_release: Factory.MyPopup().open()
+<Popp>:
+    title: "Are you sure you want to go back?"
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: "If you answer yes, the connection with all slaves will be lost."
+        BoxLayout:
+            orientation: 'horizontal'
+            Button:
+                text: "Yes"
+                on_press: root.dismiss()
+                on_release: app.root.current = 'switch_layout'
+                size_hint: 0.3,0.3
+            Button:
+                text: "No"
+                on_press: root.dismiss()
+                size_hint: 0.3,0.3
