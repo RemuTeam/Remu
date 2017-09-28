@@ -1,4 +1,5 @@
 from kivy.uix.screenmanager import ScreenManager, Screen
+from Domain.PicPresentation import PicPresentation
 
 """
 CLASS LIBRARY TO HANDLE THE FUNCTIONALITY OF GUI LAYOUTS
@@ -58,16 +59,43 @@ class SlaveGUILayout(Screen):
     def __init__(self, **kwargs):
         super(SlaveGUILayout, self).__init__(**kwargs)
         self.showpic = False
+        self.pic_presentation = PicPresentation()
 
     """
     Handles the functionality of clicks in the Slave GUI.
     """
     def button_pressed(self):
-        self.showpic = not self.showpic
-        if self.showpic:
-            self.ids.picture.source = 'a.jpg'
+        self.show_next()
+
+    """
+    Hides or shows other elements except the image element
+    """
+    def show_only_picture(self, show=False):
+        if show:
+            for child in self.children[0].children:
+                print(str(child) + " / " + str(child.cls))
+                if len(child.cls) > 0:
+                    print("was true")
+                    child.y = 6000
         else:
+            for child in self.children[0].children:
+                if len(child.cls) > 0:
+                    child.y = 0
+
+
+    """
+    Shows the next element of the show
+    """
+    def show_next(self):
+        next_pic_filename = self.pic_presentation.get_next()
+        if next_pic_filename is not None:
+            self.show_only_picture(True)
+            self.ids.picture.source = next_pic_filename
+            self.get_parent_window().fullscreen = True
+        else:
+            self.show_only_picture(False)
             self.ids.picture.source = ''
+            self.get_parent_window().fullscreen = False
 
 
 """

@@ -36,9 +36,23 @@ def test_master_button_works(simulator):
     simulator.assert_text(master_layout_label(1), "Olet master-näkymässä")
 
 
+"""
 @pytest.mark.parametrize("params", [{}])
 @simulate
 def test_slave_button_works(simulator):
     simulator.tap(switch_layout_button(2))
     simulator.assert_text(slave_layout_label(1), "Olet slave-näkymässä")
+    simulator.app.close_connections()
+"""
+
+
+@pytest.mark.parametrize("params", [{}])
+@simulate
+def test_slave(simulator):
+    simulator.tap(switch_layout_button(2))
+    simulator.assert_text(slave_layout_label(1), "Olet slave-näkymässä")
+    simulator.assert_count("//SlaveGUILayout//Image", 1)
+    simulator.assert_attr("//SlaveGUILayout//Image[1]", "source", None)
+    simulator.tap("//SlaveGUILayout//Button[1]")
+    simulator.assert_attr("//SlaveGUILayout//Image[1]", "source", "a.jpg")
     simulator.app.close_connections()

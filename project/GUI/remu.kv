@@ -2,6 +2,7 @@ ScreenManager:
     SwitchLayout:
     MasterGUILayout:
     SlaveGUILayout:
+    PresentationLayout:
 
 <SwitchLayout>:
     name: "switch_layout"
@@ -56,10 +57,23 @@ ScreenManager:
         orientation: 'vertical'
         Label:
             text: "Olet slave-näkymässä"
+            cls: 'hidable'
             font_size: 32
         Image:
             id: picture
             source: None
         Button:
+            text: "Simuloi master-signaalia"
+            on_press: root.button_pressed()
+
+
+<PresentationLayout>:
+    name: "presentation_layout"
+
+    BoxLayout:
+        Image:
+            id: picture
+            source: None
+         Button:
             text: "Simuloi master-signaalia"
             on_press: root.button_pressed()
