@@ -9,5 +9,10 @@ class SlaveTest(unittest.TestCase):
         self.assertIsNotNone(slave.presentation)
 
     def test_init_with_connection(self):
-        slave = Slave({})
-        self.assertIsNotNone(slave.master_connection)
+        mock = RemuTCPMock()
+        slave = Slave(mock)
+        self.assertEqual(slave.master_connection, mock)
+
+class RemuTCPMock(RemuTCP):
+    def __init__(self):
+        pass
