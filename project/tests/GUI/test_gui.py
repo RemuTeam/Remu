@@ -50,4 +50,4 @@ def test_master_gui_components(simulator):
 
     simulator.assert_text(master_layout_button(1), "Send message to slave")
     simulator.assert_text(master_layout_button(2), "Back")
-    simulator.assert_text(master_layout_button(3), "Add slave")
+    simulator.assert_text(master_layout_button(3), "Add Slave")
