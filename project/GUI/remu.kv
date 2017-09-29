@@ -1,11 +1,17 @@
 ScreenManager:
+    id: screen_manager
     SwitchLayout:
+        id: switch_layout
+        manager: screen_manager
     MasterGUILayout:
+        label_text: switch_layout.text
+        manager: screen_manager
     SlaveGUILayout:
+        manager: screen_manager
 
 
 <SwitchLayout>:
-    name: "switch_layout"
+    name: 'switch_layout'
     BoxLayout:
         orientation: 'vertical'
         Label:
@@ -17,6 +23,7 @@ ScreenManager:
                 size_hint: 0.3,0.3
                 on_press: app.set_master()
                 on_press: app.add_slave("127.0.0.1")
+                on_press: root.add_address("127.0.0.1")
                 on_release: app.root.current = 'master_gui_layout'
             Button:
                 text: "Slave"
@@ -26,7 +33,8 @@ ScreenManager:
 
 
 <MasterGUILayout>:
-    name: "master_gui_layout"
+    id: master_gui_layout
+    name: 'master_gui_layout'
     messages_sent: msg_sent_amount
     orientation: 'vertical'
     spacing: 10
@@ -52,12 +60,15 @@ ScreenManager:
                 text: "Add Slave"
                 on_press: app.close_connections()
                 on_press: app.add_slave(txt_input.text)
+                on_press: root.set_address(txt_input.text)
         BoxLayout:
             #name: "middle"
         BoxLayout:
             #name: "bottom_panel"
             orientation: 'horizontal'
             size_hint: 1, 0.1
+            Label:
+                text: root.label_text
             Label:
                 text: "Messages sent: "
             Label:

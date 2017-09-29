@@ -1,5 +1,6 @@
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.popup import Popup
+from kivy.properties import StringProperty
 """
 CLASS LIBRARY TO HANDLE THE FUNCTIONALITY OF GUI LAYOUTS
 
@@ -17,7 +18,10 @@ between Master- and Slave-mode.
 Inherits kivy.uix.screenmanager.Screen
 """
 class SwitchLayout(Screen):
-    pass
+    text = StringProperty('')
+
+    def add_address(self, address):
+        self.text = address
 
 
 """
@@ -32,7 +36,15 @@ class MasterGUILayout(Screen):
     A variable for debugging purposes to track the amount
     of clicks in the GUI
     """
-    msg_sent = 0;
+    msg_sent = 0
+    label_text = StringProperty('')
+
+    def __init__(self, **kwargs):
+        super(MasterGUILayout, self).__init__(**kwargs)
+
+
+    def set_address(self, address):
+        self.label_text = address
 
     """
     Increments the amount of clicks and returns the
