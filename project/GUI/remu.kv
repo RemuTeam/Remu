@@ -35,7 +35,7 @@ ScreenManager:
     BoxLayout:
         orientation: 'vertical'
         BoxLayout:
-            name: "options"
+            #name: "options"
             orientation: 'horizontal'
             size_hint: 1, 0.1
             Button:
@@ -53,9 +53,9 @@ ScreenManager:
                 on_press: app.close_connections()
                 on_press: app.add_slave(txt_input.text)
         BoxLayout:
-            name: "middle"
+            #name: "middle"
         BoxLayout:
-            name: "bottom_panel"
+            #name: "bottom_panel"
             orientation: 'horizontal'
             size_hint: 1, 0.1
             Label:
@@ -75,13 +75,13 @@ ScreenManager:
     BoxLayout:
         orientation: 'vertical'
         Label:
-            text: "Olet slave-näkymässä"
+            text: "Currently in slave mode"
             font_size: 32
         Image:
             id: picture
             source: None
         Button:
-            text: "Simuloi master-signaalia"
+            text: "Simulate master signal"
             on_press: root.button_pressed()
 
 <Popp>:

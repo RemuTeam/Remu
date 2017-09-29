@@ -19,6 +19,7 @@ def without_schedule_seconds(function):
 
     return inner
 
+
 def simulate(function):
     def simulate_inner(simulator, params):
         simulator.start(function, params or {})
