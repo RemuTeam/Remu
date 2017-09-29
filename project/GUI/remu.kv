@@ -8,7 +8,8 @@ ScreenManager:
         manager: screen_manager
     SlaveGUILayout:
         manager: screen_manager
-
+    PresentationLayout:
+        manager: screen_manager
 
 <SwitchLayout>:
     name: 'switch_layout'
@@ -88,6 +89,17 @@ ScreenManager:
         Label:
             text: "Currently in slave mode"
             font_size: 32
+        Button:
+            text: "Siirry esitystilaan"
+            on_press: root.prepare_for_presentation_mode()
+            on_press: app.root.current = "presentation_layout"
+
+
+<PresentationLayout>:
+    name: "presentation_layout"
+
+    BoxLayout:
+        orientation: 'vertical'
         Image:
             id: picture
             source: None

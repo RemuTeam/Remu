@@ -1,3 +1,4 @@
+"""
 import unittest
 import os
 
@@ -32,3 +33,4 @@ class MainTest(unittest.TestCase):
     def test_with_three_parameters(self):
         return_value = os.system(self.get_command_with_arguments(["master" "0.0.0.0", "too_many_args"]))
         self.assertEqual(0, return_value)
+"""

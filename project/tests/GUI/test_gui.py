@@ -51,3 +51,18 @@ def test_master_gui_components(simulator):
     simulator.assert_text(master_layout_button(1), "Send message to slave")
     simulator.assert_text(master_layout_button(2), "Back")
     simulator.assert_text(master_layout_button(3), "Add Slave")
+
+@pytest.mark.parametrize("params", [{}])
+@simulate
+def test_slave(simulator):
+    simulator.tap(switch_layout_button(2))
+    simulator.assert_text(slave_layout_label(1), "Olet slave-näkymässä")
+    simulator.tap(slave_layout_button(1))
+    simulator.assert_attr(presentation_layout_image(1), "source", None)
+    simulator.tap(presentation_layout_button(1))
+    simulator.assert_attr(presentation_layout_image(1), "source", "images/a.jpg")
+    simulator.tap(presentation_layout_button(1))
+    simulator.assert_attr(presentation_layout_image(1), "source", "images/b.jpg")
+    simulator.tap(presentation_layout_button(1))
+    simulator.assert_text(slave_layout_label(1), "Olet slave-näkymässä")
+    simulator.app.close_connections()

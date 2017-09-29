@@ -27,6 +27,7 @@ class RemuApp(App):
     slaves = None
     master = None
 
+
     """
     The building method uses the GUI/remu.kv file that produces the look of the requested layouts
     and GUIFactory that adds the functionalities to those layouts.

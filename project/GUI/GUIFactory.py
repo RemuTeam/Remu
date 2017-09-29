@@ -1,6 +1,9 @@
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.popup import Popup
 from kivy.properties import StringProperty
+from Domain.Slave import Slave
+from kivy.app import App
+
 """
 CLASS LIBRARY TO HANDLE THE FUNCTIONALITY OF GUI LAYOUTS
 
@@ -74,14 +77,44 @@ class SlaveGUILayout(Screen):
         self.showpic = False
 
     """
-    Handles the functionality of clicks in the Slave GUI.
+    Sets the app's main window to full screen and hides the
+    mouse cursor.
     """
+    def prepare_for_presentation_mode(self):
+        window = self.get_root_window()
+
+        window.show_cursor = False
+
+
+"""
+Fullscreen layout for presenting content
+"""
+class PresentationLayout(Screen):
+    """
+    In the constructor the class and instance are passed
+    to the superclass' __init__ function
+    """
+    def __init__(self, **kwargs):
+        super(PresentationLayout, self).__init__(**kwargs)
+        self.showpic = False
+        self.slave = Slave()
+        self.slave.presentation.get_filenames()
+
     def button_pressed(self):
-        self.showpic = not self.showpic
-        if self.showpic:
-            self.ids.picture.source = 'a.jpg'
+        self.show_next()
+
+    """
+    Shows the next element of the show
+    """
+    def show_next(self):
+        next_pic_filename = self.slave.presentation.get_next()
+        if next_pic_filename is not None:
+            self.ids.picture.source = next_pic_filename
         else:
             self.ids.picture.source = ''
+            self.get_root_window().show_cursor = True
+            self.slave.presentation.reset()
+            App.get_running_app().root.current = "slave_gui_layout"
 
 class Popp(Popup):
     pass

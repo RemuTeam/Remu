@@ -1,3 +1,5 @@
+from kivy.config import Config
+from screeninfo import get_monitors
 import sys
 
 from RemuApp import RemuApp
@@ -13,6 +15,12 @@ Accepts commandline arguments:
 
 """
 if __name__ == '__main__':
+    monitor = get_monitors()[0]
+    Config.set('graphics', 'fullscreen', '0')
+    Config.set('graphics', 'height', str(monitor.height))
+    Config.set('graphics', 'width', str(monitor.width))
+    Config.set('graphics', 'borderless', '1')
+    Config.write()
     args = sys.argv
 
     address = ''
