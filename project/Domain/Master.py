@@ -16,9 +16,9 @@ class Master:
         try:
             ipaddress.ip_address(slave_address_parts[0])
             if len(slave_address_parts) == 2:
-                self.slaves = RemuTCP(self, True, slave_address_parts[0], int(slave_address_parts[1]))
+                slave_tcp = RemuTCP(self, True, slave_address_parts[0], int(slave_address_parts[1]))
             else:
-                self.slaves = RemuTCP(self, True, slave_address_parts[0])
+                slave_tcp = RemuTCP(self, True, slave_address_parts[0])
             print("Slave added")
         except ValueError as e:
             self.slaves = None

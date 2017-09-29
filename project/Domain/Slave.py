@@ -1,4 +1,5 @@
 from Domain.PicPresentation import PicPresentation
+from Domain.Message import Message
 
 """
 CONTAINS SLAVE'S ADMINISTRATIVE AND PRESENTATIONAL DATA
@@ -24,3 +25,12 @@ class Slave:
     """
     def create_presentation(self):
         return PicPresentation()
+
+    def handle_message(self, msg):
+        response = Message()
+        if "command" in msg.fields:
+            response.set_field("responseTo", msg.fields["command"])
+            if msg.fields["command"] == "request_presentation":
+                response.fields["data"] = self.presentation.__dict__
+        return response
+
