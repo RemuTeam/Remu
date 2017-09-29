@@ -60,7 +60,7 @@ ScreenManager:
             font_size: 32
         Button:
             text: "Siirry esitystilaan"
-            on_press: root.get_parent_window().fullscreen = True
+            on_press: root.prepare_for_presentation_mode()
             on_press: app.root.current = "presentation_layout"
 
 
@@ -76,4 +76,4 @@ ScreenManager:
             text: "Simuloi master-signaalia"
             font_size: 10
             size_hint: 1.0, 0.05
-            on_press: root.show_next()
+            on_press: root.button_pressed()

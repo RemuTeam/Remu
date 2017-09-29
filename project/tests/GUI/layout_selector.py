@@ -5,9 +5,11 @@ Helper methods for GUI-testing
 # Declare constants:
 BUTTONS = "//Button"
 LABELS = "//Label"
+IMAGES = "//Image"
 SWITCH_LAYOUT = "//SwitchLayout"
 MASTER_LAYOUT = "//MasterGUILayout"
 SLAVE_LAYOUT = "//SlaveGUILayout"
+PRESENTATION_LAYOUT = "//PresentationLayout"
 
 
 # Generic layout helpers:
@@ -20,11 +22,17 @@ def layout_button(layout_name, i):
 def layout_label(layout_name, i):
     return layout_labels(layout_name) + index(i)
 
+def layout_image(layout_name, i):
+    return layout_images(layout_name) + index(i)
+
 def layout_buttons(layout_name):
     return layout_name + BUTTONS
 
 def layout_labels(layout_name):
     return layout_name + LABELS
+
+def layout_images(layout_name):
+    return layout_name + IMAGES
 
 
 # Slave layout helpers:
@@ -67,3 +75,17 @@ def master_layout_labels():
 
 def master_layout_label(i):
     return layout_label(MASTER_LAYOUT, i)
+
+
+# Presentation layout helpers:
+def presentation_layout_button(i):
+    return layout_button(PRESENTATION_LAYOUT, i)
+
+def presentation_layout_buttons():
+    return layout_buttons(PRESENTATION_LAYOUT)
+
+def presentation_layout_image(i):
+    return layout_image(PRESENTATION_LAYOUT, i)
+
+def presentation_layout_images():
+    return layout_images(PRESENTATION_LAYOUT)

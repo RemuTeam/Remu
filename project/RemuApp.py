@@ -4,7 +4,9 @@ from RemuTCP.RemuTCP import RemuTCP
 from GUI.GUIFactory import GUIFactory
 from kivy.app import App
 from kivy.lang.builder import Builder
+from kivy.config import Config
 from Domain.Message import Message
+from screeninfo import get_monitors
 
 """
     HANDLES THE NAMING OF SLAVES AND MASTER AND THE MESSAGE SENT
@@ -23,6 +25,7 @@ class RemuApp(App):
     isMaster = False
     slaves = None
     master = None
+
 
     """
     The building method uses the GUI/remu.kv file that produces the look of the requested layouts

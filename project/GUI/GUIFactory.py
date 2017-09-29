@@ -61,7 +61,15 @@ class SlaveGUILayout(Screen):
         super(SlaveGUILayout, self).__init__(**kwargs)
         self.showpic = False
         self.pic_presentation = PicPresentation()
-        self.pic_presentation.get_filenames()
+
+    """
+    Sets the app's main window to full screen and hides the
+    mouse cursor.
+    """
+    def prepare_for_presentation_mode(self):
+        window = self.get_root_window()
+
+        window.show_cursor = False
 
 
 """
@@ -76,6 +84,10 @@ class PresentationLayout(Screen):
         super(PresentationLayout, self).__init__(**kwargs)
         self.showpic = False
         self.pic_presentation = PicPresentation()
+        self.pic_presentation.get_filenames()
+
+    def button_pressed(self):
+        self.show_next()
 
     """
     Shows the next element of the show
@@ -86,7 +98,7 @@ class PresentationLayout(Screen):
             self.ids.picture.source = next_pic_filename
         else:
             self.ids.picture.source = ''
-            self.get_root_window().fullscreen = False
+            self.get_root_window().show_cursor = True
             self.pic_presentation.reset()
             App.get_running_app().root.current = "slave_gui_layout"
 
@@ -121,10 +133,3 @@ class GUIFactory:
     """
     def set_parent(self, remuapp):
         self.remuapp = remuapp
-
-
-"""
-Image background layout
-"""
-class ImageLayout:
-    pass
