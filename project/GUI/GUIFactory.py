@@ -1,5 +1,5 @@
 from kivy.uix.screenmanager import ScreenManager, Screen
-from Domain.PicPresentation import PicPresentation
+from Domain.Slave import Slave
 from kivy.app import App
 
 """
@@ -60,7 +60,6 @@ class SlaveGUILayout(Screen):
     def __init__(self, **kwargs):
         super(SlaveGUILayout, self).__init__(**kwargs)
         self.showpic = False
-        self.pic_presentation = PicPresentation()
 
     """
     Sets the app's main window to full screen and hides the
@@ -83,8 +82,8 @@ class PresentationLayout(Screen):
     def __init__(self, **kwargs):
         super(PresentationLayout, self).__init__(**kwargs)
         self.showpic = False
-        self.pic_presentation = PicPresentation()
-        self.pic_presentation.get_filenames()
+        self.slave = Slave()
+        self.slave.presentation.get_filenames()
 
     def button_pressed(self):
         self.show_next()
@@ -93,13 +92,13 @@ class PresentationLayout(Screen):
     Shows the next element of the show
     """
     def show_next(self):
-        next_pic_filename = self.pic_presentation.get_next()
+        next_pic_filename = self.slave.presentation.get_next()
         if next_pic_filename is not None:
             self.ids.picture.source = next_pic_filename
         else:
             self.ids.picture.source = ''
             self.get_root_window().show_cursor = True
-            self.pic_presentation.reset()
+            self.slave.presentation.reset()
             App.get_running_app().root.current = "slave_gui_layout"
 
 

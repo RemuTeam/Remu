@@ -24,11 +24,12 @@ class TestRemuAppMethods(unittest.TestCase):
         self.app.set_slave()
         self.assertFalse(self.app.isMaster)
         self.assertNotEquals(self.app.master,None)
-        self.app.master.stop_listening()
+        self.app.close_connections()
 
 
     def test_addSlave(self):
         self.assertEquals(self.app.slaves, None)
         self.app.add_slave('127.0.0.1')
         self.assertNotEquals(self.app.slaves, None)
+        self.app.close_connections()
 

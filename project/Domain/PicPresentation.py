@@ -7,16 +7,15 @@ of a picture presentation
 """
 
 
-class PicPresentation:
-    pic_files = []
-    pic_index = 0
+class PicPresentation():
     IMAGE_PATH = "images"
 
     """
     Construct the presentation
     """
     def __init__(self):
-        pass
+        self.pic_files = []
+        self.pic_index = 0
 
     """
     Loads the pictures to the presentation
