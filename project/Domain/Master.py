@@ -1,5 +1,5 @@
 import ipaddress
-from RemuTCP.RemuTCP import RemuTCP
+from Domain.SlaveConnection import SlaveConnection
 
 
 class Master:
@@ -12,15 +12,4 @@ class Master:
     """
 
     def add_slave(self, slave_address):
-        slave_address_parts = slave_address.split(":")
-        try:
-            ipaddress.ip_address(slave_address_parts[0])
-            if len(slave_address_parts) == 2:
-                slave_tcp = RemuTCP(self, True, slave_address_parts[0], int(slave_address_parts[1]))
-            else:
-                slave_tcp = RemuTCP(self, True, slave_address_parts[0])
-            print("Slave added")
-        except ValueError as e:
-            self.slaves = None
-            print("Invalid IP-address or port")
-            print(e)
+        self.slave_connection = SlaveConnection(slave_address)

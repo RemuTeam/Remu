@@ -2,6 +2,7 @@ import ipaddress
 from RemuTCP.RemuTCP import RemuTCP
 from Domain.Message import Message
 from Domain.PicPresentation import PicPresentation
+from Domain.Command import Command
 
 class SlaveConnection:
 
@@ -37,20 +38,20 @@ class SlaveConnection:
         Requests the presentation-object from slave
     """
     def request_presentation(self):
-        self.__send_command("request_presentation")
+        self.__send_command(Command.REQUEST_PRESENTATION)
 
     """
         Ask slave to show next item in presentation
     """
     def show_next(self):
-        self.__send_command("show_next")
+        self.__send_command(Command.SHOW_NEXT)
 
     """
         Called when slave responds to command "show_next"
         Advances presentation to next item
     """
     def response_next(self):
-        currently_showing = self.presentation.get_next()
+        self.currently_showing = self.presentation.get_next()
 
     def set_presentation(self, presentation):
         self.presentation = presentation
