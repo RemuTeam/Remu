@@ -70,6 +70,8 @@ class RemuTCP:
 
     def __init__(self, parent=None, master=False, address=None, port=8000):
         self.connection = None
+        self.address = None
+        self.port = None
         self.parent = parent
         if master:
             self.address = address
