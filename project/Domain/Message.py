@@ -1,4 +1,5 @@
 import json
+from Domain.Command import Command
 
 
 class Message:
@@ -17,3 +18,13 @@ class Message:
     def to_json(self):
         return json.dumps(self.fields)
 
+    def get_command(self):
+        if "command" in self.fields:
+            if self.fields["command"] in Command.__dict__.values():
+                return self.fields["command"]
+        return Command.INVALID_COMMAND
+
+    def get_data(self):
+        if "data" in self.fields:
+            return self.fields["data"]
+        return None

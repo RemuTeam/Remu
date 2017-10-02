@@ -53,7 +53,7 @@ ScreenManager:
                 on_press: msg_sent_amount.text = root.increment()
             Button:
                 text: "Back"
-                on_press: root.show_popup()
+                on_press: root.show_master_back_popup()
             TextInput:
                 id: txt_input
                 hint_text: "0.0.0.0:8000"
@@ -89,10 +89,17 @@ ScreenManager:
         Label:
             text: "Currently in slave mode"
             font_size: 32
-        Button:
-            text: "Go to presentation"
-            on_press: root.prepare_for_presentation_mode()
-            on_press: app.root.current = "presentation_layout"
+        BoxLayout:
+            orientation: 'horizontal'
+            Button:
+                size_hint: 0.3,0.3
+                text: "Go to presentation"
+                on_press: root.prepare_for_presentation_mode()
+                on_press: app.root.current = "presentation_layout"
+            Button:
+                size_hint:0.3,0.3
+                text: "Back"
+                on_release: root.show_slave_back_popup()
 
 
 <PresentationLayout>:
@@ -107,7 +114,7 @@ ScreenManager:
             text: "Simulate master signal"
             on_press: root.button_pressed()
 
-<Popp>:
+<MasterBackPopUp>:
     title: "Are you sure you want to go back?"
     BoxLayout:
         orientation: 'vertical'
@@ -125,3 +132,28 @@ ScreenManager:
                 text: "No"
                 on_press: root.dismiss()
                 size_hint: 0.3,0.3
+
+<SlaveBackPopUp>:
+    title: "Are you sure you want to go back?"
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: "If you answer yes, the connection with master will be lost."
+        BoxLayout:
+            orientation: 'horizontal'
+            Button:
+                text: "Yes"
+                on_press: app.close_connections()
+                on_press: root.dismiss()
+                on_release: app.root.current = 'switch_layout'
+                size_hint: 0.3,0.3
+            Button:
+                text: "No"
+                on_press: root.dismiss()
+                size_hint: 0.3,0.3
+
+#MasterBackPopUp : A popup that asks if master is sure they want to go back to the switch layout.
+#If he presses yes, connection is broken and switching layout comes up, if he presses no, connection is not lost and we return to master layout
+
+#SlaveBackPopUp : A popup that asks if slave is sure they want to go back to the switch layout.
+#If he presses yes, connection is broken and switching layout comes up, if he presses no, connection is not lost and we return to slave layout

@@ -56,8 +56,12 @@ class MasterGUILayout(Screen):
     def increment(self):
         self.msg_sent += 1
         return str(self.msg_sent)
-    def show_popup(self):
-        Popp().open()
+
+    """
+    Opens the warning pop-up to master, asking if they are sure they want to go back
+    """
+    def show_master_back_popup(self):
+        MasterBackPopUp().open()
 
 
 """
@@ -84,6 +88,11 @@ class SlaveGUILayout(Screen):
         window = self.get_root_window()
 
         window.show_cursor = False
+    """
+     Opens the warning pop-up to slave, asking if they are sure they want to go back
+    """
+    def show_slave_back_popup(self):
+        SlaveBackPopUp().open()
 
 
 """
@@ -116,8 +125,15 @@ class PresentationLayout(Screen):
             self.slave.presentation.reset()
             App.get_running_app().root.current = "slave_gui_layout"
 
-class Popp(Popup):
+"""
+These represent the popups that take the maste or slave back to the switch layout if they decide to 
+break the connection
+"""
+class MasterBackPopUp(Popup):
     pass
+class SlaveBackPopUp(Popup):
+    pass
+
 """
 Provides the GUI-layouts as different screens for the 
 Kivy-layout file.
