@@ -13,7 +13,9 @@ class Message:
         self.fields[field] = data
 
     def get_field(self, key):
-        return self.fields[key]
+        if key in self.fields:
+            return self.fields[key]
+        return None
 
     def to_json(self):
         return json.dumps(self.fields)

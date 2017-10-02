@@ -32,11 +32,13 @@ class Slave:
             self.presentation.get_filenames()
         response = Message()
         response.set_field("responseTo", Command.REQUEST_PRESENTATION)
-        response.set_field["data"] = self.presentation.__dict__
+        response.set_field("data", self.presentation.__dict__)
         return response
 
     def handle_show_next(self):
-        self.presentation.get_next()
+        if not self.presentation.pic_files:
+            self.presentation.get_filenames()
+        file = self.presentation.get_next()
         response = Message()
         response.set_field("responseTo", Command.SHOW_NEXT)
         return response
@@ -57,7 +59,7 @@ class Slave:
     """
     def handle_message(self, msg):
         if "command" in msg.fields:
-            return self.messagehandler[msg.get_command()]()
+            return self.messagehandler[msg.get_command()](self)
         return self.handle_invalid_command()
 
 
