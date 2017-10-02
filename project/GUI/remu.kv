@@ -11,6 +11,9 @@ ScreenManager:
     PresentationLayout:
         manager: screen_manager
 
+#
+# SwitchLayout defines "Master" and "Slave" buttons for the user to set the user mode
+#
 <SwitchLayout>:
     name: 'switch_layout'
     BoxLayout:
@@ -32,7 +35,10 @@ ScreenManager:
                 on_press: app.set_slave()
                 on_release: app.root.current = 'slave_gui_layout'
 
-
+#
+# MasterGUILayout contains a options bar, a bottom bar and a main view. Upper bar contains connection control, lower bar
+# displays connection status and main view contains the master view.
+#
 <MasterGUILayout>:
     id: master_gui_layout
     name: 'master_gui_layout'
@@ -44,7 +50,7 @@ ScreenManager:
     BoxLayout:
         orientation: 'vertical'
         BoxLayout:
-            #name: "options"
+            id: options
             orientation: 'horizontal'
             size_hint: 1, 0.1
             Button:
@@ -62,11 +68,11 @@ ScreenManager:
                 text: "Add Slave"
                 on_press: app.close_connections()
                 on_press: app.add_slave(txt_input.text)
-                on_press: root.set_address(txt_input.text)
+                on_press: root.set_address_to_gui(txt_input.text)
         BoxLayout:
-            #name: "middle"
+            id: middle
         BoxLayout:
-            #name: "bottom_panel"
+            id: bottom_panel
             orientation: 'horizontal'
             size_hint: 1, 0.1
             Label:
@@ -77,8 +83,10 @@ ScreenManager:
                 id: msg_sent_amount
                 text: "0"
 
-
-
+#
+# SlaveGUILayout contains the waiting view for slave mode. When the presentation starts, slave device changes to
+# presentation layout
+#
 <SlaveGUILayout>:
     name: "slave_gui_layout"
     orientation: 'vertical'
@@ -102,7 +110,9 @@ ScreenManager:
                 text: "Back"
                 on_release: root.show_slave_back_popup()
 
-
+#
+# PresentationLayout controls the slave devices presentation view
+#
 <PresentationLayout>:
     name: "presentation_layout"
 

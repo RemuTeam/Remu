@@ -1,5 +1,5 @@
 """
-Helper methods for GUI-testing
+Layout selector builds selectors for GUI-testing
 """
 
 # Declare constants:
@@ -13,7 +13,7 @@ SLAVE_LAYOUT = "//SlaveGUILayout"
 PRESENTATION_LAYOUT = "//PresentationLayout"
 #MASTERBACK_POPUP ="//MasterBackPopUp"
 
-LAYOUTS = [SWITCH_LAYOUT, MASTER_LAYOUT, SLAVE_LAYOUT, PRESENTATION_LAYOUT] #, MASTERBACK_POPUP]
+LAYOUTS = [SWITCH_LAYOUT, MASTER_LAYOUT, SLAVE_LAYOUT, PRESENTATION_LAYOUT]#, MASTERBACK_POPUP]
 ELEMENTS = [BUTTONS, LABELS, IMAGES, TEXT_INPUTS]
 
 
@@ -26,6 +26,7 @@ def get_from_layout(layout_name, element, i=None):
     return selector
 
 
+# Helper methods
 def get_from_constants(name, list):
     selector = ""
     for value in list:

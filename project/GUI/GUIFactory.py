@@ -46,7 +46,10 @@ class MasterGUILayout(Screen):
         super(MasterGUILayout, self).__init__(**kwargs)
 
 
-    def set_address(self, address):
+    """
+    Sets the address for GUI purposes, but does not control the actual connection
+    """
+    def set_address_to_gui(self, address):
         self.label_text = address
 
     """
