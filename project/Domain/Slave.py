@@ -26,6 +26,9 @@ class Slave:
     def create_presentation(self):
         return PicPresentation()
 
+    """
+    Handles the responses to master's requests
+    """
     def handle_message(self, msg):
         response = Message()
         if "command" in msg.fields:
