@@ -58,26 +58,26 @@ def test_ip_changes_when_pressed(simulator):
     simulator.tap(get_from_layout("Master", "Button", 3))
     simulator.assert_text(get_from_layout("Master", "Label", 1), "100.100.100.100:1000")
 
-@pytest.mark.parametrize("params", [{}])
-@simulate
-def test_slave(simulator):
-    simulator.tap(get_from_layout("Switch", "Button", 2))
+#@pytest.mark.parametrize("params", [{}])
+#@simulate
+#def test_slave(simulator):
+    #simulator.tap(get_from_layout("Switch", "Button", 2))
 
-    simulator.assert_text(get_from_layout("Slave", "Label", 1), "Currently in slave view")
+    #simulator.assert_text(get_from_layout("Slave", "Label", 1), "Currently in slave view")
 
-    simulator.tap(get_from_layout("Slave", "Button", 1))
-    simulator.assert_attr(get_from_layout("Presentation", "Image", 1), "source", None)
+    #simulator.tap(get_from_layout("Slave", "Button", 1))
+    #simulator.assert_attr(get_from_layout("Presentation", "Image", 1), "source", None)
 
-    simulator.tap(get_from_layout("Slave", "Button", 1))
-    simulator.assert_attr(get_from_layout("Presentation", "Image", 1), "source", "images/a.jpg")
+    #simulator.tap(get_from_layout("Slave", "Button", 1))
+    #simulator.assert_attr(get_from_layout("Presentation", "Image", 1), "source", "images/a.jpg")
 
-    simulator.tap(get_from_layout("Presentation", "Button", 1))
-    simulator.assert_attr(get_from_layout("Presentation", "Image", 1), "source", "images/b.jpg")
+    #simulator.tap(get_from_layout("Presentation", "Button", 1))
+    #simulator.assert_attr(get_from_layout("Presentation", "Image", 1), "source", "images/b.jpg")
 
-    simulator.tap(get_from_layout("Presentation", "Button", 1))
-    simulator.assert_text(get_from_layout("Slave", "Label", 1), "Currently in slave view")
+    #simulator.tap(get_from_layout("Presentation", "Button", 1))
+    #simulator.assert_text(get_from_layout("Slave", "Label", 1), "Currently in slave view")
 
-    simulator.app.close_connections()
+    #simulator.app.close_connections()
 
 #@pytest.mark.parametrize("params", [{}])
 #@simulate
