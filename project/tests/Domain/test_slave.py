@@ -1,6 +1,7 @@
 from Domain.Slave import Slave
 from RemuTCP.RemuTCP import RemuTCP
 import unittest
+from unittest.mock import Mock
 
 class SlaveTest(unittest.TestCase):
     def test_init_with_no_connection(self):
@@ -9,7 +10,7 @@ class SlaveTest(unittest.TestCase):
         self.assertIsNotNone(slave.presentation)
 
     def test_init_with_connection(self):
-        mock = RemuTCPMock()
+        mock = Mock(RemuTCP)
         slave = Slave(mock)
         self.assertEqual(slave.master_connection, mock)
 

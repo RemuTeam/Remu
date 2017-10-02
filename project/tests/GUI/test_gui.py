@@ -58,3 +58,13 @@ def test_slave(simulator):
     simulator.tap(presentation_layout_button(1))
     simulator.assert_text(slave_layout_label(1), "Currently in slave mode")
     simulator.app.close_connections()
+
+#@pytest.mark.parametrize("params", [{}])
+#@simulate
+#def test_MasterBackPopup(simulator):
+ #   simulator.tap(switch_layout_button(1))
+ #   simulator.tap(master_layout_button(2))
+    #simulator.assert_count(master_back_popup_buttons(),2)
+    #simulator.assert_count(master_back_popup_labels(),1)
+    #simulator.tap(master_back_popup_button(1))
+    #simulator.assert_text(switch_layout_button(1),"Master")

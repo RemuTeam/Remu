@@ -4,25 +4,45 @@ from Domain.Message import Message
 from Domain.PicPresentation import PicPresentation
 from Domain.Command import Command
 
+"""
+A class to handle one master-slave connection
+"""
 class SlaveConnection:
 
+    """
+    Constructor.
+
+    Address: a string in format ip.add.res.s:port
+    Connection: a RemuTCP object, if constructed beforehand
+    """
     def __init__(self, address, connection=None):
+        self.set_connection(address, connection)
+        self.presentation = None
+
+    """
+    Sets up the connection to the slave
+    """
+    def set_connection(self, address, connection):
         if connection:
             self.connection = connection
         else:
             try:
-                slave_address_parts = address.split(":")
-                ipaddress.ip_address(slave_address_parts[0])
-                if len(slave_address_parts) == 2:
-                    self.connection = RemuTCP(self, True, slave_address_parts[0], int(slave_address_parts[1]))
-                else:
-                    self.connection = RemuTCP(self, True, slave_address_parts[0])
+                self.create_new_tcp_connection(address, connection)
                 print("Slave added")
             except ValueError as e:
                 self.slaves = None
                 print("Invalid IP-address or port")
                 print(e)
-        self.presentation = None
+
+    """
+    Attempts to create a new RemuTCP-connection
+    """
+    def create_new_tcp_connection(self, address, connection):
+        slave_address_parts = address.split(":")
+        ip_address = slave_address_parts[0] if len(slave_address_parts) > 0 else None
+        port = slave_address_parts[1] if len(slave_address_parts) > 1 else None
+        ipaddress.ip_address(ip_address)
+        self.connection = RemuTCP(self, True, ip_address, port)
 
     """
         Private function for sending commands
@@ -53,6 +73,9 @@ class SlaveConnection:
     def response_next(self):
         self.currently_showing = self.presentation.get_next()
 
+    """
+    Sets the connection's presentation object
+    """
     def set_presentation(self, presentation):
         self.presentation = presentation
 
@@ -61,7 +84,6 @@ class SlaveConnection:
             response_command = msg.fields["responseTo"]
             return response_command == "request_presentation"
         return False
-
 
     def handle_presentation_response(self, data):
         presentation = PicPresentation()

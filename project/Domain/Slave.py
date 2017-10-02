@@ -52,6 +52,9 @@ class Slave:
                       Command.INVALID_COMMAND: handle_invalid_command
                       }
 
+    """
+    Handles the responses to master's requests
+    """
     def handle_message(self, msg):
         if "command" in msg.fields:
             return self.messagehandler[msg.get_command()]()
