@@ -63,16 +63,35 @@ class SlaveConnection:
         return False
 
 
+    def handle_presentation_response(self, data):
+        presentation = PicPresentation()
+        presentation.pic_index = data["pic_index"]
+        presentation.pic_files = data["pic_files"]
+        self.set_presentation(presentation)
+
+    def handle_show_next_response(self, data):
+        self.currently_showing = self.presentation.get_next()
+
+    def handle_invalid_command_response(self, data):
+        print("Invalid command given")
+
+    handle_responses = {Command.REQUEST_PRESENTATION: handle_presentation_response,
+                        Command.SHOW_NEXT: handle_show_next_response,
+                        Command.INVALID_COMMAND: handle_invalid_command_response
+                        }
+
     """
         Handles incoming messages
     """
     def handle_message(self, msg):
         print(msg.fields)
-        response = None
-        if self.__isPresentationResponse(msg):
-            presentation = PicPresentation()
-            presentation_fields = msg.fields["data"]
-            presentation.pic_index = presentation_fields["pic_index"]
-            presentation.pic_files = presentation_fields["pic_files"]
-            self.set_presentation(presentation)
-        return response
+        if "responseTo" in msg.fields:
+            if "data" in msg.fields:
+                self.handle_responses[msg.get_command()](msg.get_data())
+        #if self.__isPresentationResponse(msg):
+        #    presentation = PicPresentation()
+        #    presentation_fields = msg.fields["data"]
+        #    presentation.pic_index = presentation_fields["pic_index"]
+        #    presentation.pic_files = presentation_fields["pic_files"]
+        #    self.set_presentation(presentation)
+        #return response

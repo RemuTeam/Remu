@@ -23,3 +23,8 @@ class Message:
             if self.fields["command"] in Command.__dict__.values():
                 return self.fields["command"]
         return Command.INVALID_COMMAND
+
+    def get_data(self):
+        if "data" in self.fields:
+            return self.fields["data"]
+        return None

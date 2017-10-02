@@ -28,6 +28,8 @@ class Slave:
         return PicPresentation()
 
     def handle_request_presentation(self):
+        if not self.presentation.pic_files:
+            self.presentation.get_filenames()
         response = Message()
         response.set_field("responseTo", Command.REQUEST_PRESENTATION)
         response.set_field["data"] = self.presentation.__dict__
