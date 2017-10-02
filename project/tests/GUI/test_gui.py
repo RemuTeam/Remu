@@ -24,14 +24,6 @@ def test_master_button_works(simulator):
 
     simulator.assert_text(master_layout_label(2), "Messages sent: ")
 
-
-@pytest.mark.parametrize("params", [{}])
-@simulate
-def test_slave_button_works(simulator):
-    simulator.tap(switch_layout_button(2))
-    simulator.assert_text(slave_layout_label(1), "Currently in slave mode")
-    simulator.app.close_connections()
-
 @pytest.mark.parametrize("params", [{}])
 @simulate
 def test_master_gui(simulator):
@@ -64,5 +56,5 @@ def test_slave(simulator):
     simulator.tap(presentation_layout_button(1))
     simulator.assert_attr(presentation_layout_image(1), "source", "images/b.jpg")
     simulator.tap(presentation_layout_button(1))
-    simulator.assert_text(slave_layout_labgit el(1), "Currently in slave mode")
+    simulator.assert_text(slave_layout_label(1), "Currently in slave mode")
     simulator.app.close_connections()
