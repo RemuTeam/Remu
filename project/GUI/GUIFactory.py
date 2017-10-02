@@ -2,6 +2,8 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.popup import Popup
 from kivy.properties import StringProperty
 from Domain.Slave import Slave
+from Domain.Master import Master
+from Domain.SlaveConnection import SlaveConnection
 from kivy.app import App
 
 """
@@ -44,10 +46,17 @@ class MasterGUILayout(Screen):
 
     def __init__(self, **kwargs):
         super(MasterGUILayout, self).__init__(**kwargs)
-
+        self.presentation = None
+        self.master = Master(self)
 
     def set_address(self, address):
         self.label_text = address
+
+    def add_slave_connection(self, address):
+        self.master.add_slave(address)
+
+    def send_message_to_slave(self):
+        self.master.request_next()
 
     """
     Increments the amount of clicks and returns the

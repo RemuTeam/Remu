@@ -23,8 +23,6 @@ ScreenManager:
                 text: "Master"
                 size_hint: 0.3,0.3
                 on_press: app.set_master()
-                on_press: app.add_slave("127.0.0.1")
-                on_press: root.add_address("127.0.0.1")
                 on_release: app.root.current = 'master_gui_layout'
             Button:
                 text: "Slave"
@@ -49,7 +47,7 @@ ScreenManager:
             size_hint: 1, 0.1
             Button:
                 text: "Send message to slave"
-                on_press: app.send_msg("127.0.0.1", "Mooooi!")
+                on_press: root.send_message_to_slave()
                 on_press: msg_sent_amount.text = root.increment()
             Button:
                 text: "Back"
@@ -61,7 +59,7 @@ ScreenManager:
                 text: "Add Slave"
                 on_press: app.close_connections()
                 on_press: app.add_slave(txt_input.text)
-                on_press: root.set_address(txt_input.text)
+                on_press: root.add_slave_connection(txt_input.text)
         BoxLayout:
             #name: "middle"
         BoxLayout:
