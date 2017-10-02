@@ -12,37 +12,34 @@ class SlaveConnection:
     """
     Constructor.
 
-    Address: a string in format ip.add.res.s:port
     Connection: a RemuTCP object, if constructed beforehand
     """
-    def __init__(self, address, connection=None):
-        self.set_connection(address, connection)
+    def __init__(self, master, connection=None):
+        self.master = master
+        self.set_connection(connection)
         self.presentation = None
 
     """
-    Sets up the connection to the slave
+    Sets the connection to the slave
     """
-    def set_connection(self, address, connection):
-        if connection:
-            self.connection = connection
-        else:
-            try:
-                self.create_new_tcp_connection(address, connection)
-                print("Slave added")
-            except ValueError as e:
-                self.slaves = None
-                print("Invalid IP-address or port")
-                print(e)
+    def set_connection(self, connection):
+        self.connection = connection
 
     """
-    Attempts to create a new RemuTCP-connection
+    Attempts to create a new RemuTCP-connection with the provided IP address
     """
-    def create_new_tcp_connection(self, address, connection):
-        slave_address_parts = address.split(":")
-        ip_address = slave_address_parts[0] if len(slave_address_parts) > 0 else None
-        port = slave_address_parts[1] if len(slave_address_parts) > 1 else None
-        ipaddress.ip_address(ip_address)
-        self.connection = RemuTCP(self, True, ip_address, port)
+    def connect_to_IP(self, address):
+        try:
+            slave_address_parts = address.split(":")
+            ip_address = slave_address_parts[0] if len(slave_address_parts) > 0 else None
+            port = slave_address_parts[1] if len(slave_address_parts) > 1 else None
+            ipaddress.ip_address(ip_address)
+            self.connection = RemuTCP(self, True, ip_address, int(port))
+            print("Slave added")
+        except ValueError as e:
+            self.connection = None
+            print("Invalid IP-address or port")
+            print(e)
 
     """
         Private function for sending commands
@@ -85,12 +82,18 @@ class SlaveConnection:
             return response_command == "request_presentation"
         return False
 
+    """
+    Creates a presentation based on the message received from master
+    """
     def handle_presentation_response(self, data):
         presentation = PicPresentation()
         presentation.pic_index = data["pic_index"]
         presentation.pic_files = data["pic_files"]
         self.set_presentation(presentation)
 
+    """
+    Handles command to show next file
+    """
     def handle_show_next_response(self, data):
         self.currently_showing = self.presentation.get_next()
 
