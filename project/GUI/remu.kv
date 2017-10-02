@@ -60,8 +60,30 @@ ScreenManager:
                 on_press: app.close_connections()
                 on_press: app.add_slave(txt_input.text)
                 on_press: root.add_slave_connection(txt_input.text)
-        BoxLayout:
+        GridLayout:
             #name: "middle"
+            cols: 2
+            rows: 2
+            padding: 10
+            spacing: 10
+            Label:
+                size_hint_x: 0.2
+                halign: 'right'
+                text: "Presentation status:"
+            Label:
+                size_hint_x: 0.8
+                halign: 'left'
+                id: presentation_status
+                text: "No presentation available"
+            Label:
+                size_hint_x: 0.2
+                halign: 'right'
+                text: "Current item:"
+            Label:
+                size_hint_x: 0.8
+                halign: 'left'
+                id: current_item
+                text: "No current item"
         BoxLayout:
             #name: "bottom_panel"
             orientation: 'horizontal'

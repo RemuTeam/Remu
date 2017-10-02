@@ -3,7 +3,7 @@ from kivy.uix.popup import Popup
 from kivy.properties import StringProperty
 from Domain.Slave import Slave
 from Domain.Master import Master
-from Domain.SlaveConnection import SlaveConnection
+from Domain.Command import Notification
 from kivy.app import App
 
 """
@@ -71,6 +71,37 @@ class MasterGUILayout(Screen):
     """
     def show_master_back_popup(self):
         MasterBackPopUp().open()
+
+    """
+    Update the presentation information on the layout
+    """
+    def update_presentation(self, data):
+        pass
+
+    """
+    Update the presentation status on the layout
+    """
+    def update_presentation_status(self, data):
+        self.msg_sent_amount.text = str(data)
+
+    def update_connection(self, data):
+        pass
+
+    """
+    Handles the received notification from master
+    
+    notification:   a Notification enum
+    data:           an object
+    """
+    def notify(self, notification, data):
+        return self.messagehandler[notification](self, data)
+
+    """
+    A dictionary of Notification-Function pairs for the purpose of
+    """
+    messagehandler = {Notification.PRESENTATION_UPDATE: update_presentation,
+                      Notification.PRESENTATION_STATUS_CHANGE: update_presentation_status,
+                      Notification.CONNECTION_FAILED: update_connection}
 
 
 """
