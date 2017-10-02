@@ -55,6 +55,8 @@ def test_master_gui_components(simulator):
 @pytest.mark.parametrize("params", [{}])
 @simulate
 def test_input_stuff(simulator):
+    simulator.tap(switch_layout_button(1))
+    
     simulator.set_text_to("//MasterGUILayout//TextInput[1]", "100.100.100.100:1000")
     simulator.tap(master_layout_button(3))
     simulator.assert_text(master_layout_label(1), "100.100.100.100:1000")
