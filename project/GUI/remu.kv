@@ -67,8 +67,10 @@ ScreenManager:
                 on_press: app.close_connections()
                 on_press: app.add_slave(txt_input.text)
                 on_press: root.set_address_to_gui(txt_input.text)
-        BoxLayout:
+        StackLayout:
             id: middle
+            orientation: 'tb-lr'
+            SlavePresentation:
         BoxLayout:
             id: bottom_panel
             orientation: 'horizontal'
@@ -122,6 +124,22 @@ ScreenManager:
         Button:
             text: "Simulate master signal"
             on_press: root.button_pressed()
+
+<SlavePresentation@BoxLayout>
+    size_hint: 1, 0.15
+    orientation: 'horizontal'
+    Button:
+        size_hint: 0.2, 1
+        text: "Slaven nimi"
+    StackLayout:
+        id: visuals
+        orientation: 'lr-tb'
+        SlaveVisualProperty:
+
+<SlaveVisualProperty@Button>
+    size_hint: 0.2, 1
+    text: root.visual_name
+
 
 <MasterBackPopUp>:
     title: "Are you sure you want to go back?"

@@ -1,5 +1,7 @@
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.popup import Popup
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.button import Button
 from kivy.properties import StringProperty
 from Domain.Slave import Slave
 from Domain.Master import Master
@@ -178,6 +180,26 @@ class MasterBackPopUp(Popup):
     pass
 class SlaveBackPopUp(Popup):
     pass
+
+"""
+SlavePresentation is the visual presentation of the slave in the master view. It contains information about the slave's
+state and visuals associated with it
+"""
+class SlavePresentation(BoxLayout):
+    pass
+
+"""
+SlaveVisualProperty is the class of the slave's visuals. It represents a single visual property of the slave's properties
+"""
+class SlaveVisualProperty(Button):
+
+    visual_name = StringProperty('')
+
+    def __init__(self, image_source):
+        self.visual_name = image_source
+
+    def on_press(self):
+        print("Showing visual property information")
 
 """
 Provides the GUI-layouts as different screens for the 
