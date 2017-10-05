@@ -111,6 +111,7 @@ class RemuTCP:
     def on_connection(self, connection):
         print("Connected successfully!")
         self.connection = connection
+        self.parent.connection_established()
 
     """
     Sends the message given as parameter if the connection is valid and on

@@ -2,7 +2,7 @@ import ipaddress
 from RemuTCP.RemuTCP import RemuTCP
 from Domain.Message import Message
 from Domain.PicPresentation import PicPresentation
-from Domain.Command import Command
+from Domain.Command import *
 
 """
 A class to handle one master-slave connection
@@ -55,13 +55,13 @@ class SlaveConnection:
         Requests the presentation-object from slave
     """
     def request_presentation(self):
-        self.__send_command(Command.REQUEST_PRESENTATION)
+        self.__send_command(Command.REQUEST_PRESENTATION.value)
 
     """
         Ask slave to show next item in presentation
     """
     def show_next(self):
-        self.__send_command(Command.SHOW_NEXT)
+        self.__send_command(Command.SHOW_NEXT.value)
 
     """
         Called when slave responds to command "show_next"
@@ -90,15 +90,21 @@ class SlaveConnection:
         presentation.pic_index = data["pic_index"]
         presentation.pic_files = data["pic_files"]
         self.set_presentation(presentation)
+        self.master.notify(Notification.PRESENTATION_UPDATE, self.presentation)
 
     """
     Handles command to show next file
     """
-    def handle_show_next_response(self, data):
-        self.currently_showing = self.presentation.get_next()
+    def handle_show_next_response(self, data=None):
+        next_item = self.presentation.get_next()
+        self.currently_showing = next_item
+        self.master.notify(Notification.PRESENTATION_STATUS_CHANGE, next_item)
 
-    def handle_invalid_command_response(self, data):
+    def handle_invalid_command_response(self, data=None):
         print("Invalid command given")
+
+    def connection_established(self):
+        self.master.notify(Notification.CONNECTION_ESTABLISHED, "connected")
 
     handle_responses = {Command.REQUEST_PRESENTATION: handle_presentation_response,
                         Command.SHOW_NEXT: handle_show_next_response,

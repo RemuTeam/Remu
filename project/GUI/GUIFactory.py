@@ -76,7 +76,7 @@ class MasterGUILayout(Screen):
     Update the presentation information on the layout
     """
     def update_presentation(self, data):
-        pass
+        self.presentation_status.text = "Updated!"
 
     """
     Update the presentation status on the layout
@@ -85,7 +85,7 @@ class MasterGUILayout(Screen):
         self.msg_sent_amount.text = str(data)
 
     def update_connection(self, data):
-        pass
+        self.set_address(str(data))
 
     """
     Handles the received notification from master
@@ -98,10 +98,12 @@ class MasterGUILayout(Screen):
 
     """
     A dictionary of Notification-Function pairs for the purpose of
+    updating the layout on predefined events.
     """
     messagehandler = {Notification.PRESENTATION_UPDATE: update_presentation,
                       Notification.PRESENTATION_STATUS_CHANGE: update_presentation_status,
-                      Notification.CONNECTION_FAILED: update_connection}
+                      Notification.CONNECTION_FAILED: update_connection,
+                      Notification.CONNECTION_ESTABLISHED: update_connection}
 
 
 """

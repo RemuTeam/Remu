@@ -8,6 +8,7 @@ from GUI.GUIFactory import GUIFactory
 from kivy.app import App
 from kivy.lang.builder import Builder
 from Domain.Message import Message
+from Domain.Slave import Slave
 
 """
     HANDLES THE NAMING OF SLAVES AND MASTER AND THE MESSAGE SENT
@@ -44,7 +45,7 @@ class RemuApp(App):
 
     def set_slave(self):
         self.isMaster = False
-        self.master = RemuTCP(self)
+        self.master = RemuTCP(Slave())
 
     """
     You can add slaves to master by using REMUTCP.py 
@@ -91,6 +92,9 @@ class RemuApp(App):
             response.set_field("text", "OK!")
             response.set_field("isMaster", self.isMaster)
         return response
+
+    def connection_established(self):
+        pass
 
     """
         Closes all established connections and stops listening to any future connection attempts.

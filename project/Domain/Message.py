@@ -22,9 +22,9 @@ class Message:
 
     def get_command(self):
         if "command" in self.fields:
-            if self.fields["command"] in Command.__dict__.values():
+            if self.fields["command"] in list(map(int, Command)):
                 return self.fields["command"]
-        return Command.INVALID_COMMAND
+        return Command.INVALID_COMMAND.value
 
     def get_data(self):
         if "data" in self.fields:

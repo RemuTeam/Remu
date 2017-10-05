@@ -20,7 +20,7 @@ class SlaveTest(unittest.TestCase):
         slave = Slave()
         msg = Message()
         msg.set_field("type", "command")
-        msg.set_field("command", Command.REQUEST_PRESENTATION)
+        msg.set_field("command", Command.REQUEST_PRESENTATION.value)
         response = slave.handle_message(msg)
         self.assertEqual(response.get_field("data")["pic_index"], 0)
         self.assertCountEqual(response.get_field("data")["pic_files"], ["images/a.jpg", "images/b.jpg"])
@@ -29,9 +29,9 @@ class SlaveTest(unittest.TestCase):
         slave = Slave()
         msg = Message()
         msg.set_field("type", "command")
-        msg.set_field("command", Command.SHOW_NEXT)
+        msg.set_field("command", Command.SHOW_NEXT.value)
         response = slave.handle_message(msg)
-        self.assertEqual(response.get_field("responseTo"), Command.SHOW_NEXT)
+        self.assertEqual(response.get_field("responseTo"), Command.SHOW_NEXT.value)
         self.assertEqual(slave.presentation.pic_index, 1)
 
     def test_handling_invalid_commands(self):
@@ -39,4 +39,4 @@ class SlaveTest(unittest.TestCase):
         msg = Message()
         msg.set_field("command", "SHOWUSWHATYOU'VEGOT")
         response = slave.handle_message(msg)
-        self.assertEqual(response.get_field("responseTo"), Command.INVALID_COMMAND)
+        self.assertEqual(response.get_field("responseTo"), Command.INVALID_COMMAND.value)

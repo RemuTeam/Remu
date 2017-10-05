@@ -35,7 +35,7 @@ class Slave:
         if not self.presentation.pic_files:
             self.presentation.get_filenames()
         response = Message()
-        response.set_field("responseTo", Command.REQUEST_PRESENTATION)
+        response.set_field("responseTo", Command.REQUEST_PRESENTATION.value)
         response.set_field("data", self.presentation.__dict__)
         return response
 
@@ -49,7 +49,7 @@ class Slave:
             self.presentation.get_filenames()
         file = self.presentation.get_next()
         response = Message()
-        response.set_field("responseTo", Command.SHOW_NEXT)
+        response.set_field("responseTo", Command.SHOW_NEXT.value)
         return response
 
     """
@@ -58,7 +58,7 @@ class Slave:
     """
     def handle_invalid_command(self):
         response = Message()
-        response.set_field("responseTo", Command.INVALID_COMMAND)
+        response.set_field("responseTo", Command.INVALID_COMMAND.value)
         return response
 
     # Messagehandler
@@ -66,17 +66,20 @@ class Slave:
     Python's replacement for a switch-case: gives methods given 
     by the Command-enumerator, essentially just a dictionary that has function calls
     """
-    messagehandler = {Command.REQUEST_PRESENTATION: handle_request_presentation,
-                      Command.SHOW_NEXT: handle_show_next,
-                      Command.INVALID_COMMAND: handle_invalid_command
+    messagehandler = {Command.REQUEST_PRESENTATION.value: handle_request_presentation,
+                      Command.SHOW_NEXT.value: handle_show_next,
+                      Command.INVALID_COMMAND.value: handle_invalid_command
                       }
 
     """
     Handles the responses to master's requests
     """
     def handle_message(self, msg):
+        print("trying to parse")
         if "command" in msg.fields:
+            print(str(msg.get_command()))
             return self.messagehandler[msg.get_command()](self)
         return self.handle_invalid_command()
 
-
+    def connection_established(self):
+        pass
