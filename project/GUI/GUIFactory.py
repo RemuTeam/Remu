@@ -77,9 +77,11 @@ class MasterGUILayout(Screen):
 
     """
     Update the presentation information on the layout
+    
+    Not yet implemented
     """
     def update_presentation(self, data):
-        self.presentation_status.text = "Updated!"
+        pass
 
     """
     Update the presentation status on the layout
@@ -88,7 +90,7 @@ class MasterGUILayout(Screen):
         self.msg_sent_amount.text = str(data)
 
     def update_connection(self, data):
-        self.set_address(str(data))
+        self.set_address_to_gui(str(data))
 
     """
     Handles the received notification from master

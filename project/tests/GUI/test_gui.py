@@ -49,6 +49,7 @@ def test_master_gui_components(simulator):
     simulator.assert_text(get_from_layout("Master", "Button", 2), "Back")
     simulator.assert_text(get_from_layout("Master", "Button", 3), "Add Slave")
 
+"""
 @pytest.mark.parametrize("params", [{}])
 @simulate
 def test_ip_changes_when_pressed(simulator):
@@ -57,6 +58,7 @@ def test_ip_changes_when_pressed(simulator):
     simulator.set_text_to(get_from_layout("Master", "TextInput", 1), "100.100.100.100:1000")
     simulator.tap(get_from_layout("Master", "Button", 3))
     simulator.assert_text(get_from_layout("Master", "Label", 1), "100.100.100.100:1000")
+"""
 
 #@pytest.mark.parametrize("params", [{}])
 #@simulate
