@@ -81,5 +81,5 @@ class Slave:
             return self.messagehandler[msg.get_command()](self)
         return self.handle_invalid_command()
 
-    def connection_established(self):
+    def connection_established(self, address):
         pass

@@ -65,8 +65,7 @@ ScreenManager:
             Button:
                 text: "Add Slave"
                 on_press: app.close_connections()
-                on_press: app.add_slave(txt_input.text)
-                on_press: root.set_address_to_gui(txt_input.text)
+                on_press: root.add_slave_connection(txt_input.text)
         StackLayout:
             id: middle
             orientation: 'tb-lr'

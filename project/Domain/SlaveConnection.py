@@ -3,6 +3,7 @@ from RemuTCP.RemuTCP import RemuTCP
 from Domain.Message import Message
 from Domain.PicPresentation import PicPresentation
 from Domain.Command import *
+from functools import partial
 
 """
 A class to handle one master-slave connection
@@ -103,12 +104,12 @@ class SlaveConnection:
     def handle_invalid_command_response(self, data=None):
         print("Invalid command given")
 
-    def connection_established(self):
-        self.master.notify(Notification.CONNECTION_ESTABLISHED, "connected")
+    def connection_established(self, address):
+        self.master.notify(Notification.CONNECTION_ESTABLISHED, address)
 
-    handle_responses = {Command.REQUEST_PRESENTATION: handle_presentation_response,
-                        Command.SHOW_NEXT: handle_show_next_response,
-                        Command.INVALID_COMMAND: handle_invalid_command_response
+    handle_responses = {Command.REQUEST_PRESENTATION.value: partial(handle_presentation_response),
+                        Command.SHOW_NEXT.value: partial(handle_show_next_response),
+                        Command.INVALID_COMMAND.value: partial(handle_invalid_command_response)
                         }
 
     """
@@ -118,7 +119,7 @@ class SlaveConnection:
         print(msg.fields)
         if "responseTo" in msg.fields:
             if "data" in msg.fields:
-                self.handle_responses[msg.get_command()](msg.get_data())
+                self.handle_responses[msg.get_field("responseTo")](self, msg.get_data())
         #if self.__isPresentationResponse(msg):
         #    presentation = PicPresentation()
         #    presentation_fields = msg.fields["data"]
