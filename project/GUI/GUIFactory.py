@@ -49,7 +49,10 @@ class MasterGUILayout(Screen):
         self.presentation = None
         self.master = Master(self)
 
-    def set_address(self, address):
+    """
+    Sets the address for GUI purposes, but does not control the actual connection
+    """
+    def set_address_to_gui(self, address):
         self.label_text = address
 
     def add_slave_connection(self, address):

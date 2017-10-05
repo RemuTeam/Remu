@@ -73,6 +73,17 @@ class Simulator(object):
     def tap(self, selector):
         self.press(selector, release=True)
 
+    def _set_attr(self, obj, attr, value):
+        setattr(obj, attr, value)
+
+    @execution_step
+    def set_attribute(self, selector, attr, value):
+        self._set_attr(self.assert_exists(selector, False), attr, value)
+
+    def set_text_to(self, selector, text):
+        Logger.info("Simulation: Setting text %s to widget %s" % (text, selector))
+        self.set_attribute(selector, "text", text)
+
     @execution_step
     def wait(self, seconds):
         Logger.info("Simulation: wait %s seconds..." % seconds)
