@@ -2,7 +2,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.popup import Popup
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
-from kivy.properties import StringProperty
+from kivy.properties import StringProperty, ObjectProperty
 from Domain.Slave import Slave
 from Domain.Master import Master
 from Domain.Command import Notification
@@ -45,6 +45,7 @@ class MasterGUILayout(Screen):
     """
     msg_sent = 0
     label_text = StringProperty('')
+    slave_presentation = None
 
     def __init__(self, **kwargs):
         super(MasterGUILayout, self).__init__(**kwargs)
@@ -82,17 +83,24 @@ class MasterGUILayout(Screen):
 
     """
     Update the presentation information on the layout
-    
-    Not yet implemented
     """
     def update_presentation(self, data):
-        pass
+        if self.slave_presentation is None:
+            print("Creating a new slave presentation widget")
+            slave_widget = SlavePresentation(data)
+            self.slave_presentation = slave_widget
+            self.ids.middle.add_widget(slave_widget)
 
     """
     Update the presentation status on the layout
     """
     def update_presentation_status(self, data):
+        print("päivitetään")
         self.msg_sent_amount.text = str(data)
+        current_id = self.slave_presentation.presentation_data.pic_index
+        self.ids.visuals.ids[current_id-1].set_inactive()
+        self.ids.visuals.ids[current_id].set_active()
+
 
     def update_connection(self, data):
         self.set_address_to_gui(str(data))
@@ -204,7 +212,22 @@ SlavePresentation is the visual presentation of the slave in the master view. It
 state and visuals associated with it
 """
 class SlavePresentation(BoxLayout):
-    pass
+
+    presentation_data = None
+
+    def __init__(self, data):
+        super(SlavePresentation, self).__init__()
+        self.presentation_data = data
+        self.create_visual_widgets(data)
+
+    def create_visual_widgets(self, data):
+        for i in range(0, len(data.pic_files)):
+            image = data.pic_files[i]
+            visual = SlaveVisualProperty(image)
+            visual.id = str(i)
+            if data.pic_index == i:
+                visual.set_active()
+            self.ids.visuals.add_widget(visual)
 
 """
 SlaveVisualProperty is the class of the slave's visuals. It represents a single visual property of the slave's properties
@@ -213,11 +236,21 @@ class SlaveVisualProperty(Button):
 
     visual_name = StringProperty('')
 
-    #def __init__(self, image_source):
-    #    self.visual_name = image_source
+    def __init__(self, image_source):
+        super(SlaveVisualProperty, self).__init__()
+        self.visual_name = image_source.split("/")[1]
+        self.background_normal = ''
+        self.background_color = [0.5, 0.5, 0.5, 1]
 
     def on_press(self):
         print("Showing visual property information")
+
+    def set_active(self):
+        self.background_color = [0.3, 0.6, 0.3, 1]
+
+    def set_inactive(self):
+        self.background_color = [0.3, 0.3, 0.3, 1]
+
 
 """
 Provides the GUI-layouts as different screens for the 
