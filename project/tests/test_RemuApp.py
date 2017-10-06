@@ -1,5 +1,7 @@
 import unittest
 from RemuApp import RemuApp
+from unittest.mock import Mock
+from Domain.Master import Master
 
 
 class TestRemuAppMethods(unittest.TestCase):
@@ -15,7 +17,7 @@ class TestRemuAppMethods(unittest.TestCase):
     def test_setMaster(self):
 
         self.assertFalse(self.app.isMaster)
-        self.app.set_master()
+        self.app.set_master(Mock(Master))
         self.assertEquals(self.app.isMaster, True)
 
     """

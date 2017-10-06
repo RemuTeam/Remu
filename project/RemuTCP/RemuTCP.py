@@ -130,3 +130,9 @@ class RemuTCP:
             response.set_field("address", msg.get_field("sender"))
             return response.to_json()
         return None
+
+    def end_connection(self):
+        if self.port:
+            self.stop_listening()
+        if self.connection:
+            self.connection.loseConnection()

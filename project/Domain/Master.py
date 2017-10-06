@@ -50,6 +50,9 @@ class Master:
             print("now asking for the presentation")
             self.slave_connection.request_presentation()
 
+    def close_connections(self):
+        self.slave_connection.connection.end_connection()
+
     """
     A dictionary of Notification-Function pairs for the purpose of
     updating the layout on predefined events.

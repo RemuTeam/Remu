@@ -14,12 +14,14 @@ class Slave:
     def __init__(self, layout=None):
         self.presentation = self.create_presentation()
         self.layout = layout
+        self.master_connection = None
 
     """
     Sets the slave's master_connection
     """
-    #def set_master_connection(self, master_connection):
-    #    self.master_connection = master_connection
+    def set_master_connection(self, master_connection):
+        self.master_connection = master_connection
+        self.master_connection.parent = self
 
     def set_layout(self, new_layout):
         self.layout = new_layout
@@ -86,3 +88,6 @@ class Slave:
 
     def connection_established(self, address):
         pass
+
+    def close_connections(self):
+        self.master_connection.end_connection()

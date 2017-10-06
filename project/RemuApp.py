@@ -25,6 +25,7 @@ class RemuApp(App):
     isMaster = False
     slaves = None
     master = None
+    servicemode = None
 
 
     """
@@ -38,12 +39,13 @@ class RemuApp(App):
     """
     RemuApp sets slaves and master with boolean parameter isMaster
     """
-    def set_master(self):
+    def set_master(self, master):
         self.isMaster = True
+        self.servicemode = master
 
-    def set_slave(self):
+    def set_slave(self, slave):
         self.isMaster = False
-        self.slave = Slave()
+        self.servicemode = slave
 
 
     """
@@ -51,9 +53,5 @@ class RemuApp(App):
     """
 
     def close_connections(self):
-        if self.master:
-            self.master.stop_listening()
-            if self.master.connection:
-                self.master.connection.loseConnection()
-        if self.slaves and self.slaves.connection:
-            self.slaves.connection.loseConnection()
+        if self.servicemode:
+            self.servicemode.close_connections()

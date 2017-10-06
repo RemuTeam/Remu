@@ -49,7 +49,10 @@ class MasterGUILayout(Screen):
     def __init__(self, **kwargs):
         super(MasterGUILayout, self).__init__(**kwargs)
         self.presentation = None
+
+    def on_enter(self):
         self.master = Master(self)
+        App.get_running_app().set_master(self.master)
 
     """
     Sets the address for GUI purposes, but does not control the actual connection
@@ -130,10 +133,11 @@ class SlaveGUILayout(Screen):
         self.showpic = False
         self.slave = None
 
-    def on_enter(self, *args):
+    def on_pre_enter(self, *args):
         if self.slave is None:
             self.slave = Slave(self)
-            self.connection = RemuTCP(self.slave)
+            self.slave.set_master_connection(RemuTCP())
+            App.get_running_app().set_slave(self.slave)
 
     """
     Sets the app's main window to full screen and hides the
@@ -166,6 +170,7 @@ class PresentationLayout(Screen):
         self.show_next()
 
     def on_enter(self, *args):
+        self.set_slave(App.get_running_app().servicemode)
         self.slave.set_layout(self)
         self.slave.presentation.get_filenames()
 
