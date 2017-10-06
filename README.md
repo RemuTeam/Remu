@@ -36,3 +36,4 @@ Navigoi itsesi terminaalissa project -kansioon ja aja ohjelma komennolla
 3. Koodi on selkeää ja dokumentoitua
 4. Vähintään 2 tiimiläistä on validoinut koodin
 5. Koodi on käytettävissä tuotannossa
+
