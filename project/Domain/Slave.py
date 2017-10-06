@@ -11,15 +11,18 @@ class Slave:
     Constructor
     The master_connection is a RemuTCP object
     """
-    def __init__(self, master_connection=None):
+    def __init__(self, layout=None):
         self.presentation = self.create_presentation()
-        self.master_connection = master_connection
+        self.layout = layout
 
     """
     Sets the slave's master_connection
     """
-    def set_master_connection(self, master_connection):
-        self.master_connection = master_connection
+    #def set_master_connection(self, master_connection):
+    #    self.master_connection = master_connection
+
+    def set_layout(self, new_layout):
+        self.layout = new_layout
 
     """
     Creates slave's presentation
@@ -47,7 +50,7 @@ class Slave:
     def handle_show_next(self):
         if not self.presentation.pic_files:
             self.presentation.get_filenames()
-        file = self.presentation.get_next()
+        self.layout.show_next()
         response = Message()
         response.set_field("responseTo", Command.SHOW_NEXT.value)
         return response

@@ -43,7 +43,7 @@ class RemuApp(App):
 
     def set_slave(self):
         self.isMaster = False
-        self.master = RemuTCP(Slave())
+        self.slave = Slave()
 
 
     """

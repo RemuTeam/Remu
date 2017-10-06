@@ -4,6 +4,7 @@ from kivy.properties import StringProperty
 from Domain.Slave import Slave
 from Domain.Master import Master
 from Domain.Command import Notification
+from RemuTCP.RemuTCP import RemuTCP
 from kivy.app import App
 
 """
@@ -27,7 +28,6 @@ class SwitchLayout(Screen):
 
     def add_address(self, address):
         self.text = address
-
 
 """
 Produces the Master-mode's GUI-layout that allows the
@@ -126,6 +126,12 @@ class SlaveGUILayout(Screen):
     def __init__(self, **kwargs):
         super(SlaveGUILayout, self).__init__(**kwargs)
         self.showpic = False
+        self.slave = None
+
+    def on_enter(self, *args):
+        if self.slave is None:
+            self.slave = Slave(self)
+            self.connection = RemuTCP(self.slave)
 
     """
     Sets the app's main window to full screen and hides the
@@ -133,7 +139,7 @@ class SlaveGUILayout(Screen):
     """
     def prepare_for_presentation_mode(self):
         window = self.get_root_window()
-
+        self.parent.get_screen('presentation_layout').set_slave(self.slave)
         window.show_cursor = False
     """
      Opens the warning pop-up to slave, asking if they are sure they want to go back
@@ -153,11 +159,16 @@ class PresentationLayout(Screen):
     def __init__(self, **kwargs):
         super(PresentationLayout, self).__init__(**kwargs)
         self.showpic = False
-        self.slave = Slave()
-        self.slave.presentation.get_filenames()
 
     def button_pressed(self):
         self.show_next()
+
+    def on_enter(self, *args):
+        self.slave.set_layout(self)
+        self.slave.presentation.get_filenames()
+
+    def set_slave(self, slave):
+        self.slave = slave
 
     """
     Shows the next element of the show
