@@ -26,6 +26,12 @@ class Message:
                 return self.fields["command"]
         return Command.INVALID_COMMAND.value
 
+    def get_response(self):
+        if "responseTo" in self.fields:
+            if self.fields["responseTo"] in list(map(int, Command)):
+                return self.fields["responseTo"]
+        return Command.INVALID_COMMAND.value
+
     def get_data(self):
         if "data" in self.fields:
             return self.fields["data"]

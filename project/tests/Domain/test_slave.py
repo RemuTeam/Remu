@@ -54,3 +54,9 @@ class SlaveTest(unittest.TestCase):
         msg.set_field("command", "SHOWUSWHATYOU'VEGOT")
         response = slave.handle_message(msg)
         self.assertEqual(response.get_field("responseTo"), Command.INVALID_COMMAND.value)
+
+    def test_handling_empty_messages(self):
+        slave = Slave()
+        msg = Message()
+        response = slave.handle_message(msg)
+        self.assertEqual(response.get_field("responseTo"), Command.INVALID_COMMAND.value)
