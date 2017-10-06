@@ -43,7 +43,7 @@ class MasterGUILayout(Screen):
     A variable for debugging purposes to track the amount
     of clicks in the GUI
     """
-    msg_sent = 0
+    #msg_sent = NumericProperty(0)
     label_text = StringProperty('')
     slave_presentation = None
 
@@ -96,10 +96,8 @@ class MasterGUILayout(Screen):
     """
     def update_presentation_status(self, data):
         print("päivitetään")
-        self.msg_sent_amount.text = str(data)
-        current_id = self.slave_presentation.presentation_data.pic_index
-        self.ids.visuals.ids[current_id-1].set_inactive()
-        self.ids.visuals.ids[current_id].set_active()
+        #self.msg_sent_amount.text = str(data)
+        self.slave_presentation.show_next()
 
 
     def update_connection(self, data):
@@ -218,16 +216,26 @@ class SlavePresentation(BoxLayout):
     def __init__(self, data):
         super(SlavePresentation, self).__init__()
         self.presentation_data = data
+        self.visuals = []
+        self.current_active = data.pic_index - 1
         self.create_visual_widgets(data)
 
     def create_visual_widgets(self, data):
         for i in range(0, len(data.pic_files)):
             image = data.pic_files[i]
             visual = SlaveVisualProperty(image)
-            visual.id = str(i)
-            if data.pic_index == i:
-                visual.set_active()
+            self.visuals.append(visual)
             self.ids.visuals.add_widget(visual)
+        self.show_next()
+
+    def show_next(self):
+        self.current_active = self.presentation_data.pic_index - 1
+        if self.current_active is not -1:
+            self.visuals[self.current_active].set_inactive()
+            self.visuals[self.current_active].set_active()
+        #self.current_active = self.presentation_data.pic_index
+        #self.visuals[self.current_active].set_active()
+
 
 """
 SlaveVisualProperty is the class of the slave's visuals. It represents a single visual property of the slave's properties

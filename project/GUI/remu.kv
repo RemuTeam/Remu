@@ -38,7 +38,7 @@ ScreenManager:
 <MasterGUILayout>:
     id: master_gui_layout
     name: 'master_gui_layout'
-    messages_sent: msg_sent_amount
+    #messages_sent: msg_sent
     orientation: 'vertical'
     spacing: 10
     padding: 10
@@ -52,7 +52,7 @@ ScreenManager:
             Button:
                 text: "Send message to slave"
                 on_press: root.send_message_to_slave()
-                on_press: msg_sent_amount.text = root.increment()
+                #on_press: msg_sent_amount.text = root.increment()
             Button:
                 text: "Back"
                 on_press: root.show_master_back_popup()
@@ -122,6 +122,7 @@ ScreenManager:
             on_press: root.button_pressed()
 
 <SlavePresentation@BoxLayout>
+    id: slave
     size_hint: 1, 0.15
     orientation: 'horizontal'
     Button:
