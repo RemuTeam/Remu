@@ -33,7 +33,7 @@ class SlaveConnection:
         try:
             slave_address_parts = address.split(":")
             ip_address = slave_address_parts[0] if len(slave_address_parts) > 0 else None
-            port = slave_address_parts[1] if len(slave_address_parts) > 1 else None
+            port = slave_address_parts[1] if len(slave_address_parts) > 1 else 8000
             ipaddress.ip_address(ip_address)
             self.connection = RemuTCP(self, True, ip_address, int(port))
             print("Slave added")
@@ -123,10 +123,4 @@ class SlaveConnection:
         if "responseTo" in msg.fields:
             if "data" in msg.fields:
                 self.handle_responses[msg.get_field("responseTo")](self, msg.get_data())
-        #if self.__isPresentationResponse(msg):
-        #    presentation = PicPresentation()
-        #    presentation_fields = msg.fields["data"]
-        #    presentation.pic_index = presentation_fields["pic_index"]
-        #    presentation.pic_files = presentation_fields["pic_files"]
-        #    self.set_presentation(presentation)
-        #return response
+                

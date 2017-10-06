@@ -16,15 +16,6 @@ class Master:
         self.slave_connection = SlaveConnection(self)
         self.slave_connection.connect_to_IP(slave_address)
 
-
-    """
-    Informs the layout of changes in connection and 
-    presentation status
-    """
-    def notify_layout(self, notification, data):
-        self.layout.notify(notification, data)
-
-
     def request_next(self):
         if self.slave_connection is not None:
             self.slave_connection.show_next()
@@ -45,7 +36,7 @@ class Master:
     data:           an object instance
     """
     def update_presentation_status_to_layout(self, notification, data):
-        self.notify_layout(notification, data)
+        self.layout.notify(notification, data)
 
     """
     Handles a connection update event
@@ -54,7 +45,7 @@ class Master:
     data:           an object instance
     """
     def update_connection(self, notification, data):
-        self.notify_layout(notification, data)
+        self.layout.notify(notification, data)
         if notification == Notification.CONNECTION_ESTABLISHED:
             print("now asking for the presentation")
             self.slave_connection.request_presentation()
