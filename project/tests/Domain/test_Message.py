@@ -1,7 +1,7 @@
 import unittest
 
 from Domain.Message import Message
-
+from Domain.Command import Command
 
 class TestMessageMethods(unittest.TestCase):
 
@@ -25,7 +25,25 @@ class TestMessageMethods(unittest.TestCase):
     def test_get_field(self):
         msg = Message()
         msg.fields["Test"] = "Kappa"
-        self.assertEquals(msg.fields["Test"], msg.get_field("Test"))
+        self.assertEqual(msg.fields["Test"], msg.get_field("Test"))
+
+    def test_invalid_key(self):
+        msg = Message()
+        self.assertIsNone(msg.get_field("test"))
+
+    def test_invalid_command(self):
+        msg = Message()
+        msg.set_field("command", "9999")
+        self.assertEqual(Command.INVALID_COMMAND, msg.get_command())
+
+    def test_no_data(self):
+        msg = Message()
+        self.assertIsNone(msg.get_data())
+
+    def test_data(self):
+        msg = Message()
+        msg.set_field("data", "test")
+        self.assertEqual(msg.get_data(), "test")
 
 
 if __name__ == '__main__':

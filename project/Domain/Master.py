@@ -4,17 +4,32 @@ from Domain.Command import Notification
 
 class Master:
 
+    """
+    Constructor
+
+    layout: the layout to be notified on changes
+    """
     def __init__(self, layout):
         self.slave_connection = None
         self.layout = layout
 
     """
-        You can add slaves to master by using REMUTCP.py 
+    Adds a slave connection by creating a new RemuTCP object
+    and setting it as self.slave_connection
+    
+    address: an ip-string formatted as "ipa.ddr.es.s:port"
     """
-
     def add_slave(self, slave_address):
         self.slave_connection = SlaveConnection(self)
         self.slave_connection.connect_to_IP(slave_address)
+
+    """
+    Adds a pre-constructed RemuTCP object to slave_connections
+    
+    slave_connection: RemuTCP object
+    """
+    def add_slave_connection(self, slave_connection):
+        self.slave_connection = slave_connection
 
     def request_next(self):
         if self.slave_connection is not None:
@@ -50,8 +65,12 @@ class Master:
             print("now asking for the presentation")
             self.slave_connection.request_presentation()
 
+    """
+    Closes all connections to slaves
+    """
     def close_connections(self):
-        self.slave_connection.connection.end_connection()
+        if self.slave_connection is not None:
+            self.slave_connection.connection.end_connection()
 
     """
     A dictionary of Notification-Function pairs for the purpose of
