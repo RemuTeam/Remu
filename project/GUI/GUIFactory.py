@@ -2,7 +2,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.popup import Popup
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
-from kivy.properties import StringProperty, ObjectProperty
+from kivy.properties import StringProperty
 from Domain.Slave import Slave
 from Domain.Master import Master
 from Domain.Command import Notification
@@ -43,7 +43,7 @@ class MasterGUILayout(Screen):
     A variable for debugging purposes to track the amount
     of clicks in the GUI
     """
-    #msg_sent = NumericProperty(0)
+    msg_sent = 0
     label_text = StringProperty('')
     slave_presentation = None
 
@@ -96,7 +96,7 @@ class MasterGUILayout(Screen):
     """
     def update_presentation_status(self, data):
         print("päivitetään")
-        #self.msg_sent_amount.text = str(data)
+        self.increment()
         self.slave_presentation.show_next()
 
 
