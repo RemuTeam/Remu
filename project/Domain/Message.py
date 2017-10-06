@@ -57,8 +57,19 @@ class Message:
         return Command.INVALID_COMMAND.value
 
     """
-    Returns the Message object's data-field's value
+    Returns the Message object's responseTo-field's value
     
+    returns:    an integer corresponding to a Command enumeration
+    """
+    def get_response(self):
+        if "responseTo" in self.fields:
+            if self.fields["responseTo"] in list(map(int, Command)):
+                return self.fields["responseTo"]
+        return Command.INVALID_COMMAND.value
+
+    """
+    Returns the Message object's data-field's value
+
     returns:    an object
     """
     def get_data(self):

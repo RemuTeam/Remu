@@ -3,6 +3,10 @@ from Domain.SlaveConnection import SlaveConnection
 from RemuTCP.RemuTCP import RemuTCP
 from unittest.mock import Mock
 from Domain.PicPresentation import PicPresentation
+from Domain.Slave import Slave
+from Domain.Message import Message
+from Domain.Master import Master
+from Domain.Command import Command
 
 class SlaveConnectionTest(unittest.TestCase):
     sc = None
@@ -66,3 +70,26 @@ class SlaveConnectionTest(unittest.TestCase):
         calls = mocktcp.method_calls
         name = calls[0][0]
         self.assertEqual(name, "send_message")
+
+    def test_handle_picpresentation_response(self):
+        slavecon = SlaveConnection(Mock(Master))
+        slave = Slave()
+        msg = slave.handle_request_presentation()
+        slavecon.handle_message(msg)
+        self.assertEqual(len(slavecon.presentation.pic_files), 2)
+
+    def test_handle_show_next_response(self):
+        slavecon = SlaveConnection(Mock(Master))
+        slave = Slave()
+        msg = slave.handle_request_presentation()
+        slavecon.handle_message(msg)
+        msg = Message()
+        msg.set_field("responseTo", Command.SHOW_NEXT.value)
+        slavecon.handle_message(msg)
+        self.assertEqual(len(slavecon.presentation.pic_files), 2)
+        self.assertEqual(slavecon.currently_showing, "images/a.jpg")
+
+    def test_handle_invalid_command(self):
+        msg = Message()
+        msg.set_field("responseTo", "LET ME OUT LET ME OUT LET ME OUT")
+        self.sc.handle_message(msg)

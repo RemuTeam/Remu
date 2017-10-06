@@ -80,11 +80,6 @@ class SlaveConnection:
     def set_presentation(self, presentation):
         self.presentation = presentation
 
-    def __isPresentationResponse(self, msg):
-        if "response" in msg.fields and "responseTo" in msg.fields:
-            response_command = msg.fields["responseTo"]
-            return response_command == "request_presentation"
-        return False
 
     """
     Creates a presentation based on the message received from master
@@ -121,6 +116,5 @@ class SlaveConnection:
     def handle_message(self, msg):
         print(msg.fields)
         if "responseTo" in msg.fields:
-            if "data" in msg.fields:
-                self.handle_responses[msg.get_field("responseTo")](self, msg.get_data())
+            self.handle_responses[msg.get_response()](self, msg.get_data())
                 
