@@ -45,6 +45,16 @@ class TestMessageMethods(unittest.TestCase):
         msg.set_field("data", "test")
         self.assertEqual(msg.get_data(), "test")
 
+    def test_invalid_response(self):
+        msg = Message()
+        msg.set_field("responseTo", "9999")
+        self.assertEqual(Command.INVALID_COMMAND, msg.get_response())
+
+    def test_valid_response(self):
+        msg = Message()
+        msg.set_field("responseTo", 0)
+        self.assertEqual(0, msg.get_response())
+
 
 if __name__ == '__main__':
     unittest.main()
