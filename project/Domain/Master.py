@@ -69,6 +69,12 @@ class Master:
             self.slave_connection.request_presentation()
 
     """
+    Informs the slave connection about the presentation ending
+    """
+    def end_presentation(self):
+        self.slave_connection.end_presentation()
+
+    """
     Closes all connections to slaves
     """
     def close_connections(self):
@@ -81,5 +87,6 @@ class Master:
     """
     messagehandler = {Notification.PRESENTATION_UPDATE: update_presentation_status_to_layout,
                       Notification.PRESENTATION_STATUS_CHANGE: update_presentation_status_to_layout,
+                      Notification.PRESENTATION_ENDED: end_presentation,
                       Notification.CONNECTION_FAILED: update_connection,
                       Notification.CONNECTION_ESTABLISHED: update_connection}

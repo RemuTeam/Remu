@@ -99,8 +99,10 @@ class MasterGUILayout(Screen):
         self.increment()
         self.slave_presentation.show_next()
 
-
-    def update_connection(self, data):
+    """
+    Sets the slave address to be shown in the gui
+    """
+    def update_connection_to_gui(self, data):
         self.set_address_to_gui(str(data))
 
     """
@@ -118,8 +120,8 @@ class MasterGUILayout(Screen):
     """
     messagehandler = {Notification.PRESENTATION_UPDATE: update_presentation,
                       Notification.PRESENTATION_STATUS_CHANGE: update_presentation_status,
-                      Notification.CONNECTION_FAILED: update_connection,
-                      Notification.CONNECTION_ESTABLISHED: update_connection}
+                      Notification.CONNECTION_FAILED: update_connection_to_gui,
+                      Notification.CONNECTION_ESTABLISHED: update_connection_to_gui}
 
 
 """
@@ -129,6 +131,8 @@ the Master-devices commands.
 Inherits kivy.uix.screenmanager.Screen
 """
 class SlaveGUILayout(Screen):
+
+    info_text = StringProperty('Currently in slave view')
 
     """
     In the constructor the class and instance are passed
@@ -159,6 +163,8 @@ class SlaveGUILayout(Screen):
     def show_slave_back_popup(self):
         SlaveBackPopUp().open()
 
+    def set_info_text(self, info_text):
+        self.info_text = info_text
 
 """
 Fullscreen layout for presenting content
@@ -191,10 +197,17 @@ class PresentationLayout(Screen):
         if next_pic_filename is not None:
             self.ids.picture.source = next_pic_filename
         else:
-            self.ids.picture.source = ''
-            self.get_root_window().show_cursor = True
-            self.slave.presentation.reset()
-            App.get_running_app().root.current = "slave_gui_layout"
+            self.reset_presentation()
+
+    """
+    Resets the presentation to the starting state
+    """
+    def reset_presentation(self):
+        self.ids.picture.source = ''
+        self.get_root_window().show_cursor = True
+        self.slave.presentation.reset()
+        self.parent.get_screen('slave_gui_layout').set_info_text("Presentation ended\nCurrently in slave mode")
+        App.get_running_app().root.current = "slave_gui_layout"
 
 """
 These represent the popups that take the maste or slave back to the switch layout if they decide to 

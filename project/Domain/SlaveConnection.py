@@ -80,6 +80,11 @@ class SlaveConnection:
     def set_presentation(self, presentation):
         self.presentation = presentation
 
+    """
+    Ends the current presentation
+    """
+    def end_presentation(self):
+        self.__send_command(Command.END_PRESENTATION.value)
 
     """
     Creates a presentation based on the message received from master
@@ -99,6 +104,9 @@ class SlaveConnection:
         self.currently_showing = next_item
         self.master.notify(Notification.PRESENTATION_STATUS_CHANGE, next_item)
 
+    def handle_ending_presentation(self, data=None):
+        self.presentation.reset()
+
     def handle_invalid_command_response(self, data=None):
         print("Invalid command given")
 
@@ -107,6 +115,7 @@ class SlaveConnection:
 
     handle_responses = {Command.REQUEST_PRESENTATION.value: partial(handle_presentation_response),
                         Command.SHOW_NEXT.value: partial(handle_show_next_response),
+                        Command.END_PRESENTATION.value: partial(handle_ending_presentation),
                         Command.INVALID_COMMAND.value: partial(handle_invalid_command_response)
                         }
 

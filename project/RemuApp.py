@@ -47,6 +47,12 @@ class RemuApp(App):
         self.isMaster = False
         self.servicemode = slave
 
+    """
+    Ends the presentation by calling the current servicemode's end_presentation method.
+    slave servicemode end_presentation not yet implemented
+    """
+    def end_presentation(self):
+        self.servicemode.end_presentation()
 
     """
         Closes all established connections and stops listening to any future connection attempts.

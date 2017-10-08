@@ -92,7 +92,7 @@ ScreenManager:
     BoxLayout:
         orientation: 'vertical'
         Label:
-            text: "Currently in slave mode"
+            text: root.info_text
             font_size: 32
         BoxLayout:
             orientation: 'horizontal'
@@ -154,6 +154,7 @@ ScreenManager:
             orientation: 'horizontal'
             Button:
                 text: "Yes"
+                on_press: app.end_presentation()
                 on_press: app.close_connections()
                 on_press: root.dismiss()
                 on_release: app.root.current = 'switch_layout'

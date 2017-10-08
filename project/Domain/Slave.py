@@ -66,6 +66,17 @@ class Slave:
         response.set_field("responseTo", Command.INVALID_COMMAND.value)
         return response
 
+    """
+    Handles the ending of the presentation.
+    """
+    def handle_ending_presentation(self):
+        if not self.presentation.pic_files:
+            self.presentation.get_filenames()
+        self.layout.reset_presentation()
+        response = Message()
+        response.set_field("responseTo", Command.END_PRESENTATION.value)
+        return response
+
     # Messagehandler
     """
     Python's replacement for a switch-case: gives methods given 
@@ -73,6 +84,7 @@ class Slave:
     """
     messagehandler = {Command.REQUEST_PRESENTATION.value: handle_request_presentation,
                       Command.SHOW_NEXT.value: handle_show_next,
+                      Command.END_PRESENTATION.value: handle_ending_presentation,
                       Command.INVALID_COMMAND.value: handle_invalid_command
                       }
 
