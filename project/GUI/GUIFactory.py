@@ -132,7 +132,7 @@ Inherits kivy.uix.screenmanager.Screen
 """
 class SlaveGUILayout(Screen):
 
-    info_text = StringProperty('Currently in slave view')
+    info_text = StringProperty('Currently in slave mode')
 
     """
     In the constructor the class and instance are passed

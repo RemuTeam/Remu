@@ -33,7 +33,7 @@ class MasterTest(unittest.TestCase):
             master_mock = Master(Mock(MasterGUILayout))
             master_mock.request_next()
 
-        mock_method.assert_called_once()
+        mock_method.assert_called_once_with()
 
     def test_request_next_calls_slave_connections_show_next(self):
         with patch.object(SlaveConnection, 'show_next', return_value=None) as mock_method:
