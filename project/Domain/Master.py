@@ -31,6 +31,9 @@ class Master:
     def add_slave_connection(self, slave_connection):
         self.slave_connection = slave_connection
 
+    """
+    Asks the slave to show the next visual
+    """
     def request_next(self):
         if self.slave_connection is not None:
             self.slave_connection.show_next()

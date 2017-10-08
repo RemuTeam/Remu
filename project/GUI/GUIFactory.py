@@ -220,6 +220,9 @@ class SlavePresentation(BoxLayout):
         self.current_active = data.pic_index - 1
         self.create_visual_widgets(data)
 
+    """
+    Creates the visual widgets for the slave's visuals
+    """
     def create_visual_widgets(self, data):
         for i in range(0, len(data.pic_files)):
             image = data.pic_files[i]
@@ -228,6 +231,9 @@ class SlavePresentation(BoxLayout):
             self.ids.visuals.add_widget(visual)
         self.show_next()
 
+    """
+    Highlights the next visual, indicating it is the currently active visual
+    """
     def show_next(self):
         self.current_active = self.presentation_data.pic_index - 1
         if self.current_active is not -1:

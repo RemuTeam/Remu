@@ -121,6 +121,9 @@ ScreenManager:
             text: "Simulate master signal"
             on_press: root.button_pressed()
 
+#
+# SlavePresentation represents a single slave of the master, with all of its visuals included
+#
 <SlavePresentation@BoxLayout>
     id: slave
     size_hint: 1, 0.15
@@ -132,6 +135,10 @@ ScreenManager:
         id: visuals
         orientation: 'lr-tb'
 
+#
+# SlaveVisualProperty is the visual representation of slave's visual property. It inherits Button, so that
+# it can be pressed to show more information about the property
+#
 <SlaveVisualProperty@Button>
     size_hint: 0.2, 1
     text: root.visual_name
