@@ -72,7 +72,8 @@ class Master:
     Informs the slave connection about the presentation ending
     """
     def end_presentation(self):
-        self.slave_connection.end_presentation()
+        if self.slave_connection is not None:
+            self.slave_connection.end_presentation()
 
     """
     Closes all connections to slaves
