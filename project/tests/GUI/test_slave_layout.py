@@ -1,3 +1,4 @@
+"""
 import unittest
 from GUI.GUIFactory import SlaveGUILayout
 
@@ -24,3 +25,4 @@ class SlaveLayoutTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+"""

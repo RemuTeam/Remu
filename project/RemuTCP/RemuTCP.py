@@ -39,10 +39,10 @@ from twisted.internet import reactor, protocol
 
 class RemuProtocol(protocol.Protocol):
     def connectionMade(self):
-        self.factory.app.on_connection(self.transport)
+        self.factory.connection.on_connection(self.transport)
 
     def dataReceived(self, data):
-        response = self.factory.app.handle_message(data.decode('utf-8'))
+        response = self.factory.connection.handle_message(data.decode('utf-8'))
         if response:
             self.transport.write(response.encode('utf-8'))
 
@@ -50,8 +50,8 @@ class RemuProtocol(protocol.Protocol):
 class RemuProtocolFactory(protocol.ClientFactory):
     protocol = RemuProtocol
 
-    def __init__(self, app):
-        self.app = app
+    def __init__(self, connection):
+        self.connection = connection
 
     def startedConnecting(self, connector):
         print('Started to connect.')
@@ -67,12 +67,12 @@ if no it is thus a slave and starts listening.
 """
 
 class RemuTCP:
-    connection = None
-    address = None
-    port = None
 
-    def __init__(self, app, master=False, address=None, port=8000):
-        self.app = app
+    def __init__(self, parent=None, master=False, address=None, port=8000):
+        self.connection = None
+        self.address = None
+        self.port = None
+        self.parent = parent
         if master:
             self.address = address
             self.connect_to_slave(port)
@@ -84,6 +84,9 @@ class RemuTCP:
     """
     def stop_listening(self):
         self.port.stopListening()
+
+    def set_parent(self, parent):
+        self.parent = parent
 
     """
     The constructor calls when computer is indentified as master. Uses the imported reactor to make a TCP connection
@@ -108,6 +111,7 @@ class RemuTCP:
     def on_connection(self, connection):
         print("Connected successfully!")
         self.connection = connection
+        self.parent.connection_established(self.address)
 
     """
     Sends the message given as parameter if the connection is valid and on
@@ -121,8 +125,14 @@ class RemuTCP:
     def handle_message(self, json_msg):
         msg = Message(json_msg)
         msg.set_field("sender", self.connection.getPeer().host)
-        response = self.app.handle_message(msg)
+        response = self.parent.handle_message(msg)
         if response:
             response.set_field("address", msg.get_field("sender"))
             return response.to_json()
         return None
+
+    def end_connection(self):
+        if self.port:
+            self.stop_listening()
+        if self.connection:
+            self.connection.loseConnection()
