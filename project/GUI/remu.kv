@@ -62,7 +62,7 @@ ScreenManager:
                 hint_text: "0.0.0.0:8000"
             Button:
                 text: "Add Slave"
-                on_press: app.close_connections()
+                #on_press: app.close_connections()
                 on_press: root.add_slave_connection(txt_input.text)
         StackLayout:
             id: middle
