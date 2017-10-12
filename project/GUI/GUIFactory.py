@@ -308,6 +308,7 @@ class RemuSM(ScreenManager):
     """
     def rm_master_layout(self):
         self.remove_widget(self.master_screen)
+        self.change_screen_to("switch_layout")
 
     """
     Removes the slave layout and the presentation layout from screenmanager's screens
@@ -315,6 +316,7 @@ class RemuSM(ScreenManager):
     def rm_slave_layout(self):
         self.remove_widget(self.slave_screen)
         self.remove_widget(self.presentation_screen)
+        self.change_screen_to("switch_layout")
 
 
 

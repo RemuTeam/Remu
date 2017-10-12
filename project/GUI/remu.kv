@@ -140,7 +140,7 @@ RemuSM:
                 on_press: app.end_presentation()
                 on_press: app.close_connections()
                 on_press: root.dismiss()
-                on_release: app.root.current = 'switch_layout'
+                on_release: app.root.rm_master_layout()
                 size_hint: 0.3,0.3
             Button:
                 text: "No"
@@ -159,7 +159,7 @@ RemuSM:
                 text: "Yes"
                 on_press: app.close_connections()
                 on_press: root.dismiss()
-                on_release: app.root.current = 'switch_layout'
+                on_release: app.root.rm_slave_layout()
                 size_hint: 0.3,0.3
             Button:
                 text: "No"
