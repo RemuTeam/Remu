@@ -45,7 +45,7 @@ class MasterGUILayout(Screen):
     """
     msg_sent = 0
     label_text = StringProperty('')
-    slave_presentation = None
+    slave_presentation = []
 
     def __init__(self, **kwargs):
         super(MasterGUILayout, self).__init__(**kwargs)
@@ -85,11 +85,10 @@ class MasterGUILayout(Screen):
     Update the presentation information on the layout
     """
     def update_presentation(self, data):
-        if self.slave_presentation is None:
-            print("Creating a new slave presentation widget")
-            slave_widget = SlavePresentation(data)
-            self.slave_presentation = slave_widget
-            self.ids.middle.add_widget(slave_widget)
+        print("Creating a new slave presentation widget")
+        slave_widget = SlavePresentation(data)
+        self.slave_presentation.append(slave_widget)
+        self.ids.middle.add_widget(slave_widget)
 
     """
     Update the presentation status on the layout
@@ -97,7 +96,8 @@ class MasterGUILayout(Screen):
     def update_presentation_status(self, data):
         print("päivitetään")
         self.increment()
-        self.slave_presentation.show_next()
+        for i in range(0, len(self.slave_presentation)):
+            self.slave_presentation[i].show_next()
 
     """
     Sets the slave address to be shown in the gui
@@ -228,10 +228,11 @@ class SlavePresentation(BoxLayout):
 
     def __init__(self, data):
         super(SlavePresentation, self).__init__()
-        self.presentation_data = data
+        self.ids["btn_address"].text = data.full_address
+        self.presentation_data = data.presentation
         self.visuals = []
-        self.current_active = data.pic_index - 1
-        self.create_visual_widgets(data)
+        self.current_active = data.presentation.pic_index - 1
+        self.create_visual_widgets(data.presentation)
 
     """
     Creates the visual widgets for the slave's visuals

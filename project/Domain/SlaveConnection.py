@@ -19,12 +19,14 @@ class SlaveConnection:
         self.master = master
         self.set_connection(connection)
         self.presentation = None
+        self.full_address = "localhost:8000"
 
     """
     Sets the connection to the slave
     """
     def set_connection(self, connection):
         self.connection = connection
+
 
     """
     Attempts to create a new RemuTCP-connection with the provided IP address
@@ -35,6 +37,7 @@ class SlaveConnection:
             ip_address = slave_address_parts[0] if len(slave_address_parts) > 0 else None
             port = slave_address_parts[1] if len(slave_address_parts) > 1 else 8000
             ipaddress.ip_address(ip_address)
+            self.full_address = ip_address + ":" + str(port)
             self.connection = RemuTCP(self, True, ip_address, int(port))
             print("Slave added")
         except ValueError as e:
@@ -94,7 +97,7 @@ class SlaveConnection:
         presentation.pic_index = data["pic_index"]
         presentation.pic_files = data["pic_files"]
         self.set_presentation(presentation)
-        self.master.notify(Notification.PRESENTATION_UPDATE, self.presentation)
+        self.master.notify(Notification.PRESENTATION_UPDATE, self)
 
     """
     Handles command to show next file
@@ -110,8 +113,8 @@ class SlaveConnection:
     def handle_invalid_command_response(self, data=None):
         print("Invalid command given")
 
-    def connection_established(self, address):
-        self.master.notify(Notification.CONNECTION_ESTABLISHED, address)
+    def connection_established(self, full_address):
+        self.master.notify(Notification.CONNECTION_ESTABLISHED, full_address)
 
     handle_responses = {Command.REQUEST_PRESENTATION.value: partial(handle_presentation_response),
                         Command.SHOW_NEXT.value: partial(handle_show_next_response),
