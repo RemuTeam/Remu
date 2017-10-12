@@ -21,12 +21,14 @@ kivy.require('1.10.0')
 BuildKV = Builder.load_file('GUI/remu.kv')
 
 class RemuApp(App):
-    guimaker = GUIFactory()
-    isMaster = False
-    slaves = None
-    master = None
-    servicemode = None
 
+    def __init__(self, **kwargs):
+        super(RemuApp, self).__init__(**kwargs)
+        self.guimaker = GUIFactory()
+        self.isMaster = False
+        self.slaves = None
+        self.master = None
+        self.servicemode = None
 
     """
     The building method uses the GUI/remu.kv file that produces the look of the requested layouts
