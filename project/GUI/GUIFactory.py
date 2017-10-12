@@ -285,8 +285,35 @@ Kivy-layout file.
 
 Inherits kivy.uix.screenmanager.ScreenManager
 """
-class ScreenManager(ScreenManager):
-    pass
+class RemuSM(ScreenManager):
+    def __init__(self, **kwargs):
+        super(RemuSM, self).__init__(**kwargs)
+        self.master_screen = None
+        self.slave_screen = None
+        self.presentation_screen = None
+
+    def add_master_layout(self):
+        self.master_screen = MasterGUILayout(name='master_gui_layout')
+        self.add_widget(self.master_screen)
+        self.current = 'master_gui_layout'
+
+    def add_slave_layout(self):
+        self.slave_screen = SlaveGUILayout(name='slave_gui_layout')
+        self.presentation_screen = PresentationLayout(name='presentation_layout')
+        self.add_widget(self.slave_screen)
+        self.add_widget(self.presentation_screen)
+        self.current = 'slave_gui_layout'
+
+    def change_screen_to(self, name):
+        self.current = name
+
+    def rm_master_layout(self):
+        self.remove_widget(self.master_screen)
+
+    def rm_slave_layout(self):
+        self.remove_widget(self.slave_screen)
+        self.remove_widget(self.presentation_screen)
+
 
 
 """

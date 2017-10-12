@@ -1,4 +1,4 @@
-ScreenManager:
+RemuSM:
     id: screen_manager
     SwitchLayout:
         id: switch_layout
@@ -25,11 +25,11 @@ ScreenManager:
             Button:
                 text: "Master"
                 size_hint: 0.3,0.3
-                on_release: app.root.current = 'master_gui_layout'
+                on_release: app.root.add_master_layout()
             Button:
                 text: "Slave"
                 size_hint: 0.3,0.3
-                on_release: app.root.current = 'slave_gui_layout'
+                on_release: app.root.add_slave_layout()
 
 #
 # MasterGUILayout contains a options bar, a bottom bar and a main view. Upper bar contains connection control, lower bar
@@ -37,7 +37,6 @@ ScreenManager:
 #
 <MasterGUILayout>:
     id: master_gui_layout
-    name: 'master_gui_layout'
     messages_sent: root.msg_sent
     orientation: 'vertical'
     spacing: 10
@@ -84,7 +83,6 @@ ScreenManager:
 # presentation layout
 #
 <SlaveGUILayout>:
-    name: "slave_gui_layout"
     orientation: 'vertical'
     spacing: 10
     padding: 10
@@ -100,7 +98,7 @@ ScreenManager:
                 size_hint: 0.3,0.3
                 text: "Go to presentation"
                 on_press: root.prepare_for_presentation_mode()
-                on_press: app.root.current = "presentation_layout"
+                on_press: app.root.change_screen_to("presentation_layout")
             Button:
                 size_hint:0.3,0.3
                 text: "Back"
@@ -110,8 +108,6 @@ ScreenManager:
 # PresentationLayout controls the slave devices presentation view
 #
 <PresentationLayout>:
-    name: "presentation_layout"
-
     BoxLayout:
         orientation: 'vertical'
         Image:
