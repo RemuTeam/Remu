@@ -271,6 +271,7 @@ class SlaveVisualProperty(Button):
 
     def on_press(self):
         print("Showing visual property information")
+        #TODO add logic to show image information on press
 
     def set_active(self):
         self.background_color = [0.3, 0.6, 0.3, 1]
