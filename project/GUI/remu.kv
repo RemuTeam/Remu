@@ -38,7 +38,6 @@ ScreenManager:
 <MasterGUILayout>:
     id: master_gui_layout
     name: 'master_gui_layout'
-    messages_sent: root.msg_sent
     orientation: 'vertical'
     spacing: 10
     padding: 10
@@ -52,7 +51,6 @@ ScreenManager:
             Button:
                 text: "Send message to slave"
                 on_press: root.send_message_to_slave()
-                on_press: msg_sent_amount.text = root.increment()
             Button:
                 text: "Back"
                 on_press: root.show_master_back_popup()
@@ -73,11 +71,6 @@ ScreenManager:
             size_hint: 1, 0.1
             Label:
                 text: root.label_text
-            Label:
-                text: "Messages sent: "
-            Label:
-                id: msg_sent_amount
-                text: "0"
 
 #
 # SlaveGUILayout contains the waiting view for slave mode. When the presentation starts, slave device changes to
@@ -116,11 +109,11 @@ ScreenManager:
         orientation: 'vertical'
         Image:
             id: picture
-            source: None
-        Button:
-            size_hint: 1, 0.05
-            text: "Simulate master signal"
-            on_press: root.button_pressed()
+            source: root.source
+        #Button:
+        #    size_hint: 1, 0.05
+        #    text: "Simulate master signal"
+        #    on_press: root.button_pressed()
 
 #
 # SlavePresentation represents a single slave of the master, with all of its visuals included

@@ -21,7 +21,7 @@ def test_switch_layout_components(simulator):
 def test_master_button_works(simulator):
     simulator.tap(get_from_layout("Switch", "Button", 1))
 
-    simulator.assert_text(get_from_layout("Master", "Label", 2), "Messages sent: ")
+    simulator.assert_text(get_from_layout("Master", "Button", 1), "Send message to slave")
 
 
 @pytest.mark.parametrize("params", [{}])
@@ -37,8 +37,6 @@ def test_master_gui(simulator):
     simulator.tap(get_from_layout("Switch", "Button", 1))
 
     simulator.assert_count(get_from_layout("Master", "Button"), 3)
-    simulator.tap(get_from_layout("Master", "Button", 1))
-    simulator.assert_text(get_from_layout("Master", "Label", 3), "1")
 
 @pytest.mark.parametrize("params", [{}])
 @simulate

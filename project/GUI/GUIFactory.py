@@ -3,10 +3,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.properties import StringProperty
-from Domain.Slave import Slave
-from Domain.Master import Master
 from Domain.Command import Notification
-from RemuTCP.RemuTCP import RemuTCP
 from kivy.app import App
 
 """
@@ -43,7 +40,6 @@ class MasterGUILayout(Screen):
     A variable for debugging purposes to track the amount
     of clicks in the GUI
     """
-    msg_sent = 0
     label_text = StringProperty('')
     slave_presentation = None
 
@@ -52,8 +48,7 @@ class MasterGUILayout(Screen):
         self.presentation = None
 
     def on_enter(self):
-        self.master = Master(self)
-        App.get_running_app().set_master(self.master)
+        self.master = App.get_running_app().get_master(self)
 
     """
     Sets the address for GUI purposes, but does not control the actual connection
@@ -66,14 +61,6 @@ class MasterGUILayout(Screen):
 
     def send_message_to_slave(self):
         self.master.request_next()
-
-    """
-    Increments the amount of clicks and returns the
-    incremented value.
-    """
-    def increment(self):
-        self.msg_sent += 1
-        return str(self.msg_sent)
 
     """
     Opens the warning pop-up to master, asking if they are sure they want to go back
@@ -96,7 +83,6 @@ class MasterGUILayout(Screen):
     """
     def update_presentation_status(self, data):
         print("päivitetään")
-        self.increment()
         self.slave_presentation.show_next()
 
     """
@@ -132,6 +118,7 @@ Inherits kivy.uix.screenmanager.Screen
 """
 class SlaveGUILayout(Screen):
 
+    # layout uses this StringProperty to show current service mode
     info_text = StringProperty('Currently in slave mode')
 
     """
@@ -140,14 +127,10 @@ class SlaveGUILayout(Screen):
     """
     def __init__(self, **kwargs):
         super(SlaveGUILayout, self).__init__(**kwargs)
-        self.showpic = False
         self.slave = None
 
     def on_pre_enter(self, *args):
-        if self.slave is None:
-            self.slave = Slave(self)
-            self.slave.set_master_connection(RemuTCP())
-            App.get_running_app().set_slave(self.slave)
+        App.get_running_app().get_slave(self)
 
     """
     Sets the app's main window to full screen and hides the
@@ -170,16 +153,18 @@ class SlaveGUILayout(Screen):
 Fullscreen layout for presenting content
 """
 class PresentationLayout(Screen):
+    source = StringProperty('')
+
     """
     In the constructor the class and instance are passed
     to the superclass' __init__ function
     """
     def __init__(self, **kwargs):
         super(PresentationLayout, self).__init__(**kwargs)
-        self.showpic = False
+        self.slave = None
 
     def button_pressed(self):
-        self.show_next()
+        self.show()
 
     def on_enter(self, *args):
         self.set_slave(App.get_running_app().servicemode)
@@ -192,12 +177,8 @@ class PresentationLayout(Screen):
     """
     Shows the next element of the show
     """
-    def show_next(self):
-        next_pic_filename = self.slave.presentation.get_next()
-        if next_pic_filename is not None:
-            self.ids.picture.source = next_pic_filename
-        else:
-            self.reset_presentation()
+    def show(self, source_file):
+        self.source = source_file
 
     """
     Resets the presentation to the starting state

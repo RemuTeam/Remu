@@ -15,6 +15,7 @@ class Slave:
         self.presentation = self.create_presentation()
         self.layout = layout
         self.master_connection = None
+        self.source = ''
 
     """
     Sets the slave's master_connection
@@ -52,7 +53,8 @@ class Slave:
     def handle_show_next(self):
         if not self.presentation.pic_files:
             self.presentation.get_filenames()
-        self.layout.show_next()
+        current = self.presentation.get_next()
+        self.layout.show(current)
         response = Message()
         response.set_field("responseTo", Command.SHOW_NEXT.value)
         return response
