@@ -252,6 +252,7 @@ class SlaveVisualProperty(Button):
 
     def on_press(self):
         print("Showing visual property information")
+        #TODO add logic to show image information on press
 
     def set_active(self):
         self.background_color = [0.3, 0.6, 0.3, 1]
@@ -261,13 +262,60 @@ class SlaveVisualProperty(Button):
 
 
 """
-Provides the GUI-layouts as different screens for the 
-Kivy-layout file.
+Handles changing the GUI-layouts as different screens for the 
+application, and also acts as the root widget
 
 Inherits kivy.uix.screenmanager.ScreenManager
 """
-class ScreenManager(ScreenManager):
-    pass
+class RemuSM(ScreenManager):
+
+    """
+    Initializes references to differents screens as 'None'
+    """
+    def __init__(self, **kwargs):
+        super(RemuSM, self).__init__(**kwargs)
+        self.master_screen = None
+        self.slave_screen = None
+        self.presentation_screen = None
+
+    """
+    Creates a new master layout, and sets it to be the current screen
+    """
+    def add_master_layout(self):
+        self.master_screen = MasterGUILayout(name='master_gui_layout')
+        self.add_widget(self.master_screen)
+        self.current = 'master_gui_layout'
+
+    """
+    Creates a new slave layout and a presentation layout, and sets the slave layout
+    to be the current screen
+    """
+    def add_slave_layout(self):
+        self.slave_screen = SlaveGUILayout(name='slave_gui_layout')
+        self.presentation_screen = PresentationLayout(name='presentation_layout')
+        self.add_widget(self.slave_screen)
+        self.add_widget(self.presentation_screen)
+        self.current = 'slave_gui_layout'
+
+    """
+    Changes the screen according to the screen name parameter
+    """
+    def change_screen_to(self, name):
+        self.current = name
+
+    """
+    Removes the master layout from screenmanager's screens
+    """
+    def rm_master_layout(self):
+        self.remove_widget(self.master_screen)
+
+    """
+    Removes the slave layout and the presentation layout from screenmanager's screens
+    """
+    def rm_slave_layout(self):
+        self.remove_widget(self.slave_screen)
+        self.remove_widget(self.presentation_screen)
+
 
 
 """
