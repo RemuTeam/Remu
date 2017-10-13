@@ -51,9 +51,11 @@ class Slave:
         if not self.presentation.pic_files:
             self.presentation.get_filenames()
         current = self.presentation.get_next()
-        self.layout.show(current)
+        if self.layout:
+            self.layout.show(current)
 
         return self.create_response(Command.SHOW_NEXT.value)
+
 
     """
     Handles invalid requests made by master, simply returns acknowledgement of 

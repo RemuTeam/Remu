@@ -41,7 +41,7 @@ class MasterGUILayout(Screen):
     of clicks in the GUI
     """
     label_text = StringProperty('')
-    slave_presentation = None
+    slave_presentation = []
 
     def __init__(self, **kwargs):
         super(MasterGUILayout, self).__init__(**kwargs)
@@ -72,18 +72,18 @@ class MasterGUILayout(Screen):
     Update the presentation information on the layout
     """
     def update_presentation(self, data):
-        if self.slave_presentation is None:
-            print("Creating a new slave presentation widget")
-            slave_widget = SlavePresentation(data)
-            self.slave_presentation = slave_widget
-            self.ids.middle.add_widget(slave_widget)
+        print("Creating a new slave presentation widget")
+        slave_widget = SlavePresentation(data)
+        self.slave_presentation.append(slave_widget)
+        self.ids.middle.add_widget(slave_widget)
 
     """
     Update the presentation status on the layout
     """
-    def update_presentation_status(self, data):
+    def update_presentation_status(self, data=None):
         print("päivitetään")
-        self.slave_presentation.show_next()
+        for i in range(0, len(self.slave_presentation)):
+            self.slave_presentation[i].update_status()
 
     """
     Sets the slave address to be shown in the gui
@@ -130,7 +130,8 @@ class SlaveGUILayout(Screen):
         self.slave = None
 
     def on_pre_enter(self, *args):
-        App.get_running_app().get_slave(self)
+        if self.slave is None:
+            self.slave = App.get_running_app().get_slave()
 
     """
     Sets the app's main window to full screen and hides the
@@ -171,6 +172,7 @@ class PresentationLayout(Screen):
         self.slave.set_layout(self)
         self.slave.presentation.get_filenames()
 
+
     def set_slave(self, slave):
         self.slave = slave
 
@@ -209,10 +211,14 @@ class SlavePresentation(BoxLayout):
 
     def __init__(self, data):
         super(SlavePresentation, self).__init__()
-        self.presentation_data = data
+        self.slave = data
+        self.ids["btn_address"].text = data.full_address
+        self.presentation_data = data.presentation
         self.visuals = []
-        self.current_active = data.pic_index - 1
-        self.create_visual_widgets(data)
+        self.current_active = data.presentation.pic_index - 1
+        self.create_visual_widgets(data.presentation)
+
+
 
     """
     Creates the visual widgets for the slave's visuals
@@ -225,16 +231,28 @@ class SlavePresentation(BoxLayout):
             self.ids.visuals.add_widget(visual)
         self.show_next()
 
+
     """
     Highlights the next visual, indicating it is the currently active visual
     """
     def show_next(self):
+        self.visuals[self.current_active].set_inactive()
         self.current_active = self.presentation_data.pic_index - 1
         if self.current_active is not -1:
-            self.visuals[self.current_active].set_inactive()
             self.visuals[self.current_active].set_active()
-        #self.current_active = self.presentation_data.pic_index
-        #self.visuals[self.current_active].set_active()
+
+    """
+    Checks if the tracked SlaveConnection has updated; updates the widget if needed
+    """
+    def update_status(self):
+        if not self.slave.connected:
+            self.ids["btn_address"].background_color = [0.94, 0.025, 0.15, 1]
+        self.show_next()
+
+
+    def get_address(self):
+        return self.ids["btn_address"].text
+
 
 
 """
@@ -258,7 +276,7 @@ class SlaveVisualProperty(Button):
         self.background_color = [0.3, 0.6, 0.3, 1]
 
     def set_inactive(self):
-        self.background_color = [0.3, 0.3, 0.3, 1]
+        self.background_color = [0.5, 0.5, 0.5, 1]
 
 
 """
