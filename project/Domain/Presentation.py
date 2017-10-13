@@ -31,7 +31,7 @@ class Presentation:
         pass
 
     """
-    Requests the presentation to reload its elements without 
+    Requests the presentation to reload its elements without resetting
     """
     def reload(self):
         pass

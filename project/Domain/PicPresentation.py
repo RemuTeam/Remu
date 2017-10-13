@@ -66,9 +66,9 @@ class PicPresentation(Presentation):
     index:  an integer, the index of the image file
     """
     def get(self, index):
-        if index < len(self.pic_files):
+        if -1 < index < len(self.pic_files):
             next_file = self.pic_files[index]
-            self.pic_index += 1
+            self.pic_index = index + 1
             return next_file
         else:
             return None
@@ -88,6 +88,7 @@ class PicPresentation(Presentation):
 
     """
     Empties the list of image files and reloads them again
+    without resetting the presentation
     """
     def reload(self):
         del self.pic_files[:]
