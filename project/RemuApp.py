@@ -7,6 +7,7 @@ from GUI.GUIFactory import GUIFactory
 from kivy.app import App
 from kivy.lang.builder import Builder
 from Domain.Slave import Slave
+from Domain.Master import Master
 
 """
     HANDLES THE NAMING OF SLAVES AND MASTER AND THE MESSAGE SENT
@@ -21,12 +22,13 @@ kivy.require('1.10.0')
 BuildKV = Builder.load_file('GUI/remu.kv')
 
 class RemuApp(App):
-    guimaker = GUIFactory()
-    isMaster = False
-    slaves = None
-    master = None
-    servicemode = None
 
+    def __init__(self, **kwargs):
+        super(RemuApp, self).__init__(**kwargs)
+        self.isMaster = False
+        self.slaves = None
+        self.master = None
+        self.servicemode = None
 
     """
     The building method uses the GUI/remu.kv file that produces the look of the requested layouts
@@ -34,18 +36,68 @@ class RemuApp(App):
     """
 
     def build(self):
-        self.guimaker.set_parent(self)
         return BuildKV
+
     """
-    RemuApp sets slaves and master with boolean parameter isMaster
+    Set Master object as service mode
+    
+    master: the object to set as master
     """
     def set_master(self, master):
         self.isMaster = True
         self.servicemode = master
 
+    """
+    Set Slave object as service mode
+    
+    slave: the object to set as slave
+    """
     def set_slave(self, slave):
         self.isMaster = False
         self.servicemode = slave
+
+    """
+    Get the app's Master
+    Creates a new Master object as self.servicemode if not set
+    
+    layout: the layout to bind with self.servicemode
+    """
+    def get_master(self, layout):
+        if self.servicemode is None:
+            self.create_master(layout)
+
+        return self.servicemode
+
+    """
+    Get the app's Slave
+    Creates a new Slave object as self.servicemode if not set
+
+    layout: the layout to bind with self.servicemode
+    """
+    def get_slave(self):
+        if self.servicemode is None:
+            self.create_slave()
+
+        return self.servicemode
+
+    """
+    Creates a new Master object and sets it as self.servicemode
+    
+    layout: the layout to bind with self.servicemode
+    """
+    def create_master(self, layout):
+        new_master = Master(layout)
+        self.set_master(new_master)
+
+    """
+    Creates a new Slave object and sets it as self.servicemode
+
+    layout: the layout to bind with self.servicemode
+    """
+    def create_slave(self):
+        new_slave = Slave()
+        new_slave.set_master_connection(RemuTCP())
+        self.set_slave(new_slave)
 
     """
     Ends the presentation by calling the current servicemode's end_presentation method.

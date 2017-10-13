@@ -1,6 +1,6 @@
-import ipaddress
 from Domain.SlaveConnection import SlaveConnection
 from Domain.Command import Notification
+
 
 class Master:
 
@@ -10,34 +10,42 @@ class Master:
     layout: the layout to be notified on changes
     """
     def __init__(self, layout):
-        self.slave_connection = None
+        self.slave_connections = {}
         self.layout = layout
 
     """
     Adds a slave connection by creating a new RemuTCP object
-    and setting it as self.slave_connection
+    and appending it to self.slave_connection
     
     address: an ip-string formatted as "ipa.ddr.es.s:port"
     """
     def add_slave(self, slave_address):
-        self.slave_connection = SlaveConnection(self)
-        self.slave_connection.connect_to_IP(slave_address)
+        slave_to_connect = SlaveConnection(self)
+        slave_to_connect.connect_to_IP(slave_address)
+        self.slave_connections[slave_to_connect.full_address] = slave_to_connect
 
     """
-    Adds a pre-constructed RemuTCP object to slave_connections
+    Adds a pre-constructed SlaveConnection object to slave_connections
     
-    slave_connection: RemuTCP object
+    slave_connection: SlaveConnection object
     """
     def add_slave_connection(self, slave_connection):
-        self.slave_connection = slave_connection
+        self.slave_connections[slave_connection.full_address] = slave_connection
 
     """
-    Asks the slave to show the next visual
+    Asks the slaves to show their next visuals
     """
     def request_next(self):
-        if self.slave_connection is not None:
-            self.slave_connection.show_next()
+        for connection in self.slave_connections.values():
+            connection.show_next()
 
+    """
+    Asks a slave to show their next visual.
+    Slave is chosen by its IP-address
+    """
+    def request_specific_next(self, address):
+        if self.slave_connections[address]:
+            self.slave.connection[address].show_next()
     """
     Handles the received notification from a slave connection
 
@@ -62,25 +70,27 @@ class Master:
     notification:   a Notification enum object instance
     data:           an object instance
     """
-    def update_connection(self, notification, data):
-        self.layout.notify(notification, data)
+    def update_connection(self, notification, full_address):
+        self.layout.notify(notification, full_address)
         if notification == Notification.CONNECTION_ESTABLISHED:
             print("now asking for the presentation")
-            self.slave_connection.request_presentation()
+            self.slave_connections[full_address].request_presentation()
+        if notification == Notification.CONNECTION_FAILED:
+            self.layout.update_presentation_status(full_address)
 
     """
     Informs the slave connection about the presentation ending
     """
     def end_presentation(self):
-        if self.slave_connection is not None:
-            self.slave_connection.end_presentation()
+        for slave in self.slave_connections.values():
+            slave.end_presentation()
 
     """
     Closes all connections to slaves
     """
     def close_connections(self):
-        if self.slave_connection is not None:
-            self.slave_connection.connection.end_connection()
+        for slave in self.slave_connections.values():
+            slave.connection.end_connection()
 
     """
     A dictionary of Notification-Function pairs for the purpose of

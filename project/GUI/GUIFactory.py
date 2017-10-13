@@ -3,10 +3,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.properties import StringProperty
-from Domain.Slave import Slave
-from Domain.Master import Master
 from Domain.Command import Notification
-from RemuTCP.RemuTCP import RemuTCP
 from kivy.app import App
 
 """
@@ -43,17 +40,15 @@ class MasterGUILayout(Screen):
     A variable for debugging purposes to track the amount
     of clicks in the GUI
     """
-    msg_sent = 0
     label_text = StringProperty('')
-    slave_presentation = None
+    slave_presentation = []
 
     def __init__(self, **kwargs):
         super(MasterGUILayout, self).__init__(**kwargs)
         self.presentation = None
 
     def on_enter(self):
-        self.master = Master(self)
-        App.get_running_app().set_master(self.master)
+        self.master = App.get_running_app().get_master(self)
 
     """
     Sets the address for GUI purposes, but does not control the actual connection
@@ -68,14 +63,6 @@ class MasterGUILayout(Screen):
         self.master.request_next()
 
     """
-    Increments the amount of clicks and returns the
-    incremented value.
-    """
-    def increment(self):
-        self.msg_sent += 1
-        return str(self.msg_sent)
-
-    """
     Opens the warning pop-up to master, asking if they are sure they want to go back
     """
     def show_master_back_popup(self):
@@ -85,19 +72,18 @@ class MasterGUILayout(Screen):
     Update the presentation information on the layout
     """
     def update_presentation(self, data):
-        if self.slave_presentation is None:
-            print("Creating a new slave presentation widget")
-            slave_widget = SlavePresentation(data)
-            self.slave_presentation = slave_widget
-            self.ids.middle.add_widget(slave_widget)
+        print("Creating a new slave presentation widget")
+        slave_widget = SlavePresentation(data)
+        self.slave_presentation.append(slave_widget)
+        self.ids.middle.add_widget(slave_widget)
 
     """
     Update the presentation status on the layout
     """
-    def update_presentation_status(self, data):
+    def update_presentation_status(self, data=None):
         print("päivitetään")
-        self.increment()
-        self.slave_presentation.show_next()
+        for i in range(0, len(self.slave_presentation)):
+            self.slave_presentation[i].update_status()
 
     """
     Sets the slave address to be shown in the gui
@@ -132,6 +118,7 @@ Inherits kivy.uix.screenmanager.Screen
 """
 class SlaveGUILayout(Screen):
 
+    # layout uses this StringProperty to show current service mode
     info_text = StringProperty('Currently in slave mode')
 
     """
@@ -140,14 +127,11 @@ class SlaveGUILayout(Screen):
     """
     def __init__(self, **kwargs):
         super(SlaveGUILayout, self).__init__(**kwargs)
-        self.showpic = False
         self.slave = None
 
     def on_pre_enter(self, *args):
         if self.slave is None:
-            self.slave = Slave(self)
-            self.slave.set_master_connection(RemuTCP())
-            App.get_running_app().set_slave(self.slave)
+            self.slave = App.get_running_app().get_slave()
 
     """
     Sets the app's main window to full screen and hides the
@@ -170,21 +154,24 @@ class SlaveGUILayout(Screen):
 Fullscreen layout for presenting content
 """
 class PresentationLayout(Screen):
+    source = StringProperty('')
+
     """
     In the constructor the class and instance are passed
     to the superclass' __init__ function
     """
     def __init__(self, **kwargs):
         super(PresentationLayout, self).__init__(**kwargs)
-        self.showpic = False
+        self.slave = None
 
     def button_pressed(self):
-        self.show_next()
+        self.show()
 
     def on_enter(self, *args):
         self.set_slave(App.get_running_app().servicemode)
         self.slave.set_layout(self)
         self.slave.presentation.get_filenames()
+
 
     def set_slave(self, slave):
         self.slave = slave
@@ -192,12 +179,8 @@ class PresentationLayout(Screen):
     """
     Shows the next element of the show
     """
-    def show_next(self):
-        next_pic_filename = self.slave.presentation.get_next()
-        if next_pic_filename is not None:
-            self.ids.picture.source = next_pic_filename
-        else:
-            self.reset_presentation()
+    def show(self, source_file):
+        self.source = source_file
 
     """
     Resets the presentation to the starting state
@@ -228,10 +211,14 @@ class SlavePresentation(BoxLayout):
 
     def __init__(self, data):
         super(SlavePresentation, self).__init__()
-        self.presentation_data = data
+        self.slave = data
+        self.ids["btn_address"].text = data.full_address
+        self.presentation_data = data.presentation
         self.visuals = []
-        self.current_active = data.pic_index - 1
-        self.create_visual_widgets(data)
+        self.current_active = data.presentation.pic_index - 1
+        self.create_visual_widgets(data.presentation)
+
+
 
     """
     Creates the visual widgets for the slave's visuals
@@ -244,16 +231,28 @@ class SlavePresentation(BoxLayout):
             self.ids.visuals.add_widget(visual)
         self.show_next()
 
+
     """
     Highlights the next visual, indicating it is the currently active visual
     """
     def show_next(self):
+        self.visuals[self.current_active].set_inactive()
         self.current_active = self.presentation_data.pic_index - 1
         if self.current_active is not -1:
-            self.visuals[self.current_active].set_inactive()
             self.visuals[self.current_active].set_active()
-        #self.current_active = self.presentation_data.pic_index
-        #self.visuals[self.current_active].set_active()
+
+    """
+    Checks if the tracked SlaveConnection has updated; updates the widget if needed
+    """
+    def update_status(self):
+        if not self.slave.connected:
+            self.ids["btn_address"].background_color = [0.94, 0.025, 0.15, 1]
+        self.show_next()
+
+
+    def get_address(self):
+        return self.ids["btn_address"].text
+
 
 
 """
@@ -271,22 +270,72 @@ class SlaveVisualProperty(Button):
 
     def on_press(self):
         print("Showing visual property information")
+        #TODO add logic to show image information on press
 
     def set_active(self):
         self.background_color = [0.3, 0.6, 0.3, 1]
 
     def set_inactive(self):
-        self.background_color = [0.3, 0.3, 0.3, 1]
+        self.background_color = [0.5, 0.5, 0.5, 1]
 
 
 """
-Provides the GUI-layouts as different screens for the 
-Kivy-layout file.
+Handles changing the GUI-layouts as different screens for the 
+application, and also acts as the root widget
 
 Inherits kivy.uix.screenmanager.ScreenManager
 """
-class ScreenManager(ScreenManager):
-    pass
+class RemuSM(ScreenManager):
+
+    """
+    Initializes references to differents screens as 'None'
+    """
+    def __init__(self, **kwargs):
+        super(RemuSM, self).__init__(**kwargs)
+        self.master_screen = None
+        self.slave_screen = None
+        self.presentation_screen = None
+
+    """
+    Creates a new master layout, and sets it to be the current screen
+    """
+    def add_master_layout(self):
+        self.master_screen = MasterGUILayout(name='master_gui_layout')
+        self.add_widget(self.master_screen)
+        self.current = 'master_gui_layout'
+
+    """
+    Creates a new slave layout and a presentation layout, and sets the slave layout
+    to be the current screen
+    """
+    def add_slave_layout(self):
+        self.slave_screen = SlaveGUILayout(name='slave_gui_layout')
+        self.presentation_screen = PresentationLayout(name='presentation_layout')
+        self.add_widget(self.slave_screen)
+        self.add_widget(self.presentation_screen)
+        self.current = 'slave_gui_layout'
+
+    """
+    Changes the screen according to the screen name parameter
+    """
+    def change_screen_to(self, name):
+        self.current = name
+
+    """
+    Removes the master layout from screenmanager's screens
+    """
+    def rm_master_layout(self):
+        self.remove_widget(self.master_screen)
+        self.change_screen_to("switch_layout")
+
+    """
+    Removes the slave layout and the presentation layout from screenmanager's screens
+    """
+    def rm_slave_layout(self):
+        self.remove_widget(self.slave_screen)
+        self.remove_widget(self.presentation_screen)
+        self.change_screen_to("switch_layout")
+
 
 
 """

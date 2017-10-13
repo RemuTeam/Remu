@@ -16,8 +16,8 @@ class PicPresentationTest(unittest.TestCase):
         self.assertCountEqual(self.pic_presentation.get_next(), 'images/b.jpg')
 
     def test_no_pics(self):
-        self.pic_presentation.get_next()
-        self.pic_presentation.get_next()
+        for i in range(0, len(self.pic_presentation.pic_files)):
+            self.pic_presentation.get_next()
         self.assertIsNone(self.pic_presentation.get_next())
 
     def test_reset(self):
