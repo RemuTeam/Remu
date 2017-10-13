@@ -40,10 +40,7 @@ class Slave:
     def handle_request_presentation(self):
         if not self.presentation.pic_files:
             self.presentation.get_filenames()
-        response = Message()
-        response.set_field("responseTo", Command.REQUEST_PRESENTATION.value)
-        response.set_field("data", self.presentation.__dict__)
-        return response
+        return self.create_response(Command.REQUEST_PRESENTATION.value, self.presentation.__dict__)
 
     """
     Handles requests to show the next picture in the presentation, 
@@ -55,18 +52,15 @@ class Slave:
             self.presentation.get_filenames()
         current = self.presentation.get_next()
         self.layout.show(current)
-        response = Message()
-        response.set_field("responseTo", Command.SHOW_NEXT.value)
-        return response
+
+        return self.create_response(Command.SHOW_NEXT.value)
 
     """
     Handles invalid requests made by master, simply returns acknowledgement of 
     an invalid command without changing anything
     """
     def handle_invalid_command(self):
-        response = Message()
-        response.set_field("responseTo", Command.INVALID_COMMAND.value)
-        return response
+        return self.create_response(Command.INVALID_COMMAND.value)
 
     """
     Handles the ending of the presentation.
@@ -75,8 +69,17 @@ class Slave:
         if not self.presentation.pic_files:
             self.presentation.get_filenames()
         self.layout.reset_presentation()
+
+        return self.create_response(Command.END_PRESENTATION.value)
+
+    """
+    Creates a instance of Message based on the given command
+    """
+    def create_response(self, command, data=None):
         response = Message()
-        response.set_field("responseTo", Command.END_PRESENTATION.value)
+        response.set_field("responseTo", command)
+        if data is not None:
+            response.set_field("data", data)
         return response
 
     # Messagehandler

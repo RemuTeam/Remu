@@ -1,6 +1,6 @@
-import ipaddress
 from Domain.SlaveConnection import SlaveConnection
 from Domain.Command import Notification
+
 
 class Master:
 
