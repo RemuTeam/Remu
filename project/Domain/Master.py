@@ -10,7 +10,7 @@ class Master:
     layout: the layout to be notified on changes
     """
     def __init__(self, layout):
-        self.slave_connection = {}
+        self.slave_connections = {}
         self.layout = layout
 
     """
@@ -22,7 +22,7 @@ class Master:
     def add_slave(self, slave_address):
         slave_to_connect = SlaveConnection(self)
         slave_to_connect.connect_to_IP(slave_address)
-        self.slave_connection[slave_to_connect.full_address] = slave_to_connect
+        self.slave_connections[slave_to_connect.full_address] = slave_to_connect
 
     """
     Adds a pre-constructed SlaveConnection object to slave_connections
@@ -30,15 +30,22 @@ class Master:
     slave_connection: SlaveConnection object
     """
     def add_slave_connection(self, slave_connection):
-        self.slave_connection[slave_connection.full_address] = slave_connection
+        self.slave_connections[slave_connection.full_address] = slave_connection
 
     """
     Asks the slaves to show their next visuals
     """
     def request_next(self):
-        for connection in self.slave_connection.values():
+        for connection in self.slave_connections.values():
             connection.show_next()
 
+    """
+    Asks a slave to show their next visual.
+    Slave is chosen by its IP-address
+    """
+    def request_specific_next(self, address):
+        if self.slave_connections[address]:
+            self.slave.connection[address].show_next()
     """
     Handles the received notification from a slave connection
 
@@ -67,20 +74,22 @@ class Master:
         self.layout.notify(notification, full_address)
         if notification == Notification.CONNECTION_ESTABLISHED:
             print("now asking for the presentation")
-            self.slave_connection[full_address].request_presentation()
+            self.slave_connections[full_address].request_presentation()
+        if notification == Notification.CONNECTION_FAILED:
+            self.layout.update_presentation_status(full_address)
 
     """
     Informs the slave connection about the presentation ending
     """
     def end_presentation(self):
-        for slave in self.slave_connection.values():
+        for slave in self.slave_connections.values():
             slave.end_presentation()
 
     """
     Closes all connections to slaves
     """
     def close_connections(self):
-        for slave in self.slave_connection.values():
+        for slave in self.slave_connections.values():
             slave.connection.end_connection()
 
     """

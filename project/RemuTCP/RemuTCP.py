@@ -58,6 +58,7 @@ class RemuProtocolFactory(protocol.ClientFactory):
 
     def clientConnectionLost(self, connector, reason):
         print('Lost connection.')
+        self.connection.parent.on_connection_lost()
 
     def clientConnectionFailed(self, connector, reason):
         print('Connection failed.')

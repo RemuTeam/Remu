@@ -20,6 +20,7 @@ class SlaveConnection:
         self.set_connection(connection)
         self.presentation = None
         self.full_address = "localhost:8000"
+        self.connected = self.connection is not None
 
     """
     Sets the connection to the slave
@@ -104,6 +105,8 @@ class SlaveConnection:
     """
     def handle_show_next_response(self, data=None):
         next_item = self.presentation.get_next()
+        if next_item is None:
+            self.presentation.reset()
         self.currently_showing = next_item
         self.master.notify(Notification.PRESENTATION_STATUS_CHANGE, next_item)
 
@@ -114,6 +117,7 @@ class SlaveConnection:
         print("Invalid command given")
 
     def connection_established(self, full_address):
+        self.connected = True
         self.master.notify(Notification.CONNECTION_ESTABLISHED, full_address)
 
     handle_responses = {Command.REQUEST_PRESENTATION.value: partial(handle_presentation_response),
@@ -130,3 +134,10 @@ class SlaveConnection:
         if "responseTo" in msg.fields:
             self.handle_responses[msg.get_response()](self, msg.get_data())
                 
+
+    """
+    Called from RemuTCP when the connection is lost; used to notify GUI of the status
+    """
+    def on_connection_lost(self):
+        self.connected = False
+        self.master.notify(Notification.CONNECTION_FAILED, self.full_address)

@@ -21,7 +21,7 @@ kivy.require('1.10.0')
 BuildKV = Builder.load_file('GUI/remu.kv')
 
 class RemuApp(App):
-    guimaker = GUIFactory()
+    #guimaker = GUIFactory()
     isMaster = False
     slaves = None
     master = None
@@ -34,7 +34,7 @@ class RemuApp(App):
     """
 
     def build(self):
-        self.guimaker.set_parent(self)
+        #self.guimaker.set_parent(self)
         return BuildKV
     """
     RemuApp sets slaves and master with boolean parameter isMaster
