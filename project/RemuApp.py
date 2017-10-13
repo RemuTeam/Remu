@@ -1,5 +1,3 @@
-import ipaddress
-
 import kivy
 
 from RemuTCP.RemuTCP import RemuTCP
@@ -66,7 +64,7 @@ class RemuApp(App):
     """
     def get_master(self, layout):
         if self.servicemode is None:
-            self.create_master(layout)
+            self.__create_master(layout)
 
         return self.servicemode
 
@@ -78,7 +76,7 @@ class RemuApp(App):
     """
     def get_slave(self, layout):
         if self.servicemode is None:
-            self.create_slave(layout)
+            self.__create_slave(layout)
 
         return self.servicemode
 
@@ -87,7 +85,7 @@ class RemuApp(App):
     
     layout: the layout to bind with self.servicemode
     """
-    def create_master(self, layout):
+    def __create_master(self, layout):
         new_master = Master(layout)
         self.set_master(new_master)
 
@@ -96,7 +94,7 @@ class RemuApp(App):
 
     layout: the layout to bind with self.servicemode
     """
-    def create_slave(self, layout):
+    def __create_slave(self, layout):
         new_slave = Slave(layout)
         new_slave.set_master_connection(RemuTCP())
         self.set_slave(new_slave)
@@ -106,7 +104,15 @@ class RemuApp(App):
     slave servicemode end_presentation not yet implemented
     """
     def end_presentation(self):
-        self.servicemode.end_presentation()
+        if self.isMaster:
+            self.servicemode.end_presentation()
+
+    def reset_servicemode(self):
+        self.end_presentation()
+        self.close_connections()
+        print("I've done reset 'em all, self.servicemode was " + str(self.servicemode))
+        self.servicemode = None
+        print("and is now " + str(self.servicemode))
 
     """
         Closes all established connections and stops listening to any future connection attempts.

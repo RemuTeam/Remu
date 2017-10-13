@@ -1,5 +1,6 @@
 import os
 from PIL import Image
+from Domain.Presentation import Presentation
 
 """
 This class contains the data and functionality 
@@ -7,7 +8,7 @@ of a picture presentation
 """
 
 
-class PicPresentation():
+class PicPresentation(Presentation):
     IMAGE_PATH = "images"
 
     """
@@ -21,10 +22,9 @@ class PicPresentation():
     Loads the pictures to the presentation
     The directory to load the files from is "images"
     """
-    def get_filenames(self):
+    def __get_filenames(self):
         if len(self.pic_files) == 0:
             path = os.path.join(os.getcwd(), self.IMAGE_PATH)
-            print(str(path))
             self.get_pics_from_path(path)
 
     """
@@ -34,7 +34,6 @@ class PicPresentation():
     def get_pics_from_path(self, path):
         for filename in os.listdir(path):
             relative_filename = self.IMAGE_PATH + "/" + filename
-            print(str(relative_filename))
             if self.filetype_is_supported(relative_filename):
                 self.pic_files.append(relative_filename)
 
@@ -58,8 +57,17 @@ class PicPresentation():
     Returns None if no more pictures are available
     """
     def get_next(self):
-        if self.pic_index < len(self.pic_files):
-            next_file = self.pic_files[self.pic_index]
+        return self.get(self.pic_index)
+
+    """
+    Returns the image file of the index
+    Returns None if the list has no such index
+    
+    index:  an integer, the index of the image file
+    """
+    def get(self, index):
+        if index < len(self.pic_files):
+            next_file = self.pic_files[index]
             self.pic_index += 1
             return next_file
         else:
@@ -70,3 +78,17 @@ class PicPresentation():
     """
     def reset(self):
         self.pic_index = 0
+
+    """
+    Loads the presentation's elements and resets the presentation
+    """
+    def load(self):
+        self.__get_filenames()
+        self.reset()
+
+    """
+    Empties the list of image files and reloads them again
+    """
+    def reload(self):
+        del self.pic_files[:]
+        self.__get_filenames()

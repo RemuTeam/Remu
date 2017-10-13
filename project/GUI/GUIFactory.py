@@ -169,7 +169,7 @@ class PresentationLayout(Screen):
     def on_enter(self, *args):
         self.set_slave(App.get_running_app().servicemode)
         self.slave.set_layout(self)
-        self.slave.presentation.get_filenames()
+        self.slave.reset_presentation()
 
     def set_slave(self, slave):
         self.slave = slave
@@ -186,7 +186,7 @@ class PresentationLayout(Screen):
     def reset_presentation(self):
         self.ids.picture.source = ''
         self.get_root_window().show_cursor = True
-        self.slave.presentation.reset()
+        self.slave.reset_presentation()
         self.parent.get_screen('slave_gui_layout').set_info_text("Presentation ended\nCurrently in slave mode")
         App.get_running_app().root.current = "slave_gui_layout"
 
@@ -196,6 +196,7 @@ break the connection
 """
 class MasterBackPopUp(Popup):
     pass
+
 class SlaveBackPopUp(Popup):
     pass
 

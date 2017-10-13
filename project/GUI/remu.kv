@@ -137,8 +137,7 @@ RemuSM:
             orientation: 'horizontal'
             Button:
                 text: "Yes"
-                on_press: app.end_presentation()
-                on_press: app.close_connections()
+                on_press: app.reset_servicemode()
                 on_press: root.dismiss()
                 on_release: app.root.rm_master_layout()
                 size_hint: 0.3,0.3
@@ -157,7 +156,7 @@ RemuSM:
             orientation: 'horizontal'
             Button:
                 text: "Yes"
-                on_press: app.close_connections()
+                on_press: app.reset_servicemode()
                 on_press: root.dismiss()
                 on_release: app.root.rm_slave_layout()
                 size_hint: 0.3,0.3

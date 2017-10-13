@@ -6,7 +6,7 @@ class PicPresentationTest(unittest.TestCase):
 
     def setUp(self):
         self.pic_presentation = PicPresentation()
-        self.pic_presentation.get_filenames()
+        self.pic_presentation.load()
 
     def test_get_first_pic(self):
         self.assertCountEqual(self.pic_presentation.get_next(), 'images/a.jpg')
@@ -25,3 +25,18 @@ class PicPresentationTest(unittest.TestCase):
         self.assertEqual(self.pic_presentation.pic_index, 1)
         self.pic_presentation.reset()
         self.assertEqual(self.pic_presentation.pic_index, 0)
+
+    def test_reload(self):
+        original_filenames = self.pic_presentation.pic_files.copy()
+        alternative_filenames = ["1.jpg", "2.jpg"]
+        self.pic_presentation.pic_files = alternative_filenames
+        self.assertEqual(alternative_filenames, self.pic_presentation.pic_files)
+        self.pic_presentation.reload()
+        self.assertEqual(original_filenames, self.pic_presentation.pic_files)
+
+    def test_get_filenames(self):
+        alternative_filenames = ["1.jpg", "2.jpg"]
+        self.pic_presentation.pic_files = alternative_filenames
+        self.assertEqual(alternative_filenames, self.pic_presentation.pic_files)
+        self.pic_presentation.load()
+        self.assertEqual(alternative_filenames, self.pic_presentation.pic_files)

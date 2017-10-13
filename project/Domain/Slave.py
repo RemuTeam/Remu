@@ -33,13 +33,17 @@ class Slave:
     def create_presentation(self):
         return PicPresentation()
 
+    def reset_presentation(self):
+        self.source = ''
+        self.presentation.reset()
+
     """
     Handles requests for the presentation made by the master, returns the
     presentation with the response
     """
     def handle_request_presentation(self):
         if not self.presentation.pic_files:
-            self.presentation.get_filenames()
+            self.presentation.load()
         response = Message()
         response.set_field("responseTo", Command.REQUEST_PRESENTATION.value)
         response.set_field("data", self.presentation.__dict__)
@@ -52,7 +56,7 @@ class Slave:
     """
     def handle_show_next(self):
         if not self.presentation.pic_files:
-            self.presentation.get_filenames()
+            self.presentation.load()
         current = self.presentation.get_next()
         self.layout.show(current)
         response = Message()
@@ -73,7 +77,7 @@ class Slave:
     """
     def handle_ending_presentation(self):
         if not self.presentation.pic_files:
-            self.presentation.get_filenames()
+            self.presentation.reset()
         self.layout.reset_presentation()
         response = Message()
         response.set_field("responseTo", Command.END_PRESENTATION.value)
