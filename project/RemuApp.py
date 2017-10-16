@@ -2,7 +2,7 @@ import ipaddress
 
 import kivy
 
-from RemuTCP.RemuTCP import RemuTCP
+from Networking.RemuTCP import RemuTCP
 from GUI.GUIFactory import GUIFactory
 from kivy.app import App
 from kivy.lang.builder import Builder

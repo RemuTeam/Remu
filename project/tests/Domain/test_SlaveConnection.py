@@ -1,6 +1,6 @@
 import unittest
 from Domain.SlaveConnection import SlaveConnection
-from RemuTCP.RemuTCP import RemuTCP
+from Networking.RemuTCP import RemuTCP
 from unittest.mock import Mock
 from Domain.PicPresentation import PicPresentation
 from Domain.Slave import Slave

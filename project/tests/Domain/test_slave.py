@@ -1,7 +1,7 @@
 from Domain.Slave import Slave
 from Domain.Message import Message
 from Domain.Command import Command
-from RemuTCP.RemuTCP import RemuTCP
+from Networking.RemuTCP import RemuTCP
 from GUI.GUIFactory import PresentationLayout
 import unittest
 from unittest.mock import Mock

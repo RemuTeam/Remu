@@ -1,6 +1,6 @@
 import unittest
 import time
-from RemuTCP.RemuTCP import RemuTCP
+from Networking.RemuTCP import RemuTCP
 
 class TestRemuTCPMethods(unittest.TestCase):
 
