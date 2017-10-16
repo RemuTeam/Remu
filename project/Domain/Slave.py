@@ -1,7 +1,7 @@
 from Domain.PicPresentation import PicPresentation
 from Domain.Message import Message
 from Domain.Command import Command
-
+from Networking.RemuUDP import Beacon
 """
 CONTAINS SLAVE'S ADMINISTRATIVE AND PRESENTATIONAL DATA
 """
@@ -16,6 +16,8 @@ class Slave:
         self.layout = layout
         self.master_connection = None
         self.source = ''
+        self.beacon = Beacon()
+        self.beacon.main()
 
     """
     Sets the slave's master_connection
