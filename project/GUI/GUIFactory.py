@@ -251,8 +251,7 @@ class SlaveVisualProperty(Button):
         self.background_color = [0.5, 0.5, 0.5, 1]
 
     def on_press(self):
-        print("Showing visual property information")
-        #TODO add logic to show image information on press
+        print("Showing visual property information not yet implemented!")
 
     def set_active(self):
         self.background_color = [0.3, 0.6, 0.3, 1]
@@ -317,7 +316,6 @@ class RemuSM(ScreenManager):
         self.remove_widget(self.slave_screen)
         self.remove_widget(self.presentation_screen)
         self.change_screen_to("switch_layout")
-
 
 
 """
