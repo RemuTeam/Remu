@@ -72,6 +72,13 @@ class SlaveConnection:
         self.__send_command(Command.SHOW_NEXT.value)
 
     """
+        Ask slave to 
+    """
+    def terminate_connection(self):
+        self.__send_command(Command.DROP_CONNECTION.value)
+        self.master.notify()
+
+    """
         Called when slave responds to command "show_next"
         Advances presentation to next item
     """
@@ -120,10 +127,10 @@ class SlaveConnection:
         self.connected = True
         self.master.notify(Notification.CONNECTION_ESTABLISHED, full_address)
 
-    handle_responses = {Command.REQUEST_PRESENTATION.value: partial(handle_presentation_response),
-                        Command.SHOW_NEXT.value: partial(handle_show_next_response),
-                        Command.END_PRESENTATION.value: partial(handle_ending_presentation),
-                        Command.INVALID_COMMAND.value: partial(handle_invalid_command_response)
+    handle_responses = {Command.REQUEST_PRESENTATION.value: handle_presentation_response,
+                        Command.SHOW_NEXT.value: handle_show_next_response,
+                        Command.END_PRESENTATION.value: handle_ending_presentation,
+                        Command.INVALID_COMMAND.value: handle_invalid_command_response
                         }
 
     """

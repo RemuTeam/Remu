@@ -45,7 +45,7 @@ class Master:
     """
     def request_specific_next(self, address):
         if self.slave_connections[address]:
-            self.slave.connection[address].show_next()
+            self.slave_connections[address].show_next()
     """
     Handles the received notification from a slave connection
 

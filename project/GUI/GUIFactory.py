@@ -41,7 +41,7 @@ class MasterGUILayout(Screen):
     of clicks in the GUI
     """
     label_text = StringProperty('')
-    slave_presentation = []
+    slave_presentation = {}
 
     def __init__(self, **kwargs):
         super(MasterGUILayout, self).__init__(**kwargs)
@@ -72,9 +72,11 @@ class MasterGUILayout(Screen):
     Update the presentation information on the layout
     """
     def update_presentation(self, data):
+        if data.full_address in self.slave_presentation:
+            self.ids.middle.remove_widget(self.slave_presentation[data.full_address])
         print("Creating a new slave presentation widget")
         slave_widget = SlavePresentation(data)
-        self.slave_presentation.append(slave_widget)
+        self.slave_presentation[data.full_address] = slave_widget
         self.ids.middle.add_widget(slave_widget)
 
     """
@@ -82,8 +84,8 @@ class MasterGUILayout(Screen):
     """
     def update_presentation_status(self, data=None):
         print("päivitetään")
-        for i in range(0, len(self.slave_presentation)):
-            self.slave_presentation[i].update_status()
+        for slave_connection in self.slave_presentation.values():
+            slave_connection.update_status()
 
     """
     Sets the slave address to be shown in the gui
@@ -180,7 +182,8 @@ class PresentationLayout(Screen):
     Shows the next element of the show
     """
     def show(self, source_file):
-        self.source = source_file
+        if source_file:
+            self.source = source_file
 
     """
     Resets the presentation to the starting state

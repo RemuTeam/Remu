@@ -52,7 +52,10 @@ class Slave:
             self.presentation.get_filenames()
         current = self.presentation.get_next()
         if self.layout:
-            self.layout.show(current)
+            if current is not None:
+                self.layout.show(current)
+            else:
+                self.layout.reset_presentation()
 
         return self.create_response(Command.SHOW_NEXT.value)
 
@@ -75,6 +78,15 @@ class Slave:
         return self.create_response(Command.END_PRESENTATION.value)
 
     """
+    Handles master closing its connection to the slave, doesn't close slave's 
+    listening
+    """
+    def handle_closing_connection(self):
+        if not self.presentation.pic_files:
+            self.presentation.get_filenames()
+        self.layout.reset_presentation()
+
+    """
     Creates a instance of Message based on the given command
     """
     def create_response(self, command, data=None):
@@ -92,7 +104,8 @@ class Slave:
     messagehandler = {Command.REQUEST_PRESENTATION.value: handle_request_presentation,
                       Command.SHOW_NEXT.value: handle_show_next,
                       Command.END_PRESENTATION.value: handle_ending_presentation,
-                      Command.INVALID_COMMAND.value: handle_invalid_command
+                      Command.INVALID_COMMAND.value: handle_invalid_command,
+                      Command.DROP_CONNECTION.value: handle_closing_connection
                       }
 
     """

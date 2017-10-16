@@ -7,6 +7,7 @@ class Command(IntEnum):
     REQUEST_PRESENTATION = 0    # for requesting slave's presentation object
     SHOW_NEXT = 1               # for requesting slave to show next element
     END_PRESENTATION = 2        # for requesting slave to end the current presentation
+    DROP_CONNECTION = 3         # for informing the slave that the connection is terminated
     INVALID_COMMAND = -1        # for invalid requests
 
 """
