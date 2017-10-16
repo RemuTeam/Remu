@@ -1,5 +1,5 @@
 import ipaddress
-from RemuTCP.RemuTCP import RemuTCP
+from Networking.RemuTCP import RemuTCP
 from Domain.Message import Message
 from Domain.PicPresentation import PicPresentation
 from Domain.Command import *
@@ -13,7 +13,7 @@ class SlaveConnection:
     """
     Constructor.
 
-    Connection: a RemuTCP object, if constructed beforehand
+    Connection: a Networking object, if constructed beforehand
     """
     def __init__(self, master, connection=None):
         self.master = master
@@ -27,7 +27,7 @@ class SlaveConnection:
         self.connection = connection
 
     """
-    Attempts to create a new RemuTCP-connection with the provided IP address
+    Attempts to create a new Networking-connection with the provided IP address
     """
     def connect_to_IP(self, address):
         try:

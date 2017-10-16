@@ -14,7 +14,7 @@ class Master:
         self.layout = layout
 
     """
-    Adds a slave connection by creating a new RemuTCP object
+    Adds a slave connection by creating a new Networking object
     and setting it as self.slave_connection
     
     address: an ip-string formatted as "ipa.ddr.es.s:port"
@@ -24,9 +24,9 @@ class Master:
         self.slave_connection.connect_to_IP(slave_address)
 
     """
-    Adds a pre-constructed RemuTCP object to slave_connections
+    Adds a pre-constructed Networking object to slave_connections
     
-    slave_connection: RemuTCP object
+    slave_connection: Networking object
     """
     def add_slave_connection(self, slave_connection):
         self.slave_connection = slave_connection

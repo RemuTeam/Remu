@@ -2,6 +2,9 @@ from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import reactor
 
 from socket import SOL_SOCKET, SO_BROADCAST
+import sys
+
+
 
 class EchoClientDatagramProtocol(DatagramProtocol):
     strings = [
@@ -12,7 +15,7 @@ class EchoClientDatagramProtocol(DatagramProtocol):
 
     def startProtocol(self):
         self.transport.socket.setsockopt(SOL_SOCKET, SO_BROADCAST, True)
-        #self.transport.connect("255.255.255.255", 8000) <- not needed
+        #self.transport.connect('<broadcast>', 8000)
         self.sendDatagram()
 
     def sendDatagram(self):
@@ -22,17 +25,21 @@ class EchoClientDatagramProtocol(DatagramProtocol):
             print("message sent")
         else:
             reactor.stop()
+            print("we're done go home")
+
 
     def datagramReceived(self, datagram, host):
         print('Datagram received: %s'%datagram)
         self.sendDatagram()
 
+
 def main():
     protocol = EchoClientDatagramProtocol()
     #0 means any port
 
-    t=reactor.listenUDP(0, protocol)
+    t=reactor.listenUDP(8000, protocol)
     t.setBroadcastAllowed(True)
+
     reactor.run()
 
 
