@@ -3,7 +3,6 @@ from twisted.internet import reactor
 import kivy.clock
 
 from socket import SOL_SOCKET, SO_BROADCAST
-import sys
 
 
 
@@ -14,40 +13,50 @@ class EchoClientDatagramProtocol(DatagramProtocol):
         "Bye-bye!"
     ]
 
+    def __init__(self, is_slave=False, udplistener = None):
+        super(EchoClientDatagramProtocol, self).__init__()
+        self.is_slave = is_slave
+        self.udplistener = udplistener
+
     def sendDatagram(self, dt=None):
-        if len(self.strings):
-            #datagram = self.strings.pop(0)
-            self.transport.write("connect to me".encode(), ('<broadcast>', 8000)) # <- write to broadcast address here
-            print("message sent")
-        else:
-            #reactor.stop()
-            print("we're done go home")
+        self.transport.write("connect to me".encode(), ('<broadcast>', 8555))
+        print("message sent")
+
 
     def startProtocol(self):
         self.transport.socket.setsockopt(SOL_SOCKET, SO_BROADCAST, True)
-        #self.transport.connect('<broadcast>', 8000)
-        kivy.clock.Clock.schedule_interval(self.sendDatagram, 2)
-        #self.sendDatagram()
-
-
+        if self.is_slave:
+            self.event = kivy.clock.Clock.schedule_interval(self.sendDatagram, 2)
 
 
     def datagramReceived(self, datagram, host):
+        if not self.is_slave:
+            self.udplistener.master.add_slave(host[0])
         print('Datagram received: %s' % datagram.decode('utf-8'))
         print(host)
-        #self.sendDatagram()
 
 class Beacon:
 
-    def main(self):
-        protocol = EchoClientDatagramProtocol()
+    def stop_beaconing(self):
+        self.protocol.event.cancel()
+
+    def start_beaconing(self):
+        self.protocol = EchoClientDatagramProtocol(True, self)
         #0 means any port
 
-        t=reactor.listenUDP(8000, protocol)
-        t.setBroadcastAllowed(True)
-
-        #reactor.run()
+        self.transport=reactor.listenUDP(0, self.protocol)
+        self.transport.setBroadcastAllowed(True)
 
 
-#if __name__ == '__main__':
-   #main()
+class MasterUDPListener:
+
+    def __init__(self, master):
+        self.master = master
+
+    def listen_for_beacons(self):
+        protocol = EchoClientDatagramProtocol(False, self)
+
+        transport = reactor.listenUDP(8555, protocol)
+        transport.setBroadcastAllowed(True)
+
+

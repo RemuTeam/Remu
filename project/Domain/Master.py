@@ -1,6 +1,6 @@
 from Domain.SlaveConnection import SlaveConnection
 from Domain.Command import Notification
-
+from Networking.RemuUDP import MasterUDPListener
 
 class Master:
 
@@ -12,6 +12,8 @@ class Master:
     def __init__(self, layout):
         self.slave_connections = {}
         self.layout = layout
+        self.master_chef = MasterUDPListener(self)
+        self.master_chef.listen_for_beacons()
 
     """
     Adds a slave connection by creating a new RemuTCP object

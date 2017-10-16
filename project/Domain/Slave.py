@@ -17,7 +17,7 @@ class Slave:
         self.master_connection = None
         self.source = ''
         self.beacon = Beacon()
-        self.beacon.main()
+        self.beacon.start_beaconing()
 
     """
     Sets the slave's master_connection, it is a listening RemuTCP connection
@@ -40,6 +40,7 @@ class Slave:
     presentation with the response
     """
     def handle_request_presentation(self):
+        self.beacon.stop_beaconing()
         if not self.presentation.pic_files:
             self.presentation.get_filenames()
         return self.create_response(Command.REQUEST_PRESENTATION.value, self.presentation.__dict__)
