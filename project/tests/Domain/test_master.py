@@ -6,7 +6,7 @@ from Domain.Master import Master
 from Domain.SlaveConnection import SlaveConnection
 from GUI.GUIFactory import MasterGUILayout
 from Domain.Command import Notification
-from RemuTCP.RemuTCP import RemuTCP
+from Networking.RemuTCP import RemuTCP
 
 class MasterTest(unittest.TestCase):
     def setUp(self):
