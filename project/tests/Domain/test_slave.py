@@ -37,7 +37,7 @@ class SlaveTest(unittest.TestCase):
         msg.set_field("command", Command.REQUEST_PRESENTATION.value)
         response = slave.handle_message(msg)
         self.assertEqual(response.get_field("data")["pic_index"], 0)
-        self.assertCountEqual(response.get_field("data")["pic_files"], ["images/a.jpg", "images/b.jpg"])
+        self.assertEqual(len(response.get_field("data")["pic_files"]), 5)
 
     def test_handling_show_next(self):
         slave = Slave(Mock(PresentationLayout))

@@ -15,18 +15,18 @@ class MasterTest(unittest.TestCase):
         self.mockMaster = Mock(Master)
 
     def tearDown(self):
-        if hasattr(self.master.slave_connection, 'connection'):
+        if hasattr(self.master.slave_connections, 'connection'):
             self.master.close_connections()
 
     def test_add_slave_works(self):
-        self.assertIsNone(self.master.slave_connection)
+        self.assertIsNotNone(self.master.slave_connections)
         self.master.add_slave("127.0.0.1")
-        self.assertIsNotNone(self.master.slave_connection)
+        self.assertGreaterEqual(len(self.master.slave_connections.keys()), 1)
 
     def test_add_slave_connection_works(self):
-        self.assertIsNone(self.master.slave_connection)
-        self.master.add_slave_connection(Mock(SlaveConnection))
-        self.assertIsNotNone(self.master.slave_connection)
+        self.assertIsNotNone(self.master.slave_connections)
+        self.master.add_slave_connection(SlaveConnection(None))
+        self.assertGreaterEqual(len(self.master.slave_connections.keys()), 1)
 
     def test_request_next_works(self):
         with patch.object(Master, 'request_next', return_value=None) as mock_method:
@@ -52,9 +52,9 @@ class MasterTest(unittest.TestCase):
             slave_connection_mock = SlaveConnection(master_mock)
             slave_connection_mock.set_connection(connection_mock)
             master_mock.add_slave_connection(slave_connection_mock)
-            master_mock.notify(Notification.PRESENTATION_UPDATE, "test_data")
+            master_mock.notify(Notification.PRESENTATION_UPDATE, "localhost:8000")
 
-        mock_method.assert_called_once_with(Notification.PRESENTATION_UPDATE, "test_data")
+        mock_method.assert_called_once_with(Notification.PRESENTATION_UPDATE, "localhost:8000")
 
     def test_update_connection_works1(self):
         with patch.object(MasterGUILayout, 'notify', return_value=None) as mock_method:
@@ -64,9 +64,9 @@ class MasterTest(unittest.TestCase):
             slave_connection_mock = SlaveConnection(master_mock)
             slave_connection_mock.set_connection(connection_mock)
             master_mock.add_slave_connection(slave_connection_mock)
-            master_mock.notify(Notification.CONNECTION_FAILED, "test_data")
+            master_mock.notify(Notification.CONNECTION_FAILED, "localhost:8000")
 
-        mock_method.assert_called_once_with(Notification.CONNECTION_FAILED, "test_data")
+        mock_method.assert_called_once_with(Notification.CONNECTION_FAILED, "localhost:8000")
 
     def test_update_connection_works2(self):
         with patch.object(MasterGUILayout, 'notify', return_value=None) as mock_method:
@@ -76,9 +76,9 @@ class MasterTest(unittest.TestCase):
             slave_connection_mock = SlaveConnection(master_mock)
             slave_connection_mock.set_connection(connection_mock)
             master_mock.add_slave_connection(slave_connection_mock)
-            master_mock.notify(Notification.CONNECTION_ESTABLISHED, "test_data")
+            master_mock.notify(Notification.CONNECTION_ESTABLISHED, "localhost:8000")
 
-        mock_method.assert_called_once_with(Notification.CONNECTION_ESTABLISHED, "test_data")
+        mock_method.assert_called_once_with(Notification.CONNECTION_ESTABLISHED, "localhost:8000")
 
     def test_update_connection_works3(self):
         with patch.object(SlaveConnection, 'request_presentation', return_value=None) as mock_method:
@@ -88,7 +88,7 @@ class MasterTest(unittest.TestCase):
             slave_connection_mock = SlaveConnection(master_mock)
             slave_connection_mock.set_connection(connection_mock)
             master_mock.add_slave_connection(slave_connection_mock)
-            master_mock.notify(Notification.CONNECTION_ESTABLISHED, "test_data")
+            master_mock.notify(Notification.CONNECTION_ESTABLISHED, "localhost:8000")
 
         mock_method.assert_called_once_with()
 

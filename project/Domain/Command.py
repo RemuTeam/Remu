@@ -7,12 +7,14 @@ class Command(IntEnum):
     REQUEST_PRESENTATION = 0    # for requesting slave's presentation object
     SHOW_NEXT = 1               # for requesting slave to show next element
     END_PRESENTATION = 2        # for requesting slave to end the current presentation
+    DROP_CONNECTION = 3         # for informing the slave that the connection is terminated
     INVALID_COMMAND = -1        # for invalid requests
 
 """
 Enumerators for observer notifications
 """
 class Notification(IntEnum):
+    CONNECTION_TERMINATED = -2      # to inform about a connection closed on purpose
     CONNECTION_FAILED = -1          # to inform about failed connection
     CONNECTION_ESTABLISHED = 0      # to inform about successful connection
     PRESENTATION_UPDATE = 1         # to inform about updated presentation

@@ -25,7 +25,6 @@ class RemuApp(App):
 
     def __init__(self, **kwargs):
         super(RemuApp, self).__init__(**kwargs)
-        self.guimaker = GUIFactory()
         self.isMaster = False
         self.slaves = None
         self.master = None
@@ -37,7 +36,6 @@ class RemuApp(App):
     """
 
     def build(self):
-        self.guimaker.set_parent(self)
         return BuildKV
 
     """
@@ -76,9 +74,9 @@ class RemuApp(App):
 
     layout: the layout to bind with self.servicemode
     """
-    def get_slave(self, layout):
+    def get_slave(self):
         if self.servicemode is None:
-            self.create_slave(layout)
+            self.create_slave()
 
         return self.servicemode
 
@@ -96,8 +94,8 @@ class RemuApp(App):
 
     layout: the layout to bind with self.servicemode
     """
-    def create_slave(self, layout):
-        new_slave = Slave(layout)
+    def create_slave(self):
+        new_slave = Slave()
         new_slave.set_master_connection(RemuTCP())
         self.set_slave(new_slave)
 

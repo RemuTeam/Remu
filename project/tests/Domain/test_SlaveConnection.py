@@ -76,7 +76,7 @@ class SlaveConnectionTest(unittest.TestCase):
         slave = Slave()
         msg = slave.handle_request_presentation()
         slavecon.handle_message(msg)
-        self.assertEqual(len(slavecon.presentation.pic_files), 2)
+        self.assertGreaterEqual(len(slavecon.presentation.pic_files), 2)
 
     def test_handle_show_next_response(self):
         slavecon = SlaveConnection(Mock(Master))
@@ -86,7 +86,7 @@ class SlaveConnectionTest(unittest.TestCase):
         msg = Message()
         msg.set_field("responseTo", Command.SHOW_NEXT.value)
         slavecon.handle_message(msg)
-        self.assertEqual(len(slavecon.presentation.pic_files), 2)
+        self.assertGreaterEqual(len(slavecon.presentation.pic_files), 2)
         self.assertEqual(slavecon.currently_showing, "images/a.jpg")
 
     def test_handle_invalid_command(self):

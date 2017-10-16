@@ -58,6 +58,7 @@ class RemuProtocolFactory(protocol.ClientFactory):
 
     def clientConnectionLost(self, connector, reason):
         print('Lost connection.')
+        self.connection.parent.on_connection_lost()
 
     def clientConnectionFailed(self, connector, reason):
         print('Connection failed.')
@@ -71,7 +72,8 @@ class RemuTCP:
     def __init__(self, parent=None, master=False, address=None, port=8000):
         self.connection = None
         self.address = None
-        self.port = None
+        self.listener = None
+        self.port = port
         self.parent = parent
         if master:
             self.address = address
@@ -83,7 +85,7 @@ class RemuTCP:
     The slave stops listening to the port in question
     """
     def stop_listening(self):
-        self.port.stopListening()
+        self.listener.stopListening()
 
     def set_parent(self, parent):
         self.parent = parent
@@ -102,7 +104,7 @@ class RemuTCP:
 
     def listen_to_master(self, port):
         print("listening")
-        self.port = reactor.listenTCP(port, RemuProtocolFactory(self))
+        self.listener = reactor.listenTCP(port, RemuProtocolFactory(self))
 
     """
     Sets the parameter connection to point to the succesfully made connection
@@ -111,7 +113,9 @@ class RemuTCP:
     def on_connection(self, connection):
         print("Connected successfully!")
         self.connection = connection
-        self.parent.connection_established(self.address)
+        full_address = self.address if self.address else "localhost"
+        full_address += ':' + str(self.port)
+        self.parent.connection_established(full_address)
 
     """
     Sends the message given as parameter if the connection is valid and on
@@ -132,7 +136,7 @@ class RemuTCP:
         return None
 
     def end_connection(self):
-        if self.port:
+        if self.listener:
             self.stop_listening()
         if self.connection:
             self.connection.loseConnection()
