@@ -69,15 +69,22 @@ class MasterGUILayout(Screen):
         MasterBackPopUp().open()
 
     """
-    Update the presentation information on the layout
+    Generate the presentation information on the layout on connection to a slave.
     """
-    def update_presentation(self, data):
-        if data.full_address in self.slave_presentation:
-            self.ids.middle.remove_widget(self.slave_presentation[data.full_address])
+    def generate_presentation(self, data):
+        self.remove_slave_presentation(data)
         print("Creating a new slave presentation widget")
         slave_widget = SlavePresentation(data)
         self.slave_presentation[data.full_address] = slave_widget
         self.ids.middle.add_widget(slave_widget)
+
+    """
+    Remove possibly existing SlavePresentation widget based on the 
+    SlaveConnection object
+    """
+    def remove_slave_presentation(self, data):
+        if data.full_address in self.slave_presentation:
+            self.ids.middle.remove_widget(self.slave_presentation[data.full_address])
 
     """
     Update the presentation status on the layout
@@ -106,10 +113,11 @@ class MasterGUILayout(Screen):
     A dictionary of Notification-Function pairs for the purpose of
     updating the layout on predefined events.
     """
-    messagehandler = {Notification.PRESENTATION_UPDATE: update_presentation,
+    messagehandler = {Notification.PRESENTATION_UPDATE: generate_presentation,
                       Notification.PRESENTATION_STATUS_CHANGE: update_presentation_status,
                       Notification.CONNECTION_FAILED: update_connection_to_gui,
-                      Notification.CONNECTION_ESTABLISHED: update_connection_to_gui}
+                      Notification.CONNECTION_ESTABLISHED: update_connection_to_gui,
+                      Notification.CONNECTION_TERMINATED: remove_slave_presentation}
 
 
 """

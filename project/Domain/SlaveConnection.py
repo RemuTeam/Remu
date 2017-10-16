@@ -56,6 +56,7 @@ class SlaveConnection:
         msg.set_field("params", params)
         self.connection.send_message(msg)
 
+
     def loseConnection(self):
         self.connection = None
 
@@ -72,11 +73,13 @@ class SlaveConnection:
         self.__send_command(Command.SHOW_NEXT.value)
 
     """
-        Ask slave to 
+        Ask slave to reset the presentation and closes the connection to it.
     """
     def terminate_connection(self):
         self.__send_command(Command.DROP_CONNECTION.value)
-        self.master.notify()
+        #self.master.notify()
+        self.connection.end_connection()
+        self.master.notify(Notification.CONNECTION_TERMINATED, self)
 
     """
         Called when slave responds to command "show_next"
@@ -86,13 +89,13 @@ class SlaveConnection:
         self.currently_showing = self.presentation.get_next()
 
     """
-    Sets the connection's presentation object
+        Sets the connection's presentation object
     """
     def set_presentation(self, presentation):
         self.presentation = presentation
 
     """
-    Ends the current presentation
+        Ends the current presentation
     """
     def end_presentation(self):
         self.__send_command(Command.END_PRESENTATION.value)
@@ -117,12 +120,22 @@ class SlaveConnection:
         self.currently_showing = next_item
         self.master.notify(Notification.PRESENTATION_STATUS_CHANGE, next_item)
 
+    """
+    Resets the presentation on master's side, called when slave is told to 
+    reset its presentation
+    """
     def handle_ending_presentation(self, data=None):
         self.presentation.reset()
 
+    """
+    Invalid command handler, doesn't do anything useful except catch bad mistakes
+    """
     def handle_invalid_command_response(self, data=None):
         print("Invalid command given")
 
+    """
+    Forwards the information of connection being established to master and its layout
+    """
     def connection_established(self, full_address):
         self.connected = True
         self.master.notify(Notification.CONNECTION_ESTABLISHED, full_address)

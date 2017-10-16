@@ -15,7 +15,7 @@ class Master:
 
     """
     Adds a slave connection by creating a new RemuTCP object
-    and appending it to self.slave_connection
+    and adding it to the dictionary self.slave_connections
     
     address: an ip-string formatted as "ipa.ddr.es.s:port"
     """
@@ -79,6 +79,14 @@ class Master:
             self.layout.update_presentation_status(full_address)
 
     """
+    Removes the knowledge of a slave from master and notifies GUI of the change
+    """
+    def remove_slave(self, notification, data):
+        if data.full_address in self.slave_connections:
+            self.slave_connections.pop(data.full_address, None)
+        self.layout.notify(notification, data)
+
+    """
     Informs the slave connection about the presentation ending
     """
     def end_presentation(self):
@@ -100,4 +108,5 @@ class Master:
                       Notification.PRESENTATION_STATUS_CHANGE: update_presentation_status_to_layout,
                       Notification.PRESENTATION_ENDED: end_presentation,
                       Notification.CONNECTION_FAILED: update_connection,
-                      Notification.CONNECTION_ESTABLISHED: update_connection}
+                      Notification.CONNECTION_ESTABLISHED: update_connection,
+                      Notification.CONNECTION_TERMINATED: remove_slave}

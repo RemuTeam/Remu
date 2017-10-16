@@ -14,6 +14,7 @@ class Command(IntEnum):
 Enumerators for observer notifications
 """
 class Notification(IntEnum):
+    CONNECTION_TERMINATED = -2      # to inform about a connection closed on purpose
     CONNECTION_FAILED = -1          # to inform about failed connection
     CONNECTION_ESTABLISHED = 0      # to inform about successful connection
     PRESENTATION_UPDATE = 1         # to inform about updated presentation

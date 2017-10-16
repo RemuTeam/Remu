@@ -18,7 +18,7 @@ class Slave:
         self.source = ''
 
     """
-    Sets the slave's master_connection
+    Sets the slave's master_connection, it is a listening RemuTCP connection
     """
     def set_master_connection(self, master_connection):
         self.master_connection = master_connection
@@ -44,7 +44,7 @@ class Slave:
 
     """
     Handles requests to show the next picture in the presentation, 
-    uses a callback (NYI) to tell the layout to update its view.
+    uses a callback to tell the layout to update its view.
     Returns a confirmation to master
     """
     def handle_show_next(self):
@@ -79,7 +79,8 @@ class Slave:
 
     """
     Handles master closing its connection to the slave, doesn't close slave's 
-    listening
+    listening and doesn't reply to the message because the master doesn't have
+    a connection to the slave anymore
     """
     def handle_closing_connection(self):
         if not self.presentation.pic_files:
@@ -121,5 +122,9 @@ class Slave:
     def connection_established(self, address):
         pass
 
+
+    """
+    Uses a RemuTCP method to close the listening connection
+    """
     def close_connections(self):
         self.master_connection.end_connection()
