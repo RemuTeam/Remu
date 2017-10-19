@@ -17,11 +17,14 @@ class MasterTest(unittest.TestCase):
     def tearDown(self):
         if hasattr(self.master.slave_connections, 'connection'):
             self.master.close_connections()
+            self.master.close_UDP_connections()
 
     def test_add_slave_works(self):
         self.assertIsNotNone(self.master.slave_connections)
         self.master.add_slave("127.0.0.1")
         self.assertGreaterEqual(len(self.master.slave_connections.keys()), 1)
+
+
 
     def test_add_slave_connection_works(self):
         self.assertIsNotNone(self.master.slave_connections)
