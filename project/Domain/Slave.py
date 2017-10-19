@@ -130,7 +130,7 @@ class Slave:
     """
     def close_all_connections(self):
         self.close_TCP_connections()
-        self.close_UDP_connections()
+        self.close_UDP_connection()
 
     """
     Uses a RemuTCP method to close the listening connection

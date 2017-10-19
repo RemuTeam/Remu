@@ -28,6 +28,10 @@ class EchoClientDatagramProtocol(DatagramProtocol):
         if self.is_slave:
             self.event = kivy.clock.Clock.schedule_interval(self.sendDatagram, 2)
 
+    def stopProtocol(self):
+        if self.is_slave:
+            self.transport.setBroadcastAllowed(False)
+        self.transport.socket.close()
 
     def datagramReceived(self, datagram, host):
         if not self.is_slave:
@@ -38,7 +42,9 @@ class EchoClientDatagramProtocol(DatagramProtocol):
 class Beacon:
 
     def stop_beaconing(self):
-        self.protocol.event.cancel()
+        self.protocol.event. cancel()
+
+
 
     def start_beaconing(self):
         self.protocol = EchoClientDatagramProtocol(True, self)
@@ -52,11 +58,12 @@ class MasterUDPListener:
 
     def __init__(self, master):
         self.master = master
-
+        self.protocol = None
     def listen_for_beacons(self):
-        protocol = EchoClientDatagramProtocol(False, self)
+        self.protocol = EchoClientDatagramProtocol(False, self)
 
-        transport = reactor.listenUDP(8555, protocol)
+        transport = reactor.listenUDP(8555, self.protocol)
         transport.setBroadcastAllowed(True)
 
-    
+    def stop_listening_to_beacons(self):
+        self.protocol.stopProtocol()
