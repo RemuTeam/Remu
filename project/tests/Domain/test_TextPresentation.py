@@ -1,6 +1,7 @@
 import os
 import unittest
 from Domain.TextPresentation import TextPresentation
+from Domain.PresentationType import PresentationType
 
 class TextPresentationTest(unittest.TestCase):
 
@@ -20,8 +21,8 @@ class TextPresentationTest(unittest.TestCase):
         self.tp.load()
 
     def test_init(self):
-        self.assertEqual(len(self.tp.text_elements), 0)
-        self.assertEqual(self.tp.text_index, 0)
+        self.assertEqual(len(self.tp.presentation_content), 0)
+        self.assertEqual(self.tp.index, 0)
         self.assertIsNone(self.tp.textfile)
 
     def test_set_text_file_path_and_name(self):
@@ -30,45 +31,45 @@ class TextPresentationTest(unittest.TestCase):
 
     def test_load(self):
         self.load()
-        self.assertEqual(len(self.tp.text_elements), 4)
+        self.assertEqual(len(self.tp.presentation_content), 4)
 
     def test_get_next(self):
         self.load()
         ok = self.tp.get_next().startswith("Well, the way they make shows is")
         self.assertTrue(ok)
-        self.assertEqual(self.tp.text_index, 1)
+        self.assertEqual(self.tp.index, 1)
         ok = self.tp.get_next().startswith("My money's in that office, right?")
         self.assertTrue(ok)
-        self.assertEqual(self.tp.text_index, 2)
+        self.assertEqual(self.tp.index, 2)
 
     def test_get_out_of_boundaries_1(self):
         self.load()
         self.assertIsNone(self.tp.get(-1))
-        self.assertEqual(self.tp.text_index, 0)
+        self.assertEqual(self.tp.index, 0)
 
     def test_get_out_of_boundaries_2(self):
         self.load()
         self.assertIsNone(self.tp.get(4))
-        self.assertEqual(self.tp.text_index, 0)
+        self.assertEqual(self.tp.index, 0)
 
     def test_get_inside_boundaries_1(self):
         self.load()
         ok = self.tp.get(0).startswith("Well, the way they make shows is")
         self.assertTrue(ok)
-        self.assertEqual(self.tp.text_index, 1)
+        self.assertEqual(self.tp.index, 1)
 
     def test_get_inside_boundaries_2(self):
         self.load()
         ok = self.tp.get(3).startswith("Well, the way they make shows is")
         self.assertTrue(ok)
-        self.assertEqual(self.tp.text_index, 4)
+        self.assertEqual(self.tp.index, 4)
 
     def test_reset(self):
         self.load()
         self.tp.get_next()
-        self.assertEqual(self.tp.text_index, 1)
+        self.assertEqual(self.tp.index, 1)
         self.tp.reset()
-        self.assertEqual(self.tp.text_index, 0)
+        self.assertEqual(self.tp.index, 0)
 
     def test_reload(self):
         self.load()
@@ -85,9 +86,15 @@ class TextPresentationTest(unittest.TestCase):
         self.load()
         ok = self.tp.get_next().startswith("Well, the way they make shows is")
         self.assertTrue(ok)
-        self.assertEqual(self.tp.text_index, 1)
+        self.assertEqual(self.tp.index, 1)
         self.tp.load()
-        self.assertEqual(self.tp.text_index, 0)
+        self.assertEqual(self.tp.index, 0)
         ok = self.tp.get_next().startswith("Well, the way they make shows is")
         self.assertTrue(ok)
-        self.assertEqual(self.tp.text_index, 1)
+        self.assertEqual(self.tp.index, 1)
+
+    def test_get_presentation_type(self):
+        self.assertEqual(self.tp.get_presentation_type(), PresentationType.Text)
+
+    def test_get_presentation_content(self):
+        self.assertEqual(self.tp.get_presentation_content(), self.tp.presentation_content)

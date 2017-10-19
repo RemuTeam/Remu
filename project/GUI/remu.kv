@@ -82,8 +82,13 @@ RemuSM:
             orientation: 'horizontal'
             Button:
                 size_hint: 0.3,0.3
-                text: "Go to presentation"
-                on_press: root.prepare_for_presentation_mode()
+                text: "Go to image presentation"
+                on_press: root.pic_presentation_chosen()
+                on_press: app.root.change_screen_to("presentation_layout")
+            Button:
+                size_hint: 0.3,0.3
+                text: "Go to text presentation"
+                on_press: root.text_presentation_chosen()
                 on_press: app.root.change_screen_to("presentation_layout")
             Button:
                 size_hint:0.3,0.3
@@ -99,6 +104,9 @@ RemuSM:
         Image:
             id: picture
             source: root.source
+        Label:
+            id: text_field
+            text: root.text_element
         #Button:
         #    size_hint: 1, 0.05
         #    text: "Simulate master signal"

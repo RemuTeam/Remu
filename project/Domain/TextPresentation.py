@@ -1,5 +1,6 @@
 import os
 from Domain.Presentation import Presentation
+from Domain.PresentationType import PresentationType
 
 """
 A PRESENTATION CLASS TO PRODUCE A PRESENTATION
@@ -7,6 +8,8 @@ CONTAINING TEXT OBJECTS
 """
 
 class TextPresentation(Presentation):
+    __PRESENTATION_TYPE = PresentationType.Text
+
     """
     Constructor
 
@@ -14,8 +17,8 @@ class TextPresentation(Presentation):
     initializes the index to keep track of the element to show
     """
     def __init__(self):
-        self.text_elements = []
-        self.text_index = 0
+        self.presentation_content = []
+        self.index = 0
         self.textfile = None
 
     """
@@ -23,7 +26,7 @@ class TextPresentation(Presentation):
     """
     def __populate_text_elements(self):
         with open(self.textfile, "r") as file:
-            self.__parse_text_file_to_list(file, self.text_elements)
+            self.__parse_text_file_to_list(file, self.presentation_content)
 
     """
     Parses a text file to a list.
@@ -68,7 +71,7 @@ class TextPresentation(Presentation):
     returns:    a string
     """
     def get_next(self):
-        return self.get(self.text_index)
+        return self.get(self.index)
 
     """
     Requests for a particular object in the presentation
@@ -79,9 +82,9 @@ class TextPresentation(Presentation):
     returns:    a string
     """
     def get(self, index):
-        if -1 < index < len(self.text_elements):
-            next_element = self.text_elements[index]
-            self.text_index = index + 1
+        if -1 < index < len(self.presentation_content):
+            next_element = self.presentation_content[index]
+            self.index = index + 1
             return next_element
         else:
             return None
@@ -90,7 +93,7 @@ class TextPresentation(Presentation):
     Resets the presentation, returning it to the beginning
     """
     def reset(self):
-        self.text_index = 0
+        self.index = 0
 
     """
     Loads the presentation's elements and resets the presentation
@@ -104,7 +107,7 @@ class TextPresentation(Presentation):
     without resetting the presentation
     """
     def reload(self):
-        del self.text_elements[:]
+        del self.presentation_content[:]
         self.__populate_text_elements()
 
     """
@@ -112,3 +115,17 @@ class TextPresentation(Presentation):
     """
     def set_text_file_path_and_name(self, textfile):
         self.textfile = textfile
+
+    """
+    Request the type of the presentation
+
+    returns the presentation's type
+    """
+    def get_presentation_type(self):
+        return self.__PRESENTATION_TYPE
+
+    """
+    Request the content of the presentation
+    """
+    def get_presentation_content(self):
+        return self.presentation_content

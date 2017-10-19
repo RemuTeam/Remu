@@ -1,6 +1,7 @@
-from Domain.PicPresentation import PicPresentation
+from Domain.Presentation import Presentation
 from Domain.Message import Message
 from Domain.Command import Command
+from Domain.MessageKeys import MessageKeys
 
 """
 CONTAINS SLAVE'S ADMINISTRATIVE AND PRESENTATIONAL DATA
@@ -12,7 +13,7 @@ class Slave:
     The master_connection is a RemuTCP object
     """
     def __init__(self, layout=None):
-        self.presentation = self.create_presentation()
+        self.presentation = Presentation()
         self.layout = layout
         self.master_connection = None
         self.source = ''
@@ -27,26 +28,25 @@ class Slave:
     def set_layout(self, new_layout):
         self.layout = new_layout
 
-    """
-    Creates slave's presentation
-    """
-    def create_presentation(self):
-        return PicPresentation()
-
     def reset_presentation(self):
         self.source = ''
         self.presentation.reset()
+
+    """
+    Sets the slave's presentation
+    """
+    def set_presentation(self, presentation):
+        self.presentation = presentation
 
     """
     Handles requests for the presentation made by the master, returns the
     presentation with the response
     """
     def handle_request_presentation(self):
-        if not self.presentation.pic_files:
-            self.presentation.load()
+        self.load_presentation()
         response = Message()
-        response.set_field("responseTo", Command.REQUEST_PRESENTATION.value)
-        response.set_field("data", self.presentation.__dict__)
+        response.set_field(MessageKeys.response_key, Command.REQUEST_PRESENTATION.value)
+        response.set_field(MessageKeys.data_key, self.presentation.__dict__)
         return response
 
     """
@@ -55,12 +55,11 @@ class Slave:
     Returns a confirmation to master
     """
     def handle_show_next(self):
-        if not self.presentation.pic_files:
-            self.presentation.load()
+        self.load_presentation()
         current = self.presentation.get_next()
         self.layout.show(current)
         response = Message()
-        response.set_field("responseTo", Command.SHOW_NEXT.value)
+        response.set_field(MessageKeys.response_key, Command.SHOW_NEXT.value)
         return response
 
     """
@@ -69,18 +68,17 @@ class Slave:
     """
     def handle_invalid_command(self):
         response = Message()
-        response.set_field("responseTo", Command.INVALID_COMMAND.value)
+        response.set_field(MessageKeys.response_key, Command.INVALID_COMMAND.value)
         return response
 
     """
     Handles the ending of the presentation.
     """
     def handle_ending_presentation(self):
-        if not self.presentation.pic_files:
-            self.presentation.reset()
+        self.load_presentation()
         self.layout.reset_presentation()
         response = Message()
-        response.set_field("responseTo", Command.END_PRESENTATION.value)
+        response.set_field(MessageKeys.response_key, Command.END_PRESENTATION.value)
         return response
 
     # Messagehandler
@@ -99,7 +97,7 @@ class Slave:
     """
     def handle_message(self, msg):
         print("trying to parse")
-        if "command" in msg.fields:
+        if MessageKeys.command_key in msg.fields:
             print(str(msg.get_command()))
             return self.messagehandler[msg.get_command()](self)
         return self.handle_invalid_command()
@@ -109,3 +107,18 @@ class Slave:
 
     def close_connections(self):
         self.master_connection.end_connection()
+
+    """
+    Returns the slave's presentation's PresentationType
+    """
+    def get_presentation_type(self):
+        if self.presentation:
+            return self.presentation.get_presentation_type()
+        return None
+
+    """
+    Load the presentations content
+    """
+    def load_presentation(self):
+        if not self.presentation.get_presentation_content():
+            self.presentation.load()

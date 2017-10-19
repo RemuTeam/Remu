@@ -35,3 +35,17 @@ class Presentation:
     """
     def reload(self):
         pass
+
+    """
+    Request the type of the presentation
+    
+    Defaults to None is not set in the class that implements
+    """
+    def get_presentation_type(self):
+        return None
+
+    """
+    Request the content of the presentation
+    """
+    def get_presentation_content(self):
+        pass

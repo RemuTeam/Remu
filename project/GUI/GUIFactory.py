@@ -4,6 +4,8 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.properties import StringProperty
 from Domain.Command import Notification
+from Domain.PresentationType import PresentationType
+from Domain.MessageKeys import MessageKeys
 from kivy.app import App
 
 """
@@ -133,12 +135,25 @@ class SlaveGUILayout(Screen):
         App.get_running_app().get_slave(self)
 
     """
+    Prepares for a text presentation
+    """
+    def text_presentation_chosen(self):
+        App.get_running_app().create_text_presentation()
+        self.prepare_for_presentation_mode()
+
+    """
+    Prepares for a text presentation
+    """
+    def pic_presentation_chosen(self):
+        App.get_running_app().create_pic_presentation()
+        self.prepare_for_presentation_mode()
+
+    """
     Sets the app's main window to full screen and hides the
     mouse cursor.
     """
     def prepare_for_presentation_mode(self):
         window = self.get_root_window()
-        self.parent.get_screen('presentation_layout').set_slave(self.slave)
         window.show_cursor = False
     """
      Opens the warning pop-up to slave, asking if they are sure they want to go back
@@ -154,6 +169,7 @@ Fullscreen layout for presenting content
 """
 class PresentationLayout(Screen):
     source = StringProperty('')
+    text_element = StringProperty('Text here!')
 
     """
     In the constructor the class and instance are passed
@@ -168,11 +184,20 @@ class PresentationLayout(Screen):
 
     def on_enter(self, *args):
         self.set_slave(App.get_running_app().servicemode)
+        self.set_visible_widget(self.slave.get_presentation_type())
         self.slave.set_layout(self)
         self.slave.reset_presentation()
 
     def set_slave(self, slave):
         self.slave = slave
+
+    def set_visible_widget(self, presentation_type):
+        if presentation_type == PresentationType.Text:
+            self.ids.picture.size_hint_y = None
+            self.ids.picture.height = '0dp'
+        elif presentation_type == PresentationType.Image:
+            self.ids.text_field.size_hint_y = None
+            self.ids.text_field.height = '0dp'
 
     """
     Shows the next element of the show
@@ -212,15 +237,15 @@ class SlavePresentation(BoxLayout):
         super(SlavePresentation, self).__init__()
         self.presentation_data = data
         self.visuals = []
-        self.current_active = data.pic_index - 1
+        self.current_active = data.index - 1
         self.create_visual_widgets(data)
 
     """
     Creates the visual widgets for the slave's visuals
     """
     def create_visual_widgets(self, data):
-        for i in range(0, len(data.pic_files)):
-            image = data.pic_files[i]
+        for i in range(0, len(data.presentation_content)):
+            image = data.presentation_content[i]
             visual = SlaveVisualProperty(image)
             self.visuals.append(visual)
             self.ids.visuals.add_widget(visual)
@@ -230,7 +255,7 @@ class SlavePresentation(BoxLayout):
     Highlights the next visual, indicating it is the currently active visual
     """
     def show_next(self):
-        self.current_active = self.presentation_data.pic_index - 1
+        self.current_active = self.presentation_data.index - 1
         if self.current_active is not -1:
             self.visuals[self.current_active].set_inactive()
             self.visuals[self.current_active].set_active()
