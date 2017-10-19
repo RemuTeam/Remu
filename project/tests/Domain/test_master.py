@@ -16,7 +16,7 @@ class MasterTest(unittest.TestCase):
 
     def tearDown(self):
         if hasattr(self.master.slave_connections, 'connection'):
-            self.master.close_connections()
+            self.master.close_all_connections()
 
     def test_add_slave_works(self):
         self.assertIsNotNone(self.master.slave_connections)
@@ -100,6 +100,6 @@ class MasterTest(unittest.TestCase):
             slave_connection_mock = SlaveConnection(master_mock)
             slave_connection_mock.set_connection(connection_mock)
             master_mock.add_slave_connection(slave_connection_mock)
-            master_mock.close_connections()
+            master_mock.close_all_connections()
 
         mock_method.assert_called_once_with()

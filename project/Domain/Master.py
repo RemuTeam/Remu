@@ -98,9 +98,22 @@ class Master:
     """
     Closes all connections to slaves
     """
-    def close_connections(self):
+    def close_all_connections(self):
+        self.close_TCP_connections()
+        self.close_UDP_connections()
+
+    """
+    Closes all connections to slaves
+    """
+    def close_TCP_connections(self):
         for slave in self.slave_connections.values():
             slave.connection.end_connection()
+
+    """
+    Closes the master's UDP protocol
+    """
+    def close_UDP_connection(self):
+        self.master_chef.stop
 
     """
     A dictionary of Notification-Function pairs for the purpose of

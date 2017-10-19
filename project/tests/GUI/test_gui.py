@@ -29,7 +29,7 @@ def test_master_button_works(simulator):
 def test_slave_button_works(simulator):
     simulator.tap(get_from_layout("Switch", "Button", 2))
     simulator.assert_text(get_from_layout("Slave", "Label", 1), "Currently in slave mode")
-    simulator.app.close_connections()
+    simulator.app.close_all_connections()
 
 @pytest.mark.parametrize("params", [{}])
 @simulate
