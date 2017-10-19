@@ -125,9 +125,21 @@ class Slave:
     def connection_established(self, address):
         pass
 
+    """
+    Closes all networking protocols the slave uses
+    """
+    def close_all_connections(self):
+        self.close_TCP_connections()
+        self.close_UDP_connection()
 
     """
     Uses a RemuTCP method to close the listening connection
     """
-    def close_connections(self):
+    def close_TCP_connections(self):
         self.master_connection.end_connection()
+
+    """
+    Uses a RemuUDP method to stop listening to the UDP connection
+    """
+    def close_UDP_connection(self):
+        self.beacon.close_connections()

@@ -42,7 +42,7 @@ class EchoClientDatagramProtocol(DatagramProtocol):
 class Beacon:
 
     def stop_beaconing(self):
-        self.protocol.event.cancel()
+        self.protocol.event. cancel()
 
 
 
@@ -66,4 +66,4 @@ class MasterUDPListener:
         transport.setBroadcastAllowed(True)
 
     def stop_listening_to_beacons(self):
-        self.protocol.stopProtocol(self)
+        self.protocol.stopProtocol()

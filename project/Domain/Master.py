@@ -9,11 +9,12 @@ class Master:
 
     layout: the layout to be notified on changes
     """
-    def __init__(self, layout):
+    def __init__(self, layout, seeking_slaves=True):
         self.slave_connections = {}
         self.layout = layout
-        self.master_chef = MasterUDPListener(self)
-        self.master_chef.listen_for_beacons()
+        if seeking_slaves:
+            self.master_chef = MasterUDPListener(self)
+            self.master_chef.listen_for_beacons()
 
     """
     Adds a slave connection by creating a new RemuTCP object
@@ -98,11 +99,24 @@ class Master:
     """
     Closes all connections to slaves
     """
-    def close_connections(self):
+    def close_all_connections(self):
+        self.close_TCP_connections()
+        self.close_UDP_connection()
+
+    """
+    Closes all connections to slaves
+    """
+    def close_TCP_connections(self):
         for slave in self.slave_connections.values():
             slave.connection.end_connection()
 
     def close_UDP_connections(self):
+        self.master_chef.stop_listening_to_beacons()
+
+    """
+    Closes the master's UDP protocol
+    """
+    def close_UDP_connection(self):
         self.master_chef.stop_listening_to_beacons()
 
     """

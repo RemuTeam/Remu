@@ -112,4 +112,4 @@ class RemuApp(App):
 
     def close_connections(self):
         if self.servicemode:
-            self.servicemode.close_connections()
+            self.servicemode.close_all_connections()
