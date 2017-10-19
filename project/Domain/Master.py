@@ -102,6 +102,9 @@ class Master:
         for slave in self.slave_connections.values():
             slave.connection.end_connection()
 
+    def close_UDP_connections(self):
+        self.master_chef.stop_listening_to_beacons()
+
     """
     A dictionary of Notification-Function pairs for the purpose of
     updating the layout on predefined events.
