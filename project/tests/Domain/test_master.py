@@ -28,6 +28,14 @@ class MasterTest(unittest.TestCase):
         self.master.add_slave_connection(SlaveConnection(None))
         self.assertGreaterEqual(len(self.master.slave_connections.keys()), 1)
 
+    def test_add_multiples_of_slave_connection(self):
+        self.assertIsNotNone(self.master.slave_connections)
+        self.master.add_slave_connection(SlaveConnection(None))
+        slavc = SlaveConnection(None)
+        slavc.full_address = "192.168.100.1"
+        self.master.add_slave_connection(slavc)
+        self.assertGreaterEqual(len(self.master.slave_connections.keys()), 2)
+
     def test_request_next_works(self):
         with patch.object(Master, 'request_next', return_value=None) as mock_method:
             master_mock = Master(Mock(MasterGUILayout))
@@ -43,6 +51,19 @@ class MasterTest(unittest.TestCase):
             master_mock.request_next()
 
         mock_method.assert_called_once_with()
+
+    def test_request_next_calls_multiple_slave_connections_show_next(self):
+        self.assertIsNotNone(self.master.slave_connections)
+        slavc = SlaveConnection(None)
+        slavc.show_next = MagicMock(return_value=0)
+        self.master.add_slave_connection(slavc)
+        slavc = SlaveConnection(None)
+        slavc.full_address = "192.168.100.1"
+        slavc.show_next = MagicMock(return_value=0)
+        self.master.add_slave_connection(slavc)
+        self.master.request_next()
+        for slaveconnection in self.master.slave_connections.values():
+            slaveconnection.show_next.assert_called()
 
     def test_update_presentation_status_to_layout_works(self):
         with patch.object(MasterGUILayout, 'notify', return_value=None) as mock_method:
