@@ -3,6 +3,7 @@ import ipaddress
 import kivy
 
 from Networking.RemuTCP import RemuTCP
+from GUI.GUIFactory import GUIFactory #ÄLÄ POISTA
 from kivy.app import App
 from kivy.lang.builder import Builder
 from Domain.Slave import Slave
