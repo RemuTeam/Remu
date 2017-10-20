@@ -168,8 +168,8 @@ class SlaveGUILayout(Screen):
 Fullscreen layout for presenting content
 """
 class PresentationLayout(Screen):
-    source = StringProperty('')
-    text_element = StringProperty('Text here!')
+    source = StringProperty('background/black_as_kivys_soul.png')
+    text_element = StringProperty('')
 
     """
     In the constructor the class and instance are passed
@@ -178,19 +178,35 @@ class PresentationLayout(Screen):
     def __init__(self, **kwargs):
         super(PresentationLayout, self).__init__(**kwargs)
         self.slave = None
-
-    def button_pressed(self):
-        self.show()
+        self.presentation_type = None
 
     def on_enter(self, *args):
         self.set_slave(App.get_running_app().servicemode)
-        self.set_visible_widget(self.slave.get_presentation_type())
+        self.set_presentation_mode(self.slave.get_presentation_type())
         self.slave.set_layout(self)
         self.slave.reset_presentation()
 
     def set_slave(self, slave):
         self.slave = slave
 
+    """
+    Sets the right media widget based on the presentation mode.
+    
+    presentation_type:  a PresentationType object
+    """
+    def set_presentation_mode(self, presentation_type):
+        self.set_visible_widget(presentation_type)
+        self.presentation_type = presentation_type
+        print(self.presentation_type)
+
+    """
+    Sets the visible widget according to the presentation's type
+    
+    Hides the "picture" widget if TextPresentation
+    Hides the "text_field" widget if PicPresentation
+    
+    presentation_type:  a PresentationType object
+    """
     def set_visible_widget(self, presentation_type):
         if presentation_type == PresentationType.Text:
             self.ids.picture.size_hint_y = None
@@ -202,8 +218,11 @@ class PresentationLayout(Screen):
     """
     Shows the next element of the show
     """
-    def show(self, source_file):
-        self.source = source_file
+    def show(self, content):
+        if self.presentation_type == PresentationType.Image:
+            self.source = content
+        elif self.presentation_type == PresentationType.Text:
+            self.text_element = content
 
     """
     Resets the presentation to the starting state
@@ -272,7 +291,8 @@ class SlaveVisualProperty(Button):
 
     def __init__(self, image_source):
         super(SlaveVisualProperty, self).__init__()
-        self.visual_name = image_source.split("/")[1]
+        #self.visual_name = image_source.split("/")[1]
+        self.visual_name = image_source
         self.background_normal = ''
         self.background_color = [0.5, 0.5, 0.5, 1]
 

@@ -44,12 +44,12 @@ class TextPresentationTest(unittest.TestCase):
 
     def test_get_out_of_boundaries_1(self):
         self.load()
-        self.assertIsNone(self.tp.get(-1))
+        self.assertEqual(self.tp.get(-1), "")
         self.assertEqual(self.tp.index, 0)
 
     def test_get_out_of_boundaries_2(self):
         self.load()
-        self.assertIsNone(self.tp.get(4))
+        self.assertEqual(self.tp.get(4), "")
         self.assertEqual(self.tp.index, 0)
 
     def test_get_inside_boundaries_1(self):
