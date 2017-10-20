@@ -311,8 +311,9 @@ class RemuSM(ScreenManager):
     Creates a new master layout, and sets it to be the current screen
     """
     def add_master_layout(self):
-        self.master_screen = MasterGUILayout(name='master_gui_layout')
-        self.add_widget(self.master_screen)
+        if self.master_screen is None:
+            self.master_screen = MasterGUILayout(name='master_gui_layout')
+            self.add_widget(self.master_screen)
         self.current = 'master_gui_layout'
 
     """
@@ -320,10 +321,11 @@ class RemuSM(ScreenManager):
     to be the current screen
     """
     def add_slave_layout(self):
-        self.slave_screen = SlaveGUILayout(name='slave_gui_layout')
-        self.presentation_screen = PresentationLayout(name='presentation_layout')
-        self.add_widget(self.slave_screen)
-        self.add_widget(self.presentation_screen)
+        if self.slave_screen is None:
+            self.slave_screen = SlaveGUILayout(name='slave_gui_layout')
+            self.presentation_screen = PresentationLayout(name='presentation_layout')
+            self.add_widget(self.slave_screen)
+            self.add_widget(self.presentation_screen)
         self.current = 'slave_gui_layout'
 
     """

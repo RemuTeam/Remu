@@ -9,20 +9,17 @@ from Domain.Master import Master
 from Domain.Command import Command
 
 class SlaveConnectionTest(unittest.TestCase):
-    sc = None
 
     def setUp(self):
-        mock = Mock(RemuTCP)
-        self.sc = SlaveConnection(None, mock)
+        self.connection_mock = Mock(RemuTCP)
+        self.sc = SlaveConnection(None, self.connection_mock)
 
     def test_init_with_connection(self):
-        mock = Mock(RemuTCP)
-        slavecon = SlaveConnection(None, mock)
-        self.assertEqual(mock, slavecon.connection)
+        self.assertEqual(self.connection_mock, self.sc.connection)
 
     def test_init_without_params(self):
-        slavecon = SlaveConnection(None)
-        self.assertIsNone(slavecon.connection)
+        empty_slavecon = SlaveConnection(None)
+        self.assertIsNone(empty_slavecon.connection)
 
     def test_invalid_ip_address1(self):
         self.sc.connect_to_IP("192.168.asd.1")
@@ -45,7 +42,6 @@ class SlaveConnectionTest(unittest.TestCase):
         self.assertIsNone(self.sc.connection)
 
     def test_show_next(self):
-        self.sc.connection = Mock(RemuTCP)
         presentation = PicPresentation()
         presentation.pic_files.append("first")
         presentation.pic_files.append("second")
@@ -56,18 +52,14 @@ class SlaveConnectionTest(unittest.TestCase):
         self.assertEqual(self.sc.currently_showing, "second")
 
     def test_request_presentation_calls_send_message(self):
-        mocktcp = Mock(RemuTCP)
-        self.sc.connection = mocktcp
         self.sc.request_presentation()
-        calls = mocktcp.method_calls
+        calls = self.connection_mock.method_calls
         name = calls[0][0]
         self.assertEqual(name, "send_message")
 
     def test_show_next_calls_send_message(self):
-        mocktcp = Mock(RemuTCP)
-        self.sc.connection = mocktcp
         self.sc.show_next()
-        calls = mocktcp.method_calls
+        calls = self.connection_mock.method_calls
         name = calls[0][0]
         self.assertEqual(name, "send_message")
 
@@ -77,6 +69,7 @@ class SlaveConnectionTest(unittest.TestCase):
         msg = slave.handle_request_presentation()
         slavecon.handle_message(msg)
         self.assertGreaterEqual(len(slavecon.presentation.pic_files), 2)
+
 
     def test_handle_show_next_response(self):
         slavecon = SlaveConnection(Mock(Master))

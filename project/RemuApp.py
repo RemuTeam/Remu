@@ -3,12 +3,10 @@ import ipaddress
 import kivy
 
 from Networking.RemuTCP import RemuTCP
-from GUI.GUIFactory import GUIFactory
 from kivy.app import App
 from kivy.lang.builder import Builder
 from Domain.Slave import Slave
 from Domain.Master import Master
-
 """
     HANDLES THE NAMING OF SLAVES AND MASTER AND THE MESSAGE SENT
     
@@ -27,7 +25,6 @@ class RemuApp(App):
         super(RemuApp, self).__init__(**kwargs)
         self.isMaster = False
         self.slaves = None
-        self.master = None
         self.servicemode = None
 
     """

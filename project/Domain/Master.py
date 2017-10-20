@@ -9,12 +9,11 @@ class Master:
 
     layout: the layout to be notified on changes
     """
-    def __init__(self, layout, seeking_slaves=True):
+    def __init__(self, layout):
         self.slave_connections = {}
         self.layout = layout
-        if seeking_slaves:
-            self.master_chef = MasterUDPListener(self)
-            self.master_chef.listen_for_beacons()
+        self.master_chef = MasterUDPListener(self)
+        self.master_chef.listen_for_beacons()
 
     """
     Adds a slave connection by creating a new RemuTCP object
