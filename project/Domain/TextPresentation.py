@@ -87,7 +87,7 @@ class TextPresentation(Presentation):
             self.index = index + 1
             return next_element
         else:
-            return None
+            return ""
 
     """
     Resets the presentation, returning it to the beginning

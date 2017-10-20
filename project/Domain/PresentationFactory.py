@@ -12,7 +12,7 @@ class PresentationFactory:
     """
     @staticmethod
     def TextPresentation():
-        presentation = TextPresentation('texts/test_text.txt')
+        presentation = TextPresentation("texts/test_text.txt")
         return presentation
 
     """
