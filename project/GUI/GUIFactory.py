@@ -272,7 +272,7 @@ class SlaveVisualProperty(Button):
 
     def __init__(self, image_source):
         super(SlaveVisualProperty, self).__init__()
-        self.visual_name = image_source.split("/")[1]
+        self.visual_name = image_source
         self.background_normal = ''
         self.background_color = [0.5, 0.5, 0.5, 1]
 

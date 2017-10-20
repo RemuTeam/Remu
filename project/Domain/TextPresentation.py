@@ -16,10 +16,10 @@ class TextPresentation(Presentation):
     initializes a list for text elements
     initializes the index to keep track of the element to show
     """
-    def __init__(self):
+    def __init__(self, textfile=None):
         self.presentation_content = []
         self.index = 0
-        self.textfile = None
+        self.textfile = textfile
 
     """
     Populates the text element list from text file

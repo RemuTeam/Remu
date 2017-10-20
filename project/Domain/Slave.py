@@ -46,7 +46,8 @@ class Slave:
         self.load_presentation()
         response = Message()
         response.set_field(MessageKeys.response_key, Command.REQUEST_PRESENTATION.value)
-        response.set_field(MessageKeys.data_key, self.presentation.__dict__)
+        response.set_field(MessageKeys.presentation_type_key, self.presentation.get_presentation_type().value)
+        response.set_field(MessageKeys.presentation_content_key, self.presentation.__dict__)
         return response
 
     """

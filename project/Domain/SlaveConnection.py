@@ -4,6 +4,7 @@ from Domain.Message import Message
 from Domain.PicPresentation import PicPresentation
 from Domain.Command import *
 from Domain.MessageKeys import MessageKeys
+from Domain.PresentationFactory import PresentationFactory
 from functools import partial
 
 """
@@ -91,9 +92,13 @@ class SlaveConnection:
     Creates a presentation based on the message received from master
     """
     def handle_presentation_response(self, data):
-        presentation = PicPresentation()
-        presentation.index = data[MessageKeys.index_key]
-        presentation.presentation_content = data[MessageKeys.presentation_content_key]
+        presentation = None
+        print(data)
+        if MessageKeys.presentation_type_key in data and MessageKeys.presentation_content_key in data:
+            presentation = PresentationFactory.CreatePresentation(data[MessageKeys.presentation_type_key], data[MessageKeys.presentation_content_key])
+        #presentation = PicPresentation()
+        #presentation.index = data[MessageKeys.index_key]
+        #presentation.presentation_content = data[MessageKeys.presentation_content_key]
         self.set_presentation(presentation)
         self.master.notify(Notification.PRESENTATION_UPDATE, self.presentation)
 
@@ -126,5 +131,5 @@ class SlaveConnection:
     def handle_message(self, msg):
         print(msg.fields)
         if MessageKeys.response_key in msg.fields:
-            self.handle_responses[msg.get_response()](self, msg.get_data())
+            self.handle_responses[msg.get_response()](self, msg.fields)
                 
