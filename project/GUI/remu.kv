@@ -124,6 +124,7 @@ RemuSM:
     StackLayout:
         id: visuals
         orientation: 'lr-tb'
+        spacing: 2
 
 #
 # SlaveVisualProperty is the visual representation of slave's visual property. It inherits Button, so that
@@ -132,6 +133,10 @@ RemuSM:
 <SlaveVisualProperty@Button>
     size_hint: 0.2, 1
     text: root.visual_name
+    text_size: self.size
+    halign: 'center'
+    valign: 'middle'
+    padding: (5, 2)
 
 
 <MasterBackPopUp>:

@@ -39,7 +39,7 @@ class SlaveTest(unittest.TestCase):
         self.assertEqual(slave.layout, mock)
 
     def test_handling_picpresentation_request(self):
-        data_key = MessageKeys.data_key
+        data_key = MessageKeys.presentation_content_key
         index_key = MessageKeys.index_key
         slave = Slave()
         presentation = PresentationFactory.PicPresentation()

@@ -96,9 +96,6 @@ class SlaveConnection:
         print(data)
         if MessageKeys.presentation_type_key in data and MessageKeys.presentation_content_key in data:
             presentation = PresentationFactory.CreatePresentation(data[MessageKeys.presentation_type_key], data[MessageKeys.presentation_content_key])
-        #presentation = PicPresentation()
-        #presentation.index = data[MessageKeys.index_key]
-        #presentation.presentation_content = data[MessageKeys.presentation_content_key]
         self.set_presentation(presentation)
         self.master.notify(Notification.PRESENTATION_UPDATE, self.presentation)
 
