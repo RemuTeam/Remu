@@ -57,9 +57,6 @@ class SlaveConnection:
         self.connection.send_message(msg)
 
 
-    def loseConnection(self):
-        self.connection = None
-
     """
         Requests the presentation-object from slave
     """
