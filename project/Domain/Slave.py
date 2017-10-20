@@ -142,4 +142,4 @@ class Slave:
     Uses a RemuUDP method to stop listening to the UDP connection
     """
     def close_UDP_connection(self):
-        self.beacon.close_connections()
+        self.beacon.stop_beaconing()

@@ -47,7 +47,7 @@ class MasterGUILayout(Screen):
         super(MasterGUILayout, self).__init__(**kwargs)
         self.presentation = None
 
-    def on_enter(self):
+    def on_pre_enter(self):
         self.master = App.get_running_app().get_master(self)
 
     """

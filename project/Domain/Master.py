@@ -12,7 +12,7 @@ class Master:
     def __init__(self, layout):
         self.slave_connections = {}
         self.layout = layout
-        self.master_chef = MasterUDPListener(self)
+        self.master_chef = MasterUDPListener()
         self.master_chef.listen_for_beacons()
 
     """

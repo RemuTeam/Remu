@@ -41,25 +41,31 @@ class EchoClientDatagramProtocol(DatagramProtocol):
 
 class Beacon:
 
+    def __init__(self):
+        self.transport = None
+        self.protocol = None
+
     def stop_beaconing(self):
         print("Stopping beacon")
-        self.protocol.event. cancel()
+        if self.protocol is not None:
+            self.protocol.event.cancel()
+            self.protocol.stopProtocol()
+            self.protocol = None
 
     def start_beaconing(self):
         print("Starting beacon")
         self.protocol = EchoClientDatagramProtocol(True, self)
         #0 means any port
 
-        self.transport=reactor.listenUDP(0, self.protocol)
+        self.transport = reactor.listenUDP(0, self.protocol)
         self.transport.setBroadcastAllowed(True)
 
 
 class MasterUDPListener:
 
-    def __init__(self, master):
-        self.master = master
+    def __init__(self):
         self.protocol = None
-        self.transport = False
+        self.transport = None
 
     def listen_for_beacons(self):
         print("Starting listening on beacons")
@@ -70,4 +76,6 @@ class MasterUDPListener:
 
     def stop_listening_to_beacons(self):
         print("Stopping listening")
-        self.protocol.stopProtocol()
+        if self.protocol is not None:
+            self.protocol.stopProtocol()
+            self.protocol = None

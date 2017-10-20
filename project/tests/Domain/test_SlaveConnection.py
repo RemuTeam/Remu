@@ -2,7 +2,6 @@ import unittest
 from Domain.SlaveConnection import SlaveConnection
 from Networking.RemuTCP import RemuTCP
 from unittest.mock import Mock
-from unittest.mock import MagicMock
 from Domain.PicPresentation import PicPresentation
 from Domain.Slave import Slave
 from Domain.Message import Message
@@ -108,10 +107,10 @@ class SlaveConnectionTest(unittest.TestCase):
     def test_presentation_resets_when_next_item_is_none(self):
         self.sc.master = Mock(Master)
         self.sc.presentation = Mock(PicPresentation)
-        self.sc.presentation.get_next = MagicMock(return_value=None)
+        self.sc.presentation.get_next = Mock(return_value=None)
         self.sc.handle_show_next_response()
-        self.sc.presentation.get_next.assert_called_once()
-        self.sc.presentation.reset.assert_called_once()
+        self.sc.presentation.get_next.assert_called_once_with()
+        self.sc.presentation.reset.assert_called_once_with()
 
     def test_connection_established_sets_connected_true(self):
         slavecon = SlaveConnection(Mock(Master))
