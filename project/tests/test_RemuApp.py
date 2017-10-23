@@ -17,7 +17,7 @@ class TestRemuAppMethods(unittest.TestCase):
     def test_setMaster(self):
 
         self.assertFalse(self.app.isMaster)
-        self.app.set_master(Mock(Master))
+        self.app.set_servicemode(Mock(Master), True)
         self.assertEquals(self.app.isMaster, True)
 
     """

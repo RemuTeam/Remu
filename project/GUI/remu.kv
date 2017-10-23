@@ -1,14 +1,7 @@
-ScreenManager:
+RemuSM:
     id: screen_manager
     SwitchLayout:
         id: switch_layout
-        manager: screen_manager
-    MasterGUILayout:
-        label_text: switch_layout.text
-        manager: screen_manager
-    SlaveGUILayout:
-        manager: screen_manager
-    PresentationLayout:
         manager: screen_manager
 
 #
@@ -25,11 +18,11 @@ ScreenManager:
             Button:
                 text: "Master"
                 size_hint: 0.3,0.3
-                on_release: app.root.current = 'master_gui_layout'
+                on_release: app.root.add_master_layout()
             Button:
                 text: "Slave"
                 size_hint: 0.3,0.3
-                on_release: app.root.current = 'slave_gui_layout'
+                on_release: app.root.add_slave_layout()
 
 #
 # MasterGUILayout contains a options bar, a bottom bar and a main view. Upper bar contains connection control, lower bar
@@ -37,8 +30,6 @@ ScreenManager:
 #
 <MasterGUILayout>:
     id: master_gui_layout
-    name: 'master_gui_layout'
-    messages_sent: root.msg_sent
     orientation: 'vertical'
     spacing: 10
     padding: 10
@@ -52,7 +43,6 @@ ScreenManager:
             Button:
                 text: "Send message to slave"
                 on_press: root.send_message_to_slave()
-                on_press: msg_sent_amount.text = root.increment()
             Button:
                 text: "Back"
                 on_press: root.show_master_back_popup()
@@ -73,18 +63,12 @@ ScreenManager:
             size_hint: 1, 0.1
             Label:
                 text: root.label_text
-            Label:
-                text: "Messages sent: "
-            Label:
-                id: msg_sent_amount
-                text: "0"
 
 #
 # SlaveGUILayout contains the waiting view for slave mode. When the presentation starts, slave device changes to
 # presentation layout
 #
 <SlaveGUILayout>:
-    name: "slave_gui_layout"
     orientation: 'vertical'
     spacing: 10
     padding: 10
@@ -100,7 +84,7 @@ ScreenManager:
                 size_hint: 0.3,0.3
                 text: "Go to presentation"
                 on_press: root.prepare_for_presentation_mode()
-                on_press: app.root.current = "presentation_layout"
+                on_press: app.root.change_screen_to("presentation_layout")
             Button:
                 size_hint:0.3,0.3
                 text: "Back"
@@ -110,17 +94,15 @@ ScreenManager:
 # PresentationLayout controls the slave devices presentation view
 #
 <PresentationLayout>:
-    name: "presentation_layout"
-
     BoxLayout:
         orientation: 'vertical'
         Image:
             id: picture
-            source: None
-        Button:
-            size_hint: 1, 0.05
-            text: "Simulate master signal"
-            on_press: root.button_pressed()
+            source: root.source
+        #Button:
+        #    size_hint: 1, 0.05
+        #    text: "Simulate master signal"
+        #    on_press: root.button_pressed()
 
 #
 # SlavePresentation represents a single slave of the master, with all of its visuals included
@@ -158,7 +140,7 @@ ScreenManager:
                 on_press: app.end_presentation()
                 on_press: app.close_connections()
                 on_press: root.dismiss()
-                on_release: app.root.current = 'switch_layout'
+                on_release: app.root.rm_master_layout()
                 size_hint: 0.3,0.3
             Button:
                 text: "No"
@@ -177,7 +159,7 @@ ScreenManager:
                 text: "Yes"
                 on_press: app.close_connections()
                 on_press: root.dismiss()
-                on_release: app.root.current = 'switch_layout'
+                on_release: app.root.rm_slave_layout()
                 size_hint: 0.3,0.3
             Button:
                 text: "No"
