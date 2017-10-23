@@ -292,6 +292,7 @@ class SlavePresentation(BoxLayout):
     Highlights the next visual, indicating it is the currently active visual
     """
     def show_next(self):
+        self.visuals[self.current_active].set_inactive()
         self.current_active = self.presentation_data.index - 1
         if self.current_active is not -1:
             self.visuals[self.current_active].set_active()

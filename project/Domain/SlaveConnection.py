@@ -103,7 +103,6 @@ class SlaveConnection:
     """
     def handle_presentation_response(self, data):
         presentation = None
-        print(data)
         if MessageKeys.presentation_type_key in data and MessageKeys.presentation_content_key in data:
             presentation = PresentationFactory.CreatePresentation(data[MessageKeys.presentation_type_key], data[MessageKeys.presentation_content_key])
         self.set_presentation(presentation)
