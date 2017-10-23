@@ -136,7 +136,8 @@ class Slave:
     Uses a RemuTCP method to close the listening connection
     """
     def close_TCP_connections(self):
-        self.master_connection.end_connection()
+        if self.master_connection is not None:
+            self.master_connection.end_connection()
 
     """
     Uses a RemuUDP method to stop listening to the UDP connection

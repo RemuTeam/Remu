@@ -37,22 +37,13 @@ class RemuApp(App):
         return BuildKV
 
     """
-    Set Master object as service mode
+    Sets the given object as service mode
     
-    master: the object to set as master
+    servicemode: the object to set as master or slave
     """
-    def set_master(self, master):
-        self.isMaster = True
-        self.servicemode = master
-
-    """
-    Set Slave object as service mode
-    
-    slave: the object to set as slave
-    """
-    def set_slave(self, slave):
-        self.isMaster = False
-        self.servicemode = slave
+    def set_servicemode(self, servicemode, isMaster):
+        self.isMaster = isMaster
+        self.servicemode = servicemode
 
     """
     Get the app's Master
@@ -62,7 +53,7 @@ class RemuApp(App):
     """
     def get_master(self, layout):
         if self.servicemode is None:
-            self.create_master(layout)
+            self.create_servicemode(layout, True)
 
         return self.servicemode
 
@@ -72,30 +63,24 @@ class RemuApp(App):
 
     layout: the layout to bind with self.servicemode
     """
-    def get_slave(self):
+    def get_slave(self, layout):
         if self.servicemode is None:
-            self.create_slave()
+            self.create_servicemode(layout, False)
 
         return self.servicemode
 
     """
-    Creates a new Master object and sets it as self.servicemode
+    Creates a new service object and sets it in the self.servicemode
     
     layout: the layout to bind with self.servicemode
     """
-    def create_master(self, layout):
-        new_master = Master(layout)
-        self.set_master(new_master)
-
-    """
-    Creates a new Slave object and sets it as self.servicemode
-
-    layout: the layout to bind with self.servicemode
-    """
-    def create_slave(self):
-        new_slave = Slave()
-        new_slave.set_master_connection(RemuTCP())
-        self.set_slave(new_slave)
+    def create_servicemode(self, layout, is_master):
+        if is_master:
+            new_master = Master(layout)
+            self.set_servicemode(new_master, True)
+        else:
+            new_slave = Slave(layout)
+            self.set_servicemode(new_slave, False)
 
     """
     Ends the presentation by calling the current servicemode's end_presentation method.

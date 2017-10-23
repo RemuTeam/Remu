@@ -16,10 +16,13 @@ class TestRemuAppMethods(unittest.TestCase):
         self.app.close_connections()
 
     def test_setMaster(self):
-        pass
         #self.assertFalse(self.app.isMaster)
         #self.app.set_master(Mock(Master))
         #self.assertEquals(self.app.isMaster, True)
+
+        self.assertFalse(self.app.isMaster)
+        self.app.set_servicemode(Mock(Master), True)
+        self.assertEquals(self.app.isMaster, True)
 
     """
     def test_setSlave(self):
