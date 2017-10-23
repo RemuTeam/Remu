@@ -80,6 +80,7 @@ class RemuApp(App):
             self.set_servicemode(new_master, True)
         else:
             new_slave = Slave(layout)
+            new_slave.set_master_connection(RemuTCP(new_slave))
             self.set_servicemode(new_slave, False)
 
     """

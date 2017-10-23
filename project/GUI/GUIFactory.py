@@ -270,7 +270,7 @@ class SlavePresentation(BoxLayout):
         self.ids["btn_address"].text = data.full_address
         self.presentation_data = data.presentation
         self.visuals = []
-        self.current_active = data.index - 1
+        self.current_active = data.presentation.index - 1
         self.create_visual_widgets(data)
 
 
@@ -278,8 +278,8 @@ class SlavePresentation(BoxLayout):
     Creates the visual widgets for the slave's visuals
     """
     def create_visual_widgets(self, data):
-        for i in range(0, len(data.presentation_content)):
-            image = data.presentation_content[i][:100]
+        for i in range(0, len(self.presentation_data.get_presentation_content())):
+            image = self.presentation_data.get_presentation_content()[i][:100]
             if len(image) == 100:
                 image += "..."
             visual = SlaveVisualProperty(image)
