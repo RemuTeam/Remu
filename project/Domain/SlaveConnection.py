@@ -1,5 +1,5 @@
 import ipaddress
-from RemuTCP.RemuTCP import RemuTCP
+from Networking.RemuTCP import RemuTCP
 from Domain.Message import Message
 from Domain.PicPresentation import PicPresentation
 from Domain.Command import *
@@ -13,12 +13,14 @@ class SlaveConnection:
     """
     Constructor.
 
-    Connection: a RemuTCP object, if constructed beforehand
+    Connection: a Networking object, if constructed beforehand
     """
     def __init__(self, master, connection=None):
         self.master = master
         self.set_connection(connection)
         self.presentation = None
+        self.full_address = "localhost:8000"
+        self.connected = self.connection is not None
 
     """
     Sets the connection to the slave
@@ -26,8 +28,9 @@ class SlaveConnection:
     def set_connection(self, connection):
         self.connection = connection
 
+
     """
-    Attempts to create a new RemuTCP-connection with the provided IP address
+    Attempts to create a new Networking-connection with the provided IP address
     """
     def connect_to_IP(self, address):
         try:
@@ -35,6 +38,7 @@ class SlaveConnection:
             ip_address = slave_address_parts[0] if len(slave_address_parts) > 0 else None
             port = slave_address_parts[1] if len(slave_address_parts) > 1 else 8000
             ipaddress.ip_address(ip_address)
+            self.full_address = ip_address + ":" + str(port)
             self.connection = RemuTCP(self, True, ip_address, int(port))
             print("Slave added")
         except ValueError as e:
@@ -52,8 +56,6 @@ class SlaveConnection:
         msg.set_field("params", params)
         self.connection.send_message(msg)
 
-    def loseConnection(self):
-        self.connection = None
 
     """
         Requests the presentation-object from slave
@@ -68,6 +70,14 @@ class SlaveConnection:
         self.__send_command(Command.SHOW_NEXT.value)
 
     """
+        Ask slave to reset the presentation and closes the connection to it.
+    """
+    def terminate_connection(self):
+        self.__send_command(Command.DROP_CONNECTION.value)
+        self.connection.end_connection()
+        self.master.notify(Notification.CONNECTION_TERMINATED, self)
+
+    """
         Called when slave responds to command "show_next"
         Advances presentation to next item
     """
@@ -75,13 +85,13 @@ class SlaveConnection:
         self.currently_showing = self.presentation.get_next()
 
     """
-    Sets the connection's presentation object
+        Sets the connection's presentation object
     """
     def set_presentation(self, presentation):
         self.presentation = presentation
 
     """
-    Ends the current presentation
+        Ends the current presentation
     """
     def end_presentation(self):
         self.__send_command(Command.END_PRESENTATION.value)
@@ -94,29 +104,42 @@ class SlaveConnection:
         presentation.pic_index = data["pic_index"]
         presentation.pic_files = data["pic_files"]
         self.set_presentation(presentation)
-        self.master.notify(Notification.PRESENTATION_UPDATE, self.presentation)
+        self.master.notify(Notification.PRESENTATION_UPDATE, self)
 
     """
     Handles command to show next file
     """
     def handle_show_next_response(self, data=None):
         next_item = self.presentation.get_next()
+        if next_item is None:
+            self.presentation.reset()
         self.currently_showing = next_item
         self.master.notify(Notification.PRESENTATION_STATUS_CHANGE, next_item)
 
+    """
+    Resets the presentation on master's side, called when slave is told to 
+    reset its presentation
+    """
     def handle_ending_presentation(self, data=None):
         self.presentation.reset()
 
+    """
+    Invalid command handler, doesn't do anything useful except catch bad mistakes
+    """
     def handle_invalid_command_response(self, data=None):
         print("Invalid command given")
 
-    def connection_established(self, address):
-        self.master.notify(Notification.CONNECTION_ESTABLISHED, address)
+    """
+    Forwards the information of connection being established to master and its layout
+    """
+    def connection_established(self, full_address):
+        self.connected = True
+        self.master.notify(Notification.CONNECTION_ESTABLISHED, full_address)
 
-    handle_responses = {Command.REQUEST_PRESENTATION.value: partial(handle_presentation_response),
-                        Command.SHOW_NEXT.value: partial(handle_show_next_response),
-                        Command.END_PRESENTATION.value: partial(handle_ending_presentation),
-                        Command.INVALID_COMMAND.value: partial(handle_invalid_command_response)
+    handle_responses = {Command.REQUEST_PRESENTATION.value: handle_presentation_response,
+                        Command.SHOW_NEXT.value: handle_show_next_response,
+                        Command.END_PRESENTATION.value: handle_ending_presentation,
+                        Command.INVALID_COMMAND.value: handle_invalid_command_response
                         }
 
     """
@@ -127,3 +150,10 @@ class SlaveConnection:
         if "responseTo" in msg.fields:
             self.handle_responses[msg.get_response()](self, msg.get_data())
                 
+
+    """
+    Called from RemuTCP when the connection is lost; used to notify GUI of the status
+    """
+    def on_connection_lost(self):
+        self.connected = False
+        self.master.notify(Notification.CONNECTION_FAILED, self.full_address)

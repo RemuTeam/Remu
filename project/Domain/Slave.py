@@ -1,7 +1,7 @@
 from Domain.PicPresentation import PicPresentation
 from Domain.Message import Message
 from Domain.Command import Command
-
+from Networking.RemuUDP import Beacon
 """
 CONTAINS SLAVE'S ADMINISTRATIVE AND PRESENTATIONAL DATA
 """
@@ -16,9 +16,11 @@ class Slave:
         self.layout = layout
         self.master_connection = None
         self.source = ''
+        self.beacon = Beacon()
+        self.beacon.start_beaconing()
 
     """
-    Sets the slave's master_connection
+    Sets the slave's master_connection, it is a listening RemuTCP connection
     """
     def set_master_connection(self, master_connection):
         self.master_connection = master_connection
@@ -38,22 +40,28 @@ class Slave:
     presentation with the response
     """
     def handle_request_presentation(self):
+        self.beacon.stop_beaconing()
         if not self.presentation.pic_files:
             self.presentation.get_filenames()
         return self.create_response(Command.REQUEST_PRESENTATION.value, self.presentation.__dict__)
 
     """
     Handles requests to show the next picture in the presentation, 
-    uses a callback (NYI) to tell the layout to update its view.
+    uses a callback to tell the layout to update its view.
     Returns a confirmation to master
     """
     def handle_show_next(self):
         if not self.presentation.pic_files:
             self.presentation.get_filenames()
         current = self.presentation.get_next()
-        self.layout.show(current)
+        if self.layout:
+            if current is not None:
+                self.layout.show(current)
+            else:
+                self.layout.reset_presentation()
 
         return self.create_response(Command.SHOW_NEXT.value)
+
 
     """
     Handles invalid requests made by master, simply returns acknowledgement of 
@@ -73,6 +81,16 @@ class Slave:
         return self.create_response(Command.END_PRESENTATION.value)
 
     """
+    Handles master closing its connection to the slave, doesn't close slave's 
+    listening and doesn't reply to the message because the master doesn't have
+    a connection to the slave anymore
+    """
+    def handle_closing_connection(self):
+        if not self.presentation.pic_files:
+            self.presentation.get_filenames()
+        self.layout.reset_presentation()
+
+    """
     Creates a instance of Message based on the given command
     """
     def create_response(self, command, data=None):
@@ -90,7 +108,8 @@ class Slave:
     messagehandler = {Command.REQUEST_PRESENTATION.value: handle_request_presentation,
                       Command.SHOW_NEXT.value: handle_show_next,
                       Command.END_PRESENTATION.value: handle_ending_presentation,
-                      Command.INVALID_COMMAND.value: handle_invalid_command
+                      Command.INVALID_COMMAND.value: handle_invalid_command,
+                      Command.DROP_CONNECTION.value: handle_closing_connection
                       }
 
     """
@@ -106,5 +125,22 @@ class Slave:
     def connection_established(self, address):
         pass
 
-    def close_connections(self):
-        self.master_connection.end_connection()
+    """
+    Closes all networking protocols the slave uses
+    """
+    def close_all_connections(self):
+        self.close_TCP_connections()
+        self.close_UDP_connection()
+
+    """
+    Uses a RemuTCP method to close the listening connection
+    """
+    def close_TCP_connections(self):
+        if self.master_connection is not None:
+            self.master_connection.end_connection()
+
+    """
+    Uses a RemuUDP method to stop listening to the UDP connection
+    """
+    def close_UDP_connection(self):
+        self.beacon.stop_beaconing()

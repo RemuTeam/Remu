@@ -1,10 +1,11 @@
 from Domain.Slave import Slave
 from Domain.Message import Message
 from Domain.Command import Command
-from RemuTCP.RemuTCP import RemuTCP
+from Networking.RemuTCP import RemuTCP
 from GUI.GUIFactory import PresentationLayout
 import unittest
 from unittest.mock import Mock
+from unittest.mock import patch
 
 class SlaveTest(unittest.TestCase):
     def test_init_with_no_layout(self):
@@ -37,7 +38,7 @@ class SlaveTest(unittest.TestCase):
         msg.set_field("command", Command.REQUEST_PRESENTATION.value)
         response = slave.handle_message(msg)
         self.assertEqual(response.get_field("data")["pic_index"], 0)
-        self.assertCountEqual(response.get_field("data")["pic_files"], ["images/a.jpg", "images/b.jpg"])
+        self.assertEqual(len(response.get_field("data")["pic_files"]), 5)
 
     def test_handling_show_next(self):
         slave = Slave(Mock(PresentationLayout))
@@ -60,3 +61,35 @@ class SlaveTest(unittest.TestCase):
         msg = Message()
         response = slave.handle_message(msg)
         self.assertEqual(response.get_field("responseTo"), Command.INVALID_COMMAND.value)
+
+    def test_handling_ending_presentation(self):
+        slave = Slave()
+        msg = Message()
+        slave.layout = Mock(PresentationLayout)
+        with patch.object(slave.layout, "reset_presentation") as mock:
+            msg.set_field("command", Command.END_PRESENTATION.value)
+            response = slave.handle_message(msg)
+            self.assertEqual(response.get_field("responseTo"), Command.END_PRESENTATION.value)
+            mock.assert_called_with()
+
+    def test_handling_closing_connection(self):
+        slave = Slave()
+        msg = Message()
+        slave.layout = Mock(PresentationLayout)
+        with patch.object(slave.layout, "reset_presentation") as mock:
+            msg.set_field("command", Command.DROP_CONNECTION.value)
+            slave.handle_message(msg)
+            mock.assert_called_with()
+
+    def test_handling_show_next_resetting_presentation(self):
+        slave = Slave()
+        slave.presentation.get_filenames()
+        for i in range(0, len(slave.presentation.pic_files)):
+            slave.presentation.get_next()
+        msg = Message()
+        slave.layout = Mock(PresentationLayout)
+        with patch.object(slave.layout, "reset_presentation") as mock:
+            msg.set_field("command", Command.SHOW_NEXT.value)
+            response = slave.handle_message(msg)
+            self.assertEqual(response.get_field("responseTo"), Command.SHOW_NEXT.value)
+            mock.assert_called_with()

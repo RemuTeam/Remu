@@ -2,13 +2,12 @@ import ipaddress
 
 import kivy
 
-from RemuTCP.RemuTCP import RemuTCP
-from GUI.GUIFactory import GUIFactory
+from Networking.RemuTCP import RemuTCP
+from GUI.GUIFactory import GUIFactory #ÄLÄ POISTA
 from kivy.app import App
 from kivy.lang.builder import Builder
 from Domain.Slave import Slave
 from Domain.Master import Master
-
 """
     HANDLES THE NAMING OF SLAVES AND MASTER AND THE MESSAGE SENT
     
@@ -25,10 +24,8 @@ class RemuApp(App):
 
     def __init__(self, **kwargs):
         super(RemuApp, self).__init__(**kwargs)
-        self.guimaker = GUIFactory()
         self.isMaster = False
         self.slaves = None
-        self.master = None
         self.servicemode = None
 
     """
@@ -37,7 +34,6 @@ class RemuApp(App):
     """
 
     def build(self):
-        self.guimaker.set_parent(self)
         return BuildKV
 
     """
@@ -99,4 +95,4 @@ class RemuApp(App):
 
     def close_connections(self):
         if self.servicemode:
-            self.servicemode.close_connections()
+            self.servicemode.close_all_connections()

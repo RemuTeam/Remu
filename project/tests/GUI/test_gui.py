@@ -18,28 +18,6 @@ def test_switch_layout_components(simulator):
 
 @pytest.mark.parametrize("params", [{}])
 @simulate
-def test_master_button_works(simulator):
-    simulator.tap(get_from_layout("Switch", "Button", 1))
-
-    simulator.assert_text(get_from_layout("Master", "Button", 1), "Send message to slave")
-
-
-@pytest.mark.parametrize("params", [{}])
-@simulate
-def test_slave_button_works(simulator):
-    simulator.tap(get_from_layout("Switch", "Button", 2))
-    simulator.assert_text(get_from_layout("Slave", "Label", 1), "Currently in slave mode")
-    simulator.app.close_connections()
-
-@pytest.mark.parametrize("params", [{}])
-@simulate
-def test_master_gui(simulator):
-    simulator.tap(get_from_layout("Switch", "Button", 1))
-
-    simulator.assert_count(get_from_layout("Master", "Button"), 3)
-
-@pytest.mark.parametrize("params", [{}])
-@simulate
 def test_master_gui_components(simulator):
     simulator.tap(get_from_layout("Switch", "Button", 1))
 
@@ -47,16 +25,11 @@ def test_master_gui_components(simulator):
     simulator.assert_text(get_from_layout("Master", "Button", 2), "Back")
     simulator.assert_text(get_from_layout("Master", "Button", 3), "Add Slave")
 
-"""
 @pytest.mark.parametrize("params", [{}])
 @simulate
-def test_ip_changes_when_pressed(simulator):
-    simulator.tap(get_from_layout("Switch", "Button", 1))
-
-    simulator.set_text_to(get_from_layout("Master", "TextInput", 1), "100.100.100.100:1000")
-    simulator.tap(get_from_layout("Master", "Button", 3))
-    simulator.assert_text(get_from_layout("Master", "Label", 1), "100.100.100.100:1000")
-"""
+def test_slave_button_works(simulator):
+    simulator.tap(get_from_layout("Switch", "Button", 2))
+    simulator.assert_text(get_from_layout("Slave", "Label", 1), "Currently in slave mode")
 
 #@pytest.mark.parametrize("params", [{}])
 #@simulate
