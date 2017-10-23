@@ -74,7 +74,6 @@ class SlaveConnection:
     """
     def terminate_connection(self):
         self.__send_command(Command.DROP_CONNECTION.value)
-        #self.master.notify()
         self.connection.end_connection()
         self.master.notify(Notification.CONNECTION_TERMINATED, self)
 
