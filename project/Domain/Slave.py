@@ -1,7 +1,9 @@
-from Domain.PicPresentation import PicPresentation
+from Domain.Presentation import Presentation
 from Domain.Message import Message
 from Domain.Command import Command
+from Domain.MessageKeys import MessageKeys
 from Networking.RemuUDP import Beacon
+
 """
 CONTAINS SLAVE'S ADMINISTRATIVE AND PRESENTATIONAL DATA
 """
@@ -12,7 +14,7 @@ class Slave:
     The master_connection is a RemuTCP object
     """
     def __init__(self, layout=None):
-        self.presentation = self.create_presentation()
+        self.presentation = Presentation()
         self.layout = layout
         self.master_connection = None
         self.source = ''
@@ -29,11 +31,15 @@ class Slave:
     def set_layout(self, new_layout):
         self.layout = new_layout
 
+    def reset_presentation(self):
+        self.source = ''
+        self.presentation.reset()
+
     """
-    Creates slave's presentation
+    Sets the slave's presentation
     """
-    def create_presentation(self):
-        return PicPresentation()
+    def set_presentation(self, presentation):
+        self.presentation = presentation
 
     """
     Handles requests for the presentation made by the master, returns the
@@ -41,9 +47,11 @@ class Slave:
     """
     def handle_request_presentation(self):
         self.beacon.stop_beaconing()
-        if not self.presentation.pic_files:
-            self.presentation.get_filenames()
-        return self.create_response(Command.REQUEST_PRESENTATION.value, self.presentation.__dict__)
+        self.load_presentation()
+        metadata = {MessageKeys.response_key: Command.REQUEST_PRESENTATION.value,
+                    MessageKeys.presentation_type_key: self.presentation.get_presentation_type().value,
+                    MessageKeys.presentation_content_key: self.presentation.__dict__}
+        return self.create_response(Command.REQUEST_PRESENTATION.value, metadata)
 
     """
     Handles requests to show the next picture in the presentation, 
@@ -51,8 +59,7 @@ class Slave:
     Returns a confirmation to master
     """
     def handle_show_next(self):
-        if not self.presentation.pic_files:
-            self.presentation.get_filenames()
+        self.load_presentation()
         current = self.presentation.get_next()
         if self.layout:
             if current is not None:
@@ -61,7 +68,6 @@ class Slave:
                 self.layout.reset_presentation()
 
         return self.create_response(Command.SHOW_NEXT.value)
-
 
     """
     Handles invalid requests made by master, simply returns acknowledgement of 
@@ -74,8 +80,7 @@ class Slave:
     Handles the ending of the presentation.
     """
     def handle_ending_presentation(self):
-        if not self.presentation.pic_files:
-            self.presentation.get_filenames()
+        self.load_presentation()
         self.layout.reset_presentation()
 
         return self.create_response(Command.END_PRESENTATION.value)
@@ -86,19 +91,21 @@ class Slave:
     a connection to the slave anymore
     """
     def handle_closing_connection(self):
-        if not self.presentation.pic_files:
-            self.presentation.get_filenames()
+        if self.presentation.get_presentation_content():
+            self.presentation.reset()
         self.layout.reset_presentation()
 
     """
     Creates a instance of Message based on the given command
     """
-    def create_response(self, command, data=None):
-        response = Message()
-        response.set_field("responseTo", command)
-        if data is not None:
-            response.set_field("data", data)
-        return response
+    @staticmethod
+    def create_response(command, metadata=None):
+        resp = Message()
+        resp.set_field(MessageKeys.response_key, command)
+        if metadata is not None:
+            for key, value in metadata.items():
+                resp.set_field(key, value)
+        return resp
 
     # Messagehandler
     """
@@ -117,13 +124,28 @@ class Slave:
     """
     def handle_message(self, msg):
         print("trying to parse")
-        if "command" in msg.fields:
+        if MessageKeys.command_key in msg.fields:
             print(str(msg.get_command()))
             return self.messagehandler[msg.get_command()](self)
         return self.handle_invalid_command()
 
     def connection_established(self, address):
         pass
+
+    """
+    Returns the slave's presentation's PresentationType
+    """
+    def get_presentation_type(self):
+        if self.presentation:
+            return self.presentation.get_presentation_type()
+        return None
+
+    """
+    Load the presentations content
+    """
+    def load_presentation(self):
+        if not self.presentation.get_presentation_content():
+            self.presentation.load()
 
     """
     Closes all networking protocols the slave uses

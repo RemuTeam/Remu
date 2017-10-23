@@ -4,6 +4,8 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.properties import StringProperty
 from Domain.Command import Notification
+from Domain.PresentationType import PresentationType
+from Domain.MessageKeys import MessageKeys
 from kivy.app import App
 
 """
@@ -144,12 +146,25 @@ class SlaveGUILayout(Screen):
             self.slave = App.get_running_app().get_slave(self)
 
     """
+    Prepares for a text presentation
+    """
+    def text_presentation_chosen(self):
+        App.get_running_app().create_text_presentation()
+        self.prepare_for_presentation_mode()
+
+    """
+    Prepares for a text presentation
+    """
+    def pic_presentation_chosen(self):
+        App.get_running_app().create_pic_presentation()
+        self.prepare_for_presentation_mode()
+
+    """
     Sets the app's main window to full screen and hides the
     mouse cursor.
     """
     def prepare_for_presentation_mode(self):
         window = self.get_root_window()
-        self.parent.get_screen('presentation_layout').set_slave(self.slave)
         window.show_cursor = False
     """
      Opens the warning pop-up to slave, asking if they are sure they want to go back
@@ -164,7 +179,8 @@ class SlaveGUILayout(Screen):
 Fullscreen layout for presenting content
 """
 class PresentationLayout(Screen):
-    source = StringProperty('')
+    source = StringProperty('background/black_as_kivys_soul.png')
+    text_element = StringProperty('')
 
     """
     In the constructor the class and instance are passed
@@ -173,25 +189,52 @@ class PresentationLayout(Screen):
     def __init__(self, **kwargs):
         super(PresentationLayout, self).__init__(**kwargs)
         self.slave = None
-
-    def button_pressed(self):
-        self.show()
+        self.presentation_type = None
 
     def on_enter(self, *args):
         self.set_slave(App.get_running_app().servicemode)
+        self.set_presentation_mode(self.slave.get_presentation_type())
         self.slave.set_layout(self)
-        self.slave.presentation.get_filenames()
+        self.slave.reset_presentation()
 
 
     def set_slave(self, slave):
         self.slave = slave
 
     """
+    Sets the right media widget based on the presentation mode.
+    
+    presentation_type:  a PresentationType object
+    """
+    def set_presentation_mode(self, presentation_type):
+        self.set_visible_widget(presentation_type)
+        self.presentation_type = presentation_type
+        print(self.presentation_type)
+
+    """
+    Sets the visible widget according to the presentation's type
+    
+    Hides the "picture" widget if TextPresentation
+    Hides the "text_field" widget if PicPresentation
+    
+    presentation_type:  a PresentationType object
+    """
+    def set_visible_widget(self, presentation_type):
+        if presentation_type == PresentationType.Text:
+            self.ids.picture.size_hint_y = None
+            self.ids.picture.height = '0dp'
+        elif presentation_type == PresentationType.Image:
+            self.ids.text_field.size_hint_y = None
+            self.ids.text_field.height = '0dp'
+
+    """
     Shows the next element of the show
     """
-    def show(self, source_file):
-        if source_file:
-            self.source = source_file
+    def show(self, content):
+        if self.presentation_type == PresentationType.Image:
+            self.source = content
+        elif self.presentation_type == PresentationType.Text:
+            self.text_element = content
 
     """
     Resets the presentation to the starting state
@@ -199,7 +242,7 @@ class PresentationLayout(Screen):
     def reset_presentation(self):
         self.ids.picture.source = ''
         self.get_root_window().show_cursor = True
-        self.slave.presentation.reset()
+        self.slave.reset_presentation()
         self.parent.get_screen('slave_gui_layout').set_info_text("Presentation ended\nCurrently in slave mode")
         App.get_running_app().root.current = "slave_gui_layout"
 
@@ -209,6 +252,7 @@ break the connection
 """
 class MasterBackPopUp(Popup):
     pass
+
 class SlaveBackPopUp(Popup):
     pass
 
@@ -226,17 +270,18 @@ class SlavePresentation(BoxLayout):
         self.ids["btn_address"].text = data.full_address
         self.presentation_data = data.presentation
         self.visuals = []
-        self.current_active = data.presentation.pic_index - 1
-        self.create_visual_widgets(data.presentation)
-
+        self.current_active = data.presentation.index - 1
+        self.create_visual_widgets(data)
 
 
     """
     Creates the visual widgets for the slave's visuals
     """
     def create_visual_widgets(self, data):
-        for i in range(0, len(data.pic_files)):
-            image = data.pic_files[i]
+        for i in range(0, len(self.presentation_data.get_presentation_content())):
+            image = self.presentation_data.get_presentation_content()[i][:100]
+            if len(image) == 100:
+                image += "..."
             visual = SlaveVisualProperty(image)
             self.visuals.append(visual)
             self.ids.visuals.add_widget(visual)
@@ -248,7 +293,7 @@ class SlavePresentation(BoxLayout):
     """
     def show_next(self):
         self.visuals[self.current_active].set_inactive()
-        self.current_active = self.presentation_data.pic_index - 1
+        self.current_active = self.presentation_data.index - 1
         if self.current_active is not -1:
             self.visuals[self.current_active].set_active()
 
@@ -275,7 +320,7 @@ class SlaveVisualProperty(Button):
 
     def __init__(self, image_source):
         super(SlaveVisualProperty, self).__init__()
-        self.visual_name = image_source.split("/")[1]
+        self.visual_name = image_source
         self.background_normal = ''
         self.background_color = [0.5, 0.5, 0.5, 1]
 

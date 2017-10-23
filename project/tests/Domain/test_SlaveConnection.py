@@ -3,10 +3,12 @@ from Domain.SlaveConnection import SlaveConnection
 from Networking.RemuTCP import RemuTCP
 from unittest.mock import Mock
 from Domain.PicPresentation import PicPresentation
+from Domain.PresentationFactory import PresentationFactory
 from Domain.Slave import Slave
 from Domain.Message import Message
 from Domain.Master import Master
 from Domain.Command import Command
+from Domain.MessageKeys import MessageKeys
 from Domain.Command import Notification
 
 class SlaveConnectionTest(unittest.TestCase):
@@ -44,8 +46,8 @@ class SlaveConnectionTest(unittest.TestCase):
 
     def test_show_next(self):
         presentation = PicPresentation()
-        presentation.pic_files.append("first")
-        presentation.pic_files.append("second")
+        presentation.presentation_content.append("first")
+        presentation.presentation_content.append("second")
         self.sc.presentation = presentation
         self.sc.response_next()
         self.assertEqual(self.sc.currently_showing, "first")
@@ -67,20 +69,21 @@ class SlaveConnectionTest(unittest.TestCase):
     def test_handle_picpresentation_response(self):
         slavecon = SlaveConnection(Mock(Master))
         slave = Slave()
+        slave.set_presentation(PresentationFactory.PicPresentation())
         msg = slave.handle_request_presentation()
         slavecon.handle_message(msg)
-        self.assertGreaterEqual(len(slavecon.presentation.pic_files), 2)
-
+        self.assertEqual(len(slavecon.presentation.get_presentation_content()), 5)
 
     def test_handle_show_next_response(self):
         slavecon = SlaveConnection(Mock(Master))
         slave = Slave()
+        slave.set_presentation(PresentationFactory.PicPresentation())
         msg = slave.handle_request_presentation()
         slavecon.handle_message(msg)
         msg = Message()
-        msg.set_field("responseTo", Command.SHOW_NEXT.value)
+        msg.set_field(MessageKeys.response_key, Command.SHOW_NEXT.value)
         slavecon.handle_message(msg)
-        self.assertGreaterEqual(len(slavecon.presentation.pic_files), 2)
+        self.assertEqual(len(slavecon.presentation.get_presentation_content()), 5)
         self.assertEqual(slavecon.currently_showing, "images/a.jpg")
 
         slavecon.handle_message(msg)
@@ -88,7 +91,7 @@ class SlaveConnectionTest(unittest.TestCase):
 
     def test_handle_invalid_command(self):
         msg = Message()
-        msg.set_field("responseTo", "LET ME OUT LET ME OUT LET ME OUT")
+        msg.set_field(MessageKeys.response_key, "LET ME OUT LET ME OUT LET ME OUT")
         self.sc.handle_message(msg)
 
     def test_terminate_connection_sends_commands_and_closes_connections(self):
@@ -132,5 +135,4 @@ class SlaveConnectionTest(unittest.TestCase):
         slavecon.connection_established("123.123.123.123:123123")
         slavecon.on_connection_lost()
         slavecon.master.notify.called_once_with(Notification.CONNECTION_FAILED, "123.123.123.123:123123")
-
 

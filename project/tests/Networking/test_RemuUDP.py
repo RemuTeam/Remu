@@ -2,12 +2,14 @@ import unittest
 import time
 from Networking.RemuUDP import MasterUDPListener
 from Networking.RemuUDP import Beacon
+from unittest.mock import Mock
+from Domain.Master import Master
 
 class TestRemuUDPMethods(unittest.TestCase):
 
     def setUp(self):
         self.beacon = Beacon()
-        self.master_chef = MasterUDPListener()
+        self.master_chef = MasterUDPListener(Mock(Master))
 
     def tearDown(self):
         self.beacon.stop_beaconing()

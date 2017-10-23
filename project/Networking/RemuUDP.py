@@ -42,9 +42,9 @@ class EchoClientDatagramProtocol(DatagramProtocol):
     Stops broadcasting and closes the socket used for the transport
     """
     def stopProtocol(self):
-        self.transport.setBroadcastAllowed(False)
-        self.transport.stopListening()
-        self.transport.socket.close()
+        if self.transport:
+            self.transport.stopListening()
+            self.transport.socket.close()
 
     """
     Is called when a datagram is received. If master receives a UDP datagram, it tries to connect to the sender.
@@ -71,7 +71,7 @@ class Beacon:
         print("Stopping beacon")
         if self.protocol is not None:
             self.protocol.event.cancel()
-            self.protocol.stopProtocol()
+            #self.protocol.stopProtocol()
             self.protocol = None
 
     """
@@ -90,7 +90,8 @@ MasterUDPListener is created when Master is initialized, and it starts listening
 """
 class MasterUDPListener:
 
-    def __init__(self):
+    def __init__(self, master):
+        self.master = master
         self.protocol = None
         self.transport = None
 

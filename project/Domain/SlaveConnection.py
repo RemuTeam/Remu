@@ -3,6 +3,8 @@ from Networking.RemuTCP import RemuTCP
 from Domain.Message import Message
 from Domain.PicPresentation import PicPresentation
 from Domain.Command import *
+from Domain.MessageKeys import MessageKeys
+from Domain.PresentationFactory import PresentationFactory
 from functools import partial
 
 """
@@ -51,9 +53,9 @@ class SlaveConnection:
     """
     def __send_command(self, command, params=None):
         msg = Message()
-        msg.set_field("type", "command")
-        msg.set_field("command", command)
-        msg.set_field("params", params)
+        msg.set_field(MessageKeys.type_key, "command")
+        msg.set_field(MessageKeys.command_key, command)
+        msg.set_field(MessageKeys.params_key, params)
         self.connection.send_message(msg)
 
 
@@ -100,9 +102,9 @@ class SlaveConnection:
     Creates a presentation based on the message received from master
     """
     def handle_presentation_response(self, data):
-        presentation = PicPresentation()
-        presentation.pic_index = data["pic_index"]
-        presentation.pic_files = data["pic_files"]
+        presentation = None
+        if MessageKeys.presentation_type_key in data and MessageKeys.presentation_content_key in data:
+            presentation = PresentationFactory.CreatePresentation(data[MessageKeys.presentation_type_key], data[MessageKeys.presentation_content_key])
         self.set_presentation(presentation)
         self.master.notify(Notification.PRESENTATION_UPDATE, self)
 
@@ -147,8 +149,8 @@ class SlaveConnection:
     """
     def handle_message(self, msg):
         print(msg.fields)
-        if "responseTo" in msg.fields:
-            self.handle_responses[msg.get_response()](self, msg.get_data())
+        if MessageKeys.response_key in msg.fields:
+            self.handle_responses[msg.get_response()](self, msg.fields)
                 
 
     """
