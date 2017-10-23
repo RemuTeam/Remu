@@ -9,6 +9,7 @@ import unittest
 from unittest.mock import Mock
 from Domain.MessageKeys import MessageKeys
 from unittest.mock import patch
+from Domain.PresentationType import PresentationType
 
 class SlaveTest(unittest.TestCase):
     def test_init_with_no_layout(self):
@@ -52,6 +53,7 @@ class SlaveTest(unittest.TestCase):
         msg.set_field(MessageKeys.command_key, Command.REQUEST_PRESENTATION.value)
         response = slave.handle_message(msg)
         self.assertEqual(response.get_field(data_key)[index_key], 0)
+        self.assertEqual(response.get_field(MessageKeys.presentation_type_key), PresentationType.Image)
         self.assertCountEqual(response.get_field(data_key)[MessageKeys.presentation_content_key],
                               ["images/a.jpg", "images/b.jpg", "images/c.jpg", "images/d.jpg", "images/e.jpg"])
 
