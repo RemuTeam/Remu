@@ -24,6 +24,7 @@ def simulator(request):
         if not kivy_style_filename in Builder.files:
             Builder.load_file(kivy_style_filename, rulesonly=False)
         application.root.current = 'switch_layout'
+        application.close_connections()
 
     request.addfinalizer(fin)
     return simulator

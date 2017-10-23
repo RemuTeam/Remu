@@ -48,4 +48,4 @@ class Presentation:
     Request the content of the presentation
     """
     def get_presentation_content(self):
-        pass
+        return None

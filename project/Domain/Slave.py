@@ -2,6 +2,7 @@ from Domain.Presentation import Presentation
 from Domain.Message import Message
 from Domain.Command import Command
 from Domain.MessageKeys import MessageKeys
+from Networking.RemuUDP import Beacon
 
 """
 CONTAINS SLAVE'S ADMINISTRATIVE AND PRESENTATIONAL DATA
@@ -17,9 +18,11 @@ class Slave:
         self.layout = layout
         self.master_connection = None
         self.source = ''
+        self.beacon = Beacon()
+        self.beacon.start_beaconing()
 
     """
-    Sets the slave's master_connection
+    Sets the slave's master_connection, it is a listening RemuTCP connection
     """
     def set_master_connection(self, master_connection):
         self.master_connection = master_connection
@@ -43,34 +46,35 @@ class Slave:
     presentation with the response
     """
     def handle_request_presentation(self):
+        self.beacon.stop_beaconing()
         self.load_presentation()
-        response = Message()
-        response.set_field(MessageKeys.response_key, Command.REQUEST_PRESENTATION.value)
-        response.set_field(MessageKeys.presentation_type_key, self.presentation.get_presentation_type().value)
-        response.set_field(MessageKeys.presentation_content_key, self.presentation.__dict__)
-        return response
+        metadata = {MessageKeys.response_key: Command.REQUEST_PRESENTATION.value,
+                    MessageKeys.presentation_type_key: self.presentation.get_presentation_type().value,
+                    MessageKeys.presentation_content_key: self.presentation.__dict__}
+        return self.create_response(Command.REQUEST_PRESENTATION.value, metadata)
 
     """
     Handles requests to show the next picture in the presentation, 
-    uses a callback (NYI) to tell the layout to update its view.
+    uses a callback to tell the layout to update its view.
     Returns a confirmation to master
     """
     def handle_show_next(self):
         self.load_presentation()
         current = self.presentation.get_next()
-        self.layout.show(current)
-        response = Message()
-        response.set_field(MessageKeys.response_key, Command.SHOW_NEXT.value)
-        return response
+        if self.layout:
+            if current is not None:
+                self.layout.show(current)
+            else:
+                self.layout.reset_presentation()
+
+        return self.create_response(Command.SHOW_NEXT.value)
 
     """
     Handles invalid requests made by master, simply returns acknowledgement of 
     an invalid command without changing anything
     """
     def handle_invalid_command(self):
-        response = Message()
-        response.set_field(MessageKeys.response_key, Command.INVALID_COMMAND.value)
-        return response
+        return self.create_response(Command.INVALID_COMMAND.value)
 
     """
     Handles the ending of the presentation.
@@ -78,9 +82,30 @@ class Slave:
     def handle_ending_presentation(self):
         self.load_presentation()
         self.layout.reset_presentation()
-        response = Message()
-        response.set_field(MessageKeys.response_key, Command.END_PRESENTATION.value)
-        return response
+
+        return self.create_response(Command.END_PRESENTATION.value)
+
+    """
+    Handles master closing its connection to the slave, doesn't close slave's 
+    listening and doesn't reply to the message because the master doesn't have
+    a connection to the slave anymore
+    """
+    def handle_closing_connection(self):
+        if self.presentation.get_presentation_content():
+            self.presentation.reset()
+        self.layout.reset_presentation()
+
+    """
+    Creates a instance of Message based on the given command
+    """
+    @staticmethod
+    def create_response(command, metadata=None):
+        resp = Message()
+        resp.set_field(MessageKeys.response_key, command)
+        if metadata is not None:
+            for key, value in metadata.items():
+                resp.set_field(key, value)
+        return resp
 
     # Messagehandler
     """
@@ -90,7 +115,8 @@ class Slave:
     messagehandler = {Command.REQUEST_PRESENTATION.value: handle_request_presentation,
                       Command.SHOW_NEXT.value: handle_show_next,
                       Command.END_PRESENTATION.value: handle_ending_presentation,
-                      Command.INVALID_COMMAND.value: handle_invalid_command
+                      Command.INVALID_COMMAND.value: handle_invalid_command,
+                      Command.DROP_CONNECTION.value: handle_closing_connection
                       }
 
     """
@@ -106,9 +132,6 @@ class Slave:
     def connection_established(self, address):
         pass
 
-    def close_connections(self):
-        self.master_connection.end_connection()
-
     """
     Returns the slave's presentation's PresentationType
     """
@@ -123,3 +146,23 @@ class Slave:
     def load_presentation(self):
         if not self.presentation.get_presentation_content():
             self.presentation.load()
+
+    """
+    Closes all networking protocols the slave uses
+    """
+    def close_all_connections(self):
+        self.close_TCP_connections()
+        self.close_UDP_connection()
+
+    """
+    Uses a RemuTCP method to close the listening connection
+    """
+    def close_TCP_connections(self):
+        if self.master_connection is not None:
+            self.master_connection.end_connection()
+
+    """
+    Uses a RemuUDP method to stop listening to the UDP connection
+    """
+    def close_UDP_connection(self):
+        self.beacon.stop_beaconing()

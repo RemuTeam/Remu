@@ -43,13 +43,13 @@ class MasterGUILayout(Screen):
     of clicks in the GUI
     """
     label_text = StringProperty('')
-    slave_presentation = None
+    slave_presentation = {}
 
     def __init__(self, **kwargs):
         super(MasterGUILayout, self).__init__(**kwargs)
         self.presentation = None
 
-    def on_enter(self):
+    def on_pre_enter(self):
         self.master = App.get_running_app().get_master(self)
 
     """
@@ -71,21 +71,30 @@ class MasterGUILayout(Screen):
         MasterBackPopUp().open()
 
     """
-    Update the presentation information on the layout
+    Generate the presentation information on the layout on connection to a slave.
     """
-    def update_presentation(self, data):
-        if self.slave_presentation is None:
-            print("Creating a new slave presentation widget")
-            slave_widget = SlavePresentation(data)
-            self.slave_presentation = slave_widget
-            self.ids.middle.add_widget(slave_widget)
+    def generate_presentation(self, data):
+        self.remove_slave_presentation(data)
+        print("Creating a new slave presentation widget")
+        slave_widget = SlavePresentation(data)
+        self.slave_presentation[data.full_address] = slave_widget
+        self.ids.middle.add_widget(slave_widget)
+
+    """
+    Remove possibly existing SlavePresentation widget based on the 
+    SlaveConnection object
+    """
+    def remove_slave_presentation(self, data):
+        if data.full_address in self.slave_presentation:
+            self.ids.middle.remove_widget(self.slave_presentation[data.full_address])
 
     """
     Update the presentation status on the layout
     """
-    def update_presentation_status(self, data):
+    def update_presentation_status(self, data=None):
         print("päivitetään")
-        self.slave_presentation.show_next()
+        for slave_connection in self.slave_presentation.values():
+            slave_connection.update_status()
 
     """
     Sets the slave address to be shown in the gui
@@ -106,10 +115,11 @@ class MasterGUILayout(Screen):
     A dictionary of Notification-Function pairs for the purpose of
     updating the layout on predefined events.
     """
-    messagehandler = {Notification.PRESENTATION_UPDATE: update_presentation,
+    messagehandler = {Notification.PRESENTATION_UPDATE: generate_presentation,
                       Notification.PRESENTATION_STATUS_CHANGE: update_presentation_status,
                       Notification.CONNECTION_FAILED: update_connection_to_gui,
-                      Notification.CONNECTION_ESTABLISHED: update_connection_to_gui}
+                      Notification.CONNECTION_ESTABLISHED: update_connection_to_gui,
+                      Notification.CONNECTION_TERMINATED: remove_slave_presentation}
 
 
 """
@@ -132,7 +142,8 @@ class SlaveGUILayout(Screen):
         self.slave = None
 
     def on_pre_enter(self, *args):
-        App.get_running_app().get_slave(self)
+        if self.slave is None:
+            self.slave = App.get_running_app().get_slave(self)
 
     """
     Prepares for a text presentation
@@ -185,6 +196,7 @@ class PresentationLayout(Screen):
         self.set_presentation_mode(self.slave.get_presentation_type())
         self.slave.set_layout(self)
         self.slave.reset_presentation()
+
 
     def set_slave(self, slave):
         self.slave = slave
@@ -254,10 +266,13 @@ class SlavePresentation(BoxLayout):
 
     def __init__(self, data):
         super(SlavePresentation, self).__init__()
-        self.presentation_data = data
+        self.slave = data
+        self.ids["btn_address"].text = data.full_address
+        self.presentation_data = data.presentation
         self.visuals = []
         self.current_active = data.index - 1
         self.create_visual_widgets(data)
+
 
     """
     Creates the visual widgets for the slave's visuals
@@ -272,16 +287,27 @@ class SlavePresentation(BoxLayout):
             self.ids.visuals.add_widget(visual)
         self.show_next()
 
+
     """
     Highlights the next visual, indicating it is the currently active visual
     """
     def show_next(self):
         self.current_active = self.presentation_data.index - 1
         if self.current_active is not -1:
-            self.visuals[self.current_active].set_inactive()
             self.visuals[self.current_active].set_active()
-        #self.current_active = self.presentation_data.pic_index
-        #self.visuals[self.current_active].set_active()
+
+    """
+    Checks if the tracked SlaveConnection has updated; updates the widget if needed
+    """
+    def update_status(self):
+        if not self.slave.connected:
+            self.ids["btn_address"].background_color = [0.94, 0.025, 0.15, 1]
+        self.show_next()
+
+
+    def get_address(self):
+        return self.ids["btn_address"].text
+
 
 
 """
@@ -298,14 +324,13 @@ class SlaveVisualProperty(Button):
         self.background_color = [0.5, 0.5, 0.5, 1]
 
     def on_press(self):
-        print("Showing visual property information")
-        #TODO add logic to show image information on press
+        print("Showing visual property information not yet implemented!")
 
     def set_active(self):
         self.background_color = [0.3, 0.6, 0.3, 1]
 
     def set_inactive(self):
-        self.background_color = [0.3, 0.3, 0.3, 1]
+        self.background_color = [0.5, 0.5, 0.5, 1]
 
 
 """
@@ -329,8 +354,9 @@ class RemuSM(ScreenManager):
     Creates a new master layout, and sets it to be the current screen
     """
     def add_master_layout(self):
-        self.master_screen = MasterGUILayout(name='master_gui_layout')
-        self.add_widget(self.master_screen)
+        if self.master_screen is None:
+            self.master_screen = MasterGUILayout(name='master_gui_layout')
+            self.add_widget(self.master_screen)
         self.current = 'master_gui_layout'
 
     """
@@ -338,10 +364,11 @@ class RemuSM(ScreenManager):
     to be the current screen
     """
     def add_slave_layout(self):
-        self.slave_screen = SlaveGUILayout(name='slave_gui_layout')
-        self.presentation_screen = PresentationLayout(name='presentation_layout')
-        self.add_widget(self.slave_screen)
-        self.add_widget(self.presentation_screen)
+        if self.slave_screen is None:
+            self.slave_screen = SlaveGUILayout(name='slave_gui_layout')
+            self.presentation_screen = PresentationLayout(name='presentation_layout')
+            self.add_widget(self.slave_screen)
+            self.add_widget(self.presentation_screen)
         self.current = 'slave_gui_layout'
 
     """
@@ -364,7 +391,6 @@ class RemuSM(ScreenManager):
         self.remove_widget(self.slave_screen)
         self.remove_widget(self.presentation_screen)
         self.change_screen_to("switch_layout")
-
 
 
 """

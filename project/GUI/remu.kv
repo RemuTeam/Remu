@@ -52,7 +52,6 @@ RemuSM:
                 hint_text: "0.0.0.0:8000"
             Button:
                 text: "Add Slave"
-                on_press: app.close_connections()
                 on_press: root.add_slave_connection(txt_input.text)
         StackLayout:
             id: middle
@@ -119,12 +118,19 @@ RemuSM:
     size_hint: 1, 0.15
     orientation: 'horizontal'
     Button:
+        id: btn_address
         size_hint: 0.2, 1
-        text: "Slaven nimi"
+        text: "Name of the slave"
+        on_press: slave.slave.show_next()
     StackLayout:
         id: visuals
         orientation: 'lr-tb'
         spacing: 2
+    Button:
+        id: killswitch
+        size_hint: 0.1, 1
+        text: " Terminate \nconnection"
+        on_press: slave.slave.terminate_connection()
 
 #
 # SlaveVisualProperty is the visual representation of slave's visual property. It inherits Button, so that
