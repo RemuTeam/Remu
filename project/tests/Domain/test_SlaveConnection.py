@@ -94,14 +94,12 @@ class SlaveConnectionTest(unittest.TestCase):
     def test_terminate_connection_sends_commands_and_closes_connections(self):
         self.sc.master = Mock(Master)
         self.sc.terminate_connection()
-        self.sc.connection.send_message.assert_called_once()
-        self.sc.connection.end_connection.assert_called_once()
+        self.sc.connection.end_connection.assert_called_once_with()
         self.sc.master.notify.assert_called_once_with(Notification.CONNECTION_TERMINATED, self.sc)
 
     def test_end_presentation_sends_command(self):
         self.sc.end_presentation()
-        self.sc.connection.send_message.assert_called_once()
-        command_value =  self.sc.connection.mock_calls[0][1][0].fields["command"]
+        command_value = self.sc.connection.mock_calls[0][1][0].fields["command"]
         self.assertEqual(command_value, Command.END_PRESENTATION.value)
 
     def test_presentation_resets_when_next_item_is_none(self):
