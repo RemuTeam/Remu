@@ -1,5 +1,5 @@
 import kivy
-
+import Networking.IP as IP
 from Networking.RemuTCP import RemuTCP
 from GUI.GUIFactory import GUIFactory #ÄLÄ POISTA
 from kivy.app import App
@@ -27,6 +27,7 @@ class RemuApp(App):
         self.isMaster = False
         self.slaves = None
         self.servicemode = None
+        self.localip = IP.get_local_ip_address()
 
     """
     The building method uses the GUI/remu.kv file that produces the look of the requested layouts

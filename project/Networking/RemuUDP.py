@@ -1,6 +1,8 @@
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import reactor
+from kivy.app import App
 import kivy.clock
+import Networking.IP as IP
 
 from socket import SOL_SOCKET, SO_BROADCAST
 
@@ -26,8 +28,20 @@ class EchoClientDatagramProtocol(DatagramProtocol):
     Sends the beaconing signal as a broadcast.
     """
     def sendDatagram(self, dt=None):
-        self.transport.write("connect to me".encode(), ('<broadcast>', DEFAULT_PORT_NUMBER))
-        print("message sent")
+        #self.transport.write("connect to me".encode(), ('<broadcast>', DEFAULT_PORT_NUMBER))
+        #print("message sent")
+        address = App.get_running_app().localip
+
+        stop = address.rfind('.')
+        base = address[:stop]
+        bcast = base + ".255"
+        self.transport.write("connect to me".encode(), (bcast, DEFAULT_PORT_NUMBER))
+        """
+        for i in range(1, 255):
+            address = base + '.' + str(i)
+            self.transport.write("connect to me".encode(), (address, DEFAULT_PORT_NUMBER))
+            print('sent', address)
+        """
 
 
     """
@@ -36,7 +50,7 @@ class EchoClientDatagramProtocol(DatagramProtocol):
     def startProtocol(self):
         self.transport.socket.setsockopt(SOL_SOCKET, SO_BROADCAST, True)
         if self.is_slave:
-            self.event = kivy.clock.Clock.schedule_interval(self.sendDatagram, 2)
+            self.event = kivy.clock.Clock.schedule_interval(self.sendDatagram, 8)
 
     """
     Stops broadcasting and closes the socket used for the transport
