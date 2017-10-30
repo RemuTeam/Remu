@@ -1,5 +1,6 @@
 import json
 from Domain.Command import Command
+from Domain.MessageKeys import MessageKeys
 
 
 """
@@ -51,9 +52,10 @@ class Message:
     returns:    an integer corresponding to a Command enumeration
     """
     def get_command(self):
-        if "command" in self.fields:
-            if self.fields["command"] in list(map(int, Command)):
-                return self.fields["command"]
+        command_key = MessageKeys.command_key
+        if command_key in self.fields:
+            if self.fields[command_key] in list(map(int, Command)):
+                return self.fields[command_key]
         return Command.INVALID_COMMAND.value
 
     """
@@ -62,9 +64,10 @@ class Message:
     returns:    an integer corresponding to a Command enumeration
     """
     def get_response(self):
-        if "responseTo" in self.fields:
-            if self.fields["responseTo"] in list(map(int, Command)):
-                return self.fields["responseTo"]
+        response_to_key = MessageKeys.response_key
+        if response_to_key in self.fields:
+            if self.fields[response_to_key] in list(map(int, Command)):
+                return self.fields[response_to_key]
         return Command.INVALID_COMMAND.value
 
     """
@@ -73,6 +76,7 @@ class Message:
     returns:    an object
     """
     def get_data(self):
-        if "data" in self.fields:
-            return self.fields["data"]
+        data_key = MessageKeys.data_key
+        if data_key in self.fields:
+            return self.fields[data_key]
         return None

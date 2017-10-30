@@ -52,7 +52,6 @@ RemuSM:
                 hint_text: "0.0.0.0:8000"
             Button:
                 text: "Add Slave"
-                on_press: app.close_connections()
                 on_press: root.add_slave_connection(txt_input.text)
         StackLayout:
             id: middle
@@ -82,8 +81,13 @@ RemuSM:
             orientation: 'horizontal'
             Button:
                 size_hint: 0.3,0.3
-                text: "Go to presentation"
-                on_press: root.prepare_for_presentation_mode()
+                text: "Go to image presentation"
+                on_press: root.pic_presentation_chosen()
+                on_press: app.root.change_screen_to("presentation_layout")
+            Button:
+                size_hint: 0.3,0.3
+                text: "Go to text presentation"
+                on_press: root.text_presentation_chosen()
                 on_press: app.root.change_screen_to("presentation_layout")
             Button:
                 size_hint:0.3,0.3
@@ -99,10 +103,12 @@ RemuSM:
         Image:
             id: picture
             source: root.source
-        #Button:
-        #    size_hint: 1, 0.05
-        #    text: "Simulate master signal"
-        #    on_press: root.button_pressed()
+        Label:
+            id: text_field
+            text: root.text_element
+            text_size: self.size
+            halign: 'center'
+            valign: 'middle'
 
 #
 # SlavePresentation represents a single slave of the master, with all of its visuals included
@@ -112,11 +118,19 @@ RemuSM:
     size_hint: 1, 0.15
     orientation: 'horizontal'
     Button:
+        id: btn_address
         size_hint: 0.2, 1
-        text: "Slaven nimi"
+        text: "Name of the slave"
+        on_press: slave.slave.show_next()
     StackLayout:
         id: visuals
         orientation: 'lr-tb'
+        spacing: 2
+    Button:
+        id: killswitch
+        size_hint: 0.1, 1
+        text: " Terminate \nconnection"
+        on_press: slave.slave.terminate_connection()
 
 #
 # SlaveVisualProperty is the visual representation of slave's visual property. It inherits Button, so that
@@ -125,6 +139,10 @@ RemuSM:
 <SlaveVisualProperty@Button>
     size_hint: 0.2, 1
     text: root.visual_name
+    text_size: self.size
+    halign: 'center'
+    valign: 'middle'
+    padding: (5, 2)
 
 
 <MasterBackPopUp>:
@@ -137,8 +155,7 @@ RemuSM:
             orientation: 'horizontal'
             Button:
                 text: "Yes"
-                on_press: app.end_presentation()
-                on_press: app.close_connections()
+                on_press: app.reset_servicemode()
                 on_press: root.dismiss()
                 on_release: app.root.rm_master_layout()
                 size_hint: 0.3,0.3
@@ -157,7 +174,7 @@ RemuSM:
             orientation: 'horizontal'
             Button:
                 text: "Yes"
-                on_press: app.close_connections()
+                on_press: app.reset_servicemode()
                 on_press: root.dismiss()
                 on_release: app.root.rm_slave_layout()
                 size_hint: 0.3,0.3
