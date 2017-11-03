@@ -49,7 +49,7 @@ class Slave:
         self.beacon.stop_beaconing()
         self.load_presentation()
         metadata = {MessageKeys.response_key: Command.REQUEST_PRESENTATION.value,
-                    MessageKeys.presentation_type_key: self.presentation.get_presentation_type().value,
+                    MessageKeys.presentation_type_key: 1,
                     MessageKeys.presentation_content_key: self.presentation.__dict__}
         return self.create_response(Command.REQUEST_PRESENTATION.value, metadata)
 
@@ -63,7 +63,7 @@ class Slave:
         current = self.presentation.get_next()
         if self.layout:
             if current is not None:
-                self.layout.show(current)
+                self.layout.set_visible_widget(current)
             else:
                 self.layout.reset_presentation()
 
@@ -136,15 +136,13 @@ class Slave:
     Returns the slave's presentation's PresentationType
     """
     def get_presentation_type(self):
-        if self.presentation:
-            return self.presentation.get_presentation_type()
-        return None
+        return 1
 
     """
     Load the presentations content
     """
     def load_presentation(self):
-        if not self.presentation.get_presentation_content():
+        if self.presentation.get_presentation_content() is None:
             self.presentation.load()
 
     """

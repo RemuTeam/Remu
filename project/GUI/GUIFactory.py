@@ -6,6 +6,7 @@ from kivy.properties import StringProperty
 from Domain.Command import Notification
 from Domain.ContentType import ContentType
 from Domain.MessageKeys import MessageKeys
+from Domain.PresentationElement import PresentationElement
 from kivy.app import App
 
 """
@@ -179,8 +180,9 @@ class SlaveGUILayout(Screen):
 Fullscreen layout for presenting content
 """
 class PresentationLayout(Screen):
-    source = StringProperty('background/black_as_kivys_soul.png')
+    image_source = StringProperty('')
     text_element = StringProperty('')
+    video_source = StringProperty('')
 
     """
     In the constructor the class and instance are passed
@@ -190,10 +192,11 @@ class PresentationLayout(Screen):
         super(PresentationLayout, self).__init__(**kwargs)
         self.slave = None
         self.presentation_type = None
+        self.start_screen = PresentationElement(ContentType.Image, "background/black_as_kivys_soul.png")
 
     def on_enter(self, *args):
         self.set_slave(App.get_running_app().servicemode)
-        self.set_presentation_mode(self.slave.get_presentation_type())
+        self.set_visible_widget(self.start_screen)
         self.slave.set_layout(self)
         self.slave.reset_presentation()
 
@@ -219,20 +222,38 @@ class PresentationLayout(Screen):
     
     presentation_type:  a PresentationType object
     """
-    def set_visible_widget(self, presentation_type):
-        if presentation_type == ContentType.Text:
-            self.ids.picture.size_hint_y = None
-            self.ids.picture.height = '0dp'
-        elif presentation_type == ContentType.Image:
-            self.ids.text_field.size_hint_y = None
-            self.ids.text_field.height = '0dp'
+    def set_visible_widget(self, element):
+        print("picture size hint y:", self.ids.picture.size_hint_y)
+        print("picture height:", self.ids.picture.height)
+        self.hide_widgets()
+        if element.type == ContentType.Text:
+            self.show_widget(self.ids.text_field)
+            self.text_element = element.get_content()
+        elif element.type == ContentType.Image:
+            self.show_widget(self.ids.picture)
+            self.image_source = element.get_content()
+        elif element.type == ContentType.Video:
+            self.show_widget(self.ids.video)
+            self.video_source = element.get_content()
+
+    def show_widget(self, widget):
+        widget.size_hint_y = 1
+        widget.size_hint_x = 1
+
+    def hide_widgets(self):
+        self.hide_widget(self.ids.picture)
+        self.hide_widget(self.ids.text_field)
+        self.hide_widget(self.ids.video)
+
+    def hide_widget(self, widget):
+        widget.size_hint_y = 0
 
     """
     Shows the next element of the show
     """
     def show(self, content):
         if self.presentation_type == ContentType.Image:
-            self.source = content
+            self.image_source = content
         elif self.presentation_type == ContentType.Text:
             self.text_element = content
 

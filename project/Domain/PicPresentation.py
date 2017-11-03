@@ -1,6 +1,7 @@
 import os
 from PIL import Image
 from Domain.Presentation import Presentation
+from Domain.PresentationElement import PresentationElement
 from Domain.ContentType import ContentType
 
 """
@@ -43,11 +44,11 @@ class PicPresentation(Presentation):
             relative_filename = self.MEDIA_PATH + "/" + filename
 
             if extension in self.VIDEO_FORMATS:
-                self.presentation_content.append(relative_filename)
+                self.presentation_content.append(PresentationElement(ContentType.Video, relative_filename))
             elif extension in self.IMAGE_FORMATS:
-                self.presentation_content.append(relative_filename)
+                self.presentation_content.append(PresentationElement(ContentType.Image, relative_filename))
             elif extension in self.TEXT_FORMATS:
-                self.presentation_content.append(relative_filename)
+                self.presentation_content.append(PresentationElement(ContentType.Text, relative_filename))
             else:
                 print("Unsupported filetype: " + extension)
 
@@ -111,11 +112,14 @@ class PicPresentation(Presentation):
 
     returns the presentation's type
     """
-    def get_presentation_type(self):
-        return self.__PRESENTATION_TYPE
+    #def get_presentation_type(self):
+    #    return self.__PRESENTATION_TYPE
 
     """
     Request the content of the presentation
     """
     def get_presentation_content(self):
+        content =  []
+        for presentation_element in self.presentation_content:
+            content.append(presentation_element.source_file)
         return self.presentation_content
