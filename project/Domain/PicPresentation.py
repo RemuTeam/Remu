@@ -26,6 +26,13 @@ class PicPresentation(Presentation):
         self.index = 0
 
     """
+    Primarily used for testing purposes, set_source_folder, changes MEDIA_PATH to the one given in the parameter.
+    The presentation needs to be loaded again to work properly
+    """
+    def set_source_folder(self, path):
+        self.MEDIA_PATH = path
+
+    """
     Loads the pictures to the presentation
     The directory to load the files from is "images"
     """
@@ -132,7 +139,7 @@ class PicPresentation(Presentation):
         dict["presentation_content"] = self.get_presentation_content()
         return dict
 
-
-    def add_elements(self, elements):
-        for list in elements:
-            self.presentation_content.append(PresentationElement(list[1], list[0]))
+    def add_elements(self, element_dict):
+        content = element_dict["presentation_content"]
+        for element in content:
+            self.presentation_content.append(PresentationElement(element[1], element[0]))

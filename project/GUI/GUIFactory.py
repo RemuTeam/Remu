@@ -247,6 +247,7 @@ class PresentationLayout(Screen):
 
     def hide_widget(self, widget):
         widget.size_hint_y = 0
+        widget.height = '0dp'
 
     """
     Shows the next element of the show

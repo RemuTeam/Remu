@@ -18,3 +18,11 @@ class PresentationElement():
     def get_content(self):
         return self.content
 
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+        if self.type != other.type:
+            return False
+        if self.source_file is not other.source_file:
+            return False
+        return True

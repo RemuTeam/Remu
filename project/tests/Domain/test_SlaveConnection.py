@@ -78,16 +78,17 @@ class SlaveConnectionTest(unittest.TestCase):
         slavecon = SlaveConnection(Mock(Master))
         slave = Slave()
         slave.set_presentation(PresentationFactory.PicPresentation())
+        slave.presentation.set_source_folder("test_media")
         msg = slave.handle_request_presentation()
         slavecon.handle_message(msg)
         msg = Message()
         msg.set_field(MessageKeys.response_key, Command.SHOW_NEXT.value)
         slavecon.handle_message(msg)
-        self.assertEqual(len(slavecon.presentation.get_presentation_content()), 5)
-        self.assertEqual(slavecon.currently_showing, "images/a.jpg")
+        self.assertEqual(len(slavecon.presentation.get_presentation_content()), 4)
+        self.assertEqual(slavecon.currently_showing.get_content(), "test_media/a.jpg")
 
         slavecon.handle_message(msg)
-        self.assertEqual(slavecon.currently_showing, "images/b.jpg")
+        self.assertEqual(slavecon.currently_showing.get_content(), "test_media/b.jpg")
 
     def test_handle_invalid_command(self):
         msg = Message()

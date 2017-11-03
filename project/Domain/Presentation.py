@@ -49,3 +49,6 @@ class Presentation:
     """
     def get_presentation_content(self):
         return None
+
+    def get_presentation_dictionary(self):
+        return None
