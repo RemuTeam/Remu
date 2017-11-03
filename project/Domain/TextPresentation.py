@@ -16,17 +16,21 @@ class TextPresentation(Presentation):
     initializes a list for text elements
     initializes the index to keep track of the element to show
     """
-    def __init__(self, textfile=None):
+    def __init__(self):
         self.presentation_content = []
         self.index = 0
-        self.textfile = textfile
 
     """
     Populates the text element list from text file
     """
     def __populate_text_elements(self):
-        with open(self.textfile, "r") as file:
-            self.__parse_text_file_to_list(file, self.presentation_content)
+        if len(self.presentation_content) == 0:
+            path = os.path.join(os.getcwd(), "texts")
+            for filename in sorted(os.listdir(path)):
+                relative_filename = "texts" + "/" + filename
+                with open(relative_filename, "r") as file:
+                    print(relative_filename)
+                    self.__parse_text_file_to_list(file, self.presentation_content)
 
     """
     Parses a text file to a list.
@@ -42,7 +46,7 @@ class TextPresentation(Presentation):
             line = file.readline()
             if not line:
                 break
-            current_str = self.__parse_delimited_string_to_list(current_str, line, list_to_populate)
+            current_str += line
 
         if current_str:
             list_to_populate.append(current_str)
