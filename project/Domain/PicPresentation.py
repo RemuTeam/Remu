@@ -10,8 +10,12 @@ of a picture presentation
 
 
 class PicPresentation(Presentation):
-    IMAGE_PATH = "images"
-    __PRESENTATION_TYPE = PresentationType.Image
+    MEDIA_PATH = "temp_media"
+    IMAGE_FORMATS = ["jpg"]
+    VIDEO_FORMATS = ["mp4"]
+    TEXT_FORMATS = ["txt"]
+    #IMAGE_PATH = "images"
+    #__PRESENTATION_TYPE = PresentationType.Image
 
     """
     Construct the presentation
@@ -24,22 +28,28 @@ class PicPresentation(Presentation):
     Loads the pictures to the presentation
     The directory to load the files from is "images"
     """
-    def __get_filenames(self):
+    def __create_presentation(self):
         if len(self.presentation_content) == 0:
-            path = os.path.join(os.getcwd(), self.IMAGE_PATH)
-            self.get_pics_from_path(path)
+            path = os.path.join(os.getcwd(), self.MEDIA_PATH)
+            self.get_presentation_elements_from_path(path)
 
     """
     Gets supported files' names from the path given
     as parameter
     """
-    def get_pics_from_path(self, path):
-        for filename in os.listdir(path):
-            relative_filename = self.IMAGE_PATH + "/" + filename
-            if self.filetype_is_supported(relative_filename):
-                self.presentation_content.append(relative_filename)
+    def get_presentation_elements_from_path(self, path):
+        for filename in sorted(os.listdir(path)):
+            extension = filename.split(".")[-1]
+            relative_filename = self.MEDIA_PATH + "/" + filename
 
-        self.presentation_content.sort()
+            if extension in self.VIDEO_FORMATS:
+                self.presentation_content.append(relative_filename)
+            elif extension in self.IMAGE_FORMATS:
+                self.presentation_content.append(relative_filename)
+            elif extension in self.TEXT_FORMATS:
+                self.presentation_content.append(relative_filename)
+            else:
+                print("Unsupported filetype: " + extension)
 
     """
     Checks if the filename given as attribute is a pointer to
@@ -85,7 +95,7 @@ class PicPresentation(Presentation):
     Loads the presentation's elements and resets the presentation
     """
     def load(self):
-        self.__get_filenames()
+        self.__create_presentation()
         self.reset()
 
     """
@@ -94,7 +104,7 @@ class PicPresentation(Presentation):
     """
     def reload(self):
         del self.presentation_content[:]
-        self.__get_filenames()
+        self.__create_presentation()
 
     """
     Request the type of the presentation
