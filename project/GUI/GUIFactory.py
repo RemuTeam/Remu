@@ -300,7 +300,7 @@ class SlavePresentation(BoxLayout):
     """
     def create_visual_widgets(self, data):
         for i in range(0, len(self.presentation_data.get_presentation_content())):
-            image = self.presentation_data.get_presentation_content()[i][:100]
+            image = self.presentation_data.get_presentation_content()[i][0][:100]
             if len(image) == 100:
                 image += "..."
             visual = SlaveVisualProperty(image)

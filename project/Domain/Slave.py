@@ -50,7 +50,7 @@ class Slave:
         self.load_presentation()
         metadata = {MessageKeys.response_key: Command.REQUEST_PRESENTATION.value,
                     MessageKeys.presentation_type_key: 1,
-                    MessageKeys.presentation_content_key: self.presentation.__dict__}
+                    MessageKeys.presentation_content_key: self.presentation.get_message_dictionary()}
         return self.create_response(Command.REQUEST_PRESENTATION.value, metadata)
 
     """
@@ -142,7 +142,7 @@ class Slave:
     Load the presentations content
     """
     def load_presentation(self):
-        if self.presentation.get_presentation_content() is None:
+        if len(self.presentation.get_presentation_content()) == 0:
             self.presentation.load()
 
     """

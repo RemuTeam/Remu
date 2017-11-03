@@ -29,11 +29,7 @@ class PresentationFactory:
     """
     @staticmethod
     def CreatePresentation(type, entries):
-        presentation = None
-        if type == ContentType.Image.value:
-            presentation = PresentationFactory.PicPresentation()
-        elif type == ContentType.Text.value:
-            presentation = PresentationFactory.TextPresentation()
-        if presentation:
-            presentation.__dict__.update(entries)
+        presentation = PresentationFactory.PicPresentation()
+        presentation.add_elements(entries)
+
         return presentation

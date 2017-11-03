@@ -32,6 +32,7 @@ class PicPresentation(Presentation):
     def __create_presentation(self):
         if len(self.presentation_content) == 0:
             path = os.path.join(os.getcwd(), self.MEDIA_PATH)
+            print(path)
             self.get_presentation_elements_from_path(path)
 
     """
@@ -42,6 +43,7 @@ class PicPresentation(Presentation):
         for filename in sorted(os.listdir(path)):
             extension = filename.split(".")[-1]
             relative_filename = self.MEDIA_PATH + "/" + filename
+            print(relative_filename)
 
             if extension in self.VIDEO_FORMATS:
                 self.presentation_content.append(PresentationElement(ContentType.Video, relative_filename))
@@ -119,7 +121,18 @@ class PicPresentation(Presentation):
     Request the content of the presentation
     """
     def get_presentation_content(self):
-        content =  []
+        content = []
         for presentation_element in self.presentation_content:
-            content.append(presentation_element.source_file)
-        return self.presentation_content
+            content.append([presentation_element.source_file, presentation_element.type])
+        return content
+
+    def get_message_dictionary(self):
+        dict = {}
+        dict["index"] = self.index
+        dict["presentation_content"] = self.get_presentation_content()
+        return dict
+
+
+    def add_elements(self, elements):
+        for list in elements:
+            self.presentation_content.append(PresentationElement(list[1], list[0]))

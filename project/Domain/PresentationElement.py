@@ -11,9 +11,10 @@ class PresentationElement():
     def prepare_content(self):
         if self.type == ContentType.Text:
             with open(self.source_file) as file:
-                self.content = file.readlines()
+                self.content = file.read()
         else:
             self.content = self.source_file
 
     def get_content(self):
         return self.content
+
