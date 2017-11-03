@@ -1,6 +1,6 @@
 from Domain.TextPresentation import TextPresentation
 from Domain.PicPresentation import PicPresentation
-from Domain.PresentationType import PresentationType
+from Domain.ContentType import ContentType
 
 """
 Creates predefined presentation objects that inherit
@@ -30,9 +30,9 @@ class PresentationFactory:
     @staticmethod
     def CreatePresentation(type, entries):
         presentation = None
-        if type == PresentationType.Image.value:
+        if type == ContentType.Image.value:
             presentation = PresentationFactory.PicPresentation()
-        elif type == PresentationType.Text.value:
+        elif type == ContentType.Text.value:
             presentation = PresentationFactory.TextPresentation()
         if presentation:
             presentation.__dict__.update(entries)

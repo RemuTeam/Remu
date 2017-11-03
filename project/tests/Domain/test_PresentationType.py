@@ -1,9 +1,9 @@
 import unittest
-from Domain.PresentationType import PresentationType
+from Domain.ContentType import ContentType
 
 class TestPresentationType(unittest.TestCase):
     def test_image_value_is_zero(self):
-        self.assertEqual(PresentationType.Image.value, 0)
+        self.assertEqual(ContentType.Image.value, 0)
 
     def test_text_value_is_zero(self):
-        self.assertEqual(PresentationType.Text.value, 1)
+        self.assertEqual(ContentType.Text.value, 1)

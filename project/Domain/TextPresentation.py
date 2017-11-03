@@ -1,6 +1,6 @@
 import os
 from Domain.Presentation import Presentation
-from Domain.PresentationType import PresentationType
+from Domain.ContentType import ContentType
 
 """
 A PRESENTATION CLASS TO PRODUCE A PRESENTATION
@@ -8,7 +8,7 @@ CONTAINING TEXT OBJECTS
 """
 
 class TextPresentation(Presentation):
-    __PRESENTATION_TYPE = PresentationType.Text
+    __PRESENTATION_TYPE = ContentType.Text
 
     """
     Constructor

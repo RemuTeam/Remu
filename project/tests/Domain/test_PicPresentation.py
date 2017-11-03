@@ -1,6 +1,6 @@
 import unittest
 from Domain.PicPresentation import PicPresentation
-from Domain.PresentationType import PresentationType
+from Domain.ContentType import ContentType
 
 class PicPresentationTest(unittest.TestCase):
     pic_presentation = None
@@ -43,7 +43,7 @@ class PicPresentationTest(unittest.TestCase):
         self.assertEqual(alternative_filenames, self.pic_presentation.presentation_content)
 
     def test_get_presentation_type(self):
-        self.assertEqual(self.pic_presentation.get_presentation_type(), PresentationType.Image)
+        self.assertEqual(self.pic_presentation.get_presentation_type(), ContentType.Image)
 
     def test_get_presentation_content(self):
         self.assertEqual(self.pic_presentation.get_presentation_content(), self.pic_presentation.presentation_content)

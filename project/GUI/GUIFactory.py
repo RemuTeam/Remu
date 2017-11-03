@@ -4,7 +4,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.properties import StringProperty
 from Domain.Command import Notification
-from Domain.PresentationType import PresentationType
+from Domain.ContentType import ContentType
 from Domain.MessageKeys import MessageKeys
 from kivy.app import App
 
@@ -220,10 +220,10 @@ class PresentationLayout(Screen):
     presentation_type:  a PresentationType object
     """
     def set_visible_widget(self, presentation_type):
-        if presentation_type == PresentationType.Text:
+        if presentation_type == ContentType.Text:
             self.ids.picture.size_hint_y = None
             self.ids.picture.height = '0dp'
-        elif presentation_type == PresentationType.Image:
+        elif presentation_type == ContentType.Image:
             self.ids.text_field.size_hint_y = None
             self.ids.text_field.height = '0dp'
 
@@ -231,9 +231,9 @@ class PresentationLayout(Screen):
     Shows the next element of the show
     """
     def show(self, content):
-        if self.presentation_type == PresentationType.Image:
+        if self.presentation_type == ContentType.Image:
             self.source = content
-        elif self.presentation_type == PresentationType.Text:
+        elif self.presentation_type == ContentType.Text:
             self.text_element = content
 
     """

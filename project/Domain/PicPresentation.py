@@ -1,7 +1,7 @@
 import os
 from PIL import Image
 from Domain.Presentation import Presentation
-from Domain.PresentationType import PresentationType
+from Domain.ContentType import ContentType
 
 """
 This class contains the data and functionality 

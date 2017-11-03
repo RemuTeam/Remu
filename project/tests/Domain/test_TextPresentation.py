@@ -1,7 +1,7 @@
 import os
 import unittest
 from Domain.TextPresentation import TextPresentation
-from Domain.PresentationType import PresentationType
+from Domain.ContentType import ContentType
 
 class TextPresentationTest(unittest.TestCase):
 
@@ -94,7 +94,7 @@ class TextPresentationTest(unittest.TestCase):
         self.assertEqual(self.tp.index, 1)
 
     def test_get_presentation_type(self):
-        self.assertEqual(self.tp.get_presentation_type(), PresentationType.Text)
+        self.assertEqual(self.tp.get_presentation_type(), ContentType.Text)
 
     def test_get_presentation_content(self):
         self.assertEqual(self.tp.get_presentation_content(), self.tp.presentation_content)

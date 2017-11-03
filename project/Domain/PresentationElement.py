@@ -1,3 +1,4 @@
+from Domain.ContentType import ContentType
 
 class PresentationElement():
 
@@ -8,7 +9,7 @@ class PresentationElement():
         self.prepare_content()
 
     def prepare_content(self):
-        if self.type == 'text':
+        if self.type == ContentType.Text:
             with open(self.source_file) as file:
                 self.content = file.readlines()
         else:
