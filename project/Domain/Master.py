@@ -1,6 +1,7 @@
 from Domain.SlaveConnection import SlaveConnection
 from Domain.Command import Notification
 from Networking.RemuUDP import MasterUDPListener
+from Networking.RemuFTP import RemuFTPServer
 
 class Master:
 
@@ -14,6 +15,8 @@ class Master:
         self.layout = layout
         self.master_chef = MasterUDPListener(self)
         self.master_chef.listen_for_beacons()
+        self.FTPServer = RemuFTPServer('./media', 8005)
+        # self.FTPServer.start()
 
     """
     Adds a slave connection by creating a new RemuTCP object
@@ -40,6 +43,15 @@ class Master:
     def request_next(self):
         for connection in self.slave_connections.values():
             connection.show_next()
+
+    """
+    Requests a slave to retrieve presentation files from the master
+    
+    connection: the SlaveConnection to make the request to
+    subpath:    the path to the files under the root folder
+    """
+    def request_retrieve_presentation_files(self, connection, subpath="."):
+        connection.retrieve_presentation_files(self.FTPServer.get_port(), subpath)
 
     """
     Asks a slave to show their next visual.
@@ -101,6 +113,7 @@ class Master:
     def close_all_connections(self):
         self.close_TCP_connections()
         self.close_UDP_connection()
+        self.close_FTP_connection()
 
     """
     Closes all connections to slaves
@@ -111,6 +124,12 @@ class Master:
 
     def close_UDP_connections(self):
         self.master_chef.stop_listening_to_beacons()
+
+    """
+    Shuts down the FTP server
+    """
+    def close_FTP_connection(self):
+        self.FTPServer.stop()
 
     """
     Closes the master's UDP protocol

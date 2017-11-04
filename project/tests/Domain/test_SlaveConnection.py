@@ -70,7 +70,7 @@ class SlaveConnectionTest(unittest.TestCase):
         slavecon = SlaveConnection(Mock(Master))
         slave = Slave()
         slave.set_presentation(PresentationFactory.PicPresentation())
-        msg = slave.handle_request_presentation()
+        msg = slave.handle_request_presentation(None)
         slavecon.handle_message(msg)
         self.assertEqual(len(slavecon.presentation.get_presentation_content()), 5)
 
@@ -78,7 +78,7 @@ class SlaveConnectionTest(unittest.TestCase):
         slavecon = SlaveConnection(Mock(Master))
         slave = Slave()
         slave.set_presentation(PresentationFactory.PicPresentation())
-        msg = slave.handle_request_presentation()
+        msg = slave.handle_request_presentation(None)
         slavecon.handle_message(msg)
         msg = Message()
         msg.set_field(MessageKeys.response_key, Command.SHOW_NEXT.value)

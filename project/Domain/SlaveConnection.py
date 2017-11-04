@@ -98,6 +98,11 @@ class SlaveConnection:
     def end_presentation(self):
         self.__send_command(Command.END_PRESENTATION.value)
 
+    def retrieve_presentation_files(self, port, subpath):
+        params = {MessageKeys.ftp_port_key: port,
+                  MessageKeys.ftp_subpath_key: subpath}
+        self.__send_command(Command.RETRIEVE_FILES.value, params)
+
     """
     Creates a presentation based on the message received from master
     """

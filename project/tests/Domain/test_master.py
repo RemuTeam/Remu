@@ -17,6 +17,7 @@ class MasterTest(unittest.TestCase):
         if hasattr(self.mock_master.slave_connections, 'connection'):
             self.mock_master.close_TCP_connections()
         self.mock_master.close_UDP_connection()
+        self.mock_master.close_FTP_connection()
 
     def test_add_slave_works(self):
         self.assertIsNotNone(self.mock_master.slave_connections)
