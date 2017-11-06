@@ -2,6 +2,7 @@ from twisted.protocols.ftp import FTPFactory, FTPRealm
 from twisted.cred.portal import Portal
 from twisted.cred.checkers import AllowAnonymousAccess, FilePasswordDB
 from twisted.internet import reactor
+import os
 
 """
 A FILE TRANSFER PROTOCOL SERVER
@@ -106,8 +107,6 @@ class FileBufferingProtocol(Protocol):
     def dataReceived(self, data):
         print("data received!")
         self.__buffer.write(data)
-        print("data:\n", data, "\n")
-        print("buffer:\n", self.__buffer.getvalue(), "\n")
         if self.__file is not None and self.__buffersize_limit_reached():
             self.write_buffer_to_file()
             print("file written")
@@ -153,9 +152,7 @@ class FileBufferingProtocol(Protocol):
         print("attempting to write file")
         with open(self.__file, "ab+") as file:
             print("writing file")
-            print(self.__buffer.getvalue())
             buffer_content = self.__flush_buffer()
-            print(self.__buffer.getvalue())
             file.write(buffer_content)
             print("file is written")
 
@@ -286,19 +283,24 @@ class RemuFTPClient:
     files listed in the self.files object from the server
     """
     def retrieveFiles(self):
+        existing_files = self.get_existing_files(self.write_path)
         if self.fileCounter < len(self.files):
             print("-------------************----------------")
             print("retrieving file number: " + str(self.fileCounter + 1) + " out of " + str(len(self.files)))
             current_file = self.files[self.fileCounter]["filename"]
             self.fileCounter += 1
-            self.bufferingProtocol.set_file(self.write_path + "/" + current_file)
-            print("file set! ", self.bufferingProtocol.get_file())
-            d = self.twisted_FTP_client.retrieveFile(current_file, self.bufferingProtocol)
-            d.addCallbacks(self.writeFile, self.fail)
-            print(self.fileCounter, len(self.files))
-            if self.fileCounter == len(self.files):
-                self.disconnect()
-                self.fileCounter = 0
+            if current_file in existing_files:
+                print(current_file, "already exists, skipping...")
+                self.retrieveFiles()
+            else:
+                self.bufferingProtocol.set_file(self.write_path + "/" + current_file)
+                print("file set! ", self.bufferingProtocol.get_file())
+                d = self.twisted_FTP_client.retrieveFile(current_file, self.bufferingProtocol)
+                d.addCallbacks(self.writeFile, self.fail)
+                print(self.fileCounter, len(self.files))
+                if self.fileCounter == len(self.files):
+                    self.disconnect()
+                    self.fileCounter = 0
 
     """
     A debugging function to print the content of the 
@@ -310,3 +312,9 @@ class RemuFTPClient:
                 print('    %s: %d bytes, %s' \
                       % (file['filename'], file['size'], file['date']))
             print('Total: %d files' % (len(self.files)))
+
+    def get_existing_files(self, path):
+        filenames = []
+        for filename in os.listdir(path):
+            filenames.append(filename)
+        return filenames
