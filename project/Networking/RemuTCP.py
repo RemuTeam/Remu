@@ -76,6 +76,7 @@ class RemuTCP:
         self.listener = None
         self.port = port
         self.parent = parent
+        self.is_master = master
         if master:
             self.address = address
             self.connect_to_slave(port)
@@ -117,6 +118,8 @@ class RemuTCP:
         full_address = self.address if self.address else "localhost"
         full_address += ':' + str(self.port)
         self.parent.connection_established(full_address)
+        if not self.is_master:
+            self.parent.close_UDP_connection()
 
     """
     Sends the message given as parameter if the connection is valid and on
