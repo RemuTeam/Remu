@@ -18,18 +18,21 @@ class PicPresentation(Presentation):
     #IMAGE_PATH = "images"
     #__PRESENTATION_TYPE = PresentationType.Image
 
-    """
-    Construct the presentation
-    """
     def __init__(self):
+        """
+        Construct the presentation
+        """
         self.presentation_content = []
         self.index = 0
 
-    """
-    Primarily used for testing purposes, set_source_folder, changes MEDIA_PATH to the one given in the parameter.
-    The presentation needs to be loaded again to work properly
-    """
     def set_source_folder(self, path):
+        """
+        Primarily used for testing purposes, set_source_folder, changes MEDIA_PATH to the one given in the parameter.
+        The presentation needs to be loaded again to work properly
+
+        :param path: String, sets the path that contains files for the presentation
+        :return: Nothing
+        """
         self.MEDIA_PATH = path
 
     """
@@ -95,10 +98,12 @@ class PicPresentation(Presentation):
         else:
             return None
 
-    """
-    Resets the picture presentation to start from the beginning
-    """
     def reset(self):
+        """
+        Resets the picture presentation to start from the beginning
+
+        :return: Nothing
+        """
         self.index = 0
 
     """
