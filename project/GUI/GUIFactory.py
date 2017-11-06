@@ -223,22 +223,22 @@ class PresentationLayout(Screen):
     presentation_type:  a PresentationType object
     """
     def set_visible_widget(self, element):
-        print("picture size hint y:", self.ids.picture.size_hint_y)
-        print("picture height:", self.ids.picture.height)
         self.hide_widgets()
+
         if element.type == ContentType.Text:
-            self.show_widget(self.ids.text_field)
             self.text_element = element.get_content()
+            self.show_widget(self.ids.text_field)
         elif element.type == ContentType.Image:
-            self.show_widget(self.ids.picture)
             self.image_source = element.get_content()
+            self.show_widget(self.ids.picture)
         elif element.type == ContentType.Video:
-            self.show_widget(self.ids.video)
             self.video_source = element.get_content()
+            self.show_widget(self.ids.video)
+            self.ids.video.state = 'play'
 
     def show_widget(self, widget):
+        widget.opacity = 1
         widget.size_hint_y = 1
-        widget.size_hint_x = 1
 
     def hide_widgets(self):
         self.hide_widget(self.ids.picture)
@@ -246,6 +246,7 @@ class PresentationLayout(Screen):
         self.hide_widget(self.ids.video)
 
     def hide_widget(self, widget):
+        widget.opacity = 0
         widget.size_hint_y = 0
         widget.height = '0dp'
 

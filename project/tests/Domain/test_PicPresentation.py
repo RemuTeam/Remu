@@ -1,21 +1,22 @@
 import unittest
 from Domain.PicPresentation import PicPresentation
 from Domain.ContentType import ContentType
-from Domain.WorkingDirectories import WorkingDirectories
+from Domain.PathConstants import PathConstants
+from Domain.Presentation import Presentation
 
 class PicPresentationTest(unittest.TestCase):
 
     def setUp(self):
-        self.pic_presentation = PicPresentation()
-        self.pic_presentation.set_source_folder(WorkingDirectories.TEST_MEDIA_FOLDER)
+        self.pic_presentation = Presentation()
+        self.pic_presentation.set_source_folder(PathConstants.TEST_MEDIA_FOLDER)
         self.pic_presentation.load()
 
     def test_get_first_pic(self):
-        self.assertCountEqual(self.pic_presentation.get_next().get_content(), WorkingDirectories.TEST_MEDIA_FOLDER + "/a.jpg")
+        self.assertCountEqual(self.pic_presentation.get_next().get_content(), PathConstants.TEST_MEDIA_FOLDER + "/a.jpg")
 
     def test_get_second_pic(self):
         self.pic_presentation.get_next()
-        self.assertCountEqual(self.pic_presentation.get_next().get_content(), WorkingDirectories.TEST_MEDIA_FOLDER + "/b.jpg")
+        self.assertCountEqual(self.pic_presentation.get_next().get_content(), PathConstants.TEST_MEDIA_FOLDER + "/b.jpg")
 
     def test_no_pics(self):
         for i in range(0, len(self.pic_presentation.get_presentation_content())):

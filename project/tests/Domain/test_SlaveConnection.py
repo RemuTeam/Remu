@@ -10,7 +10,8 @@ from Domain.Master import Master
 from Domain.Command import Command
 from Domain.MessageKeys import MessageKeys
 from Domain.Command import Notification
-from Domain.WorkingDirectories import WorkingDirectories
+from Domain.PathConstants import PathConstants
+from Domain.Presentation import Presentation
 
 class SlaveConnectionTest(unittest.TestCase):
 
@@ -46,7 +47,7 @@ class SlaveConnectionTest(unittest.TestCase):
         self.assertIsNone(self.sc.connection)
 
     def test_show_next(self):
-        presentation = PicPresentation()
+        presentation = Presentation()
         presentation.presentation_content.append("first")
         presentation.presentation_content.append("second")
         self.sc.presentation = presentation
@@ -70,7 +71,7 @@ class SlaveConnectionTest(unittest.TestCase):
     def test_handle_picpresentation_response(self):
         slavecon = SlaveConnection(Mock(Master))
         slave = Slave()
-        slave.presentation.set_source_folder(WorkingDirectories.TEST_MEDIA_FOLDER)
+        slave.presentation.set_source_folder(PathConstants.TEST_MEDIA_FOLDER)
         msg = slave.handle_request_presentation()
         slavecon.handle_message(msg)
         self.assertEqual(len(slavecon.presentation.get_presentation_content()), 4)
@@ -79,7 +80,7 @@ class SlaveConnectionTest(unittest.TestCase):
         slavecon = SlaveConnection(Mock(Master))
         slave = Slave()
         slave.set_presentation(PresentationFactory.PicPresentation())
-        slave.presentation.set_source_folder(WorkingDirectories.TEST_MEDIA_FOLDER)
+        slave.presentation.set_source_folder(PathConstants.TEST_MEDIA_FOLDER)
         msg = slave.handle_request_presentation()
         slavecon.handle_message(msg)
         msg = Message()

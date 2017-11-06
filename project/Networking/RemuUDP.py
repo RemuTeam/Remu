@@ -19,7 +19,7 @@ class EchoClientDatagramProtocol(DatagramProtocol):
         "Bye-bye!"
     ]
 
-    def __init__(self, is_slave=False, udplistener = None):
+    def __init__(self, is_slave=False, udplistener=None):
         super(EchoClientDatagramProtocol, self).__init__()
         self.is_slave = is_slave
         self.udplistener = udplistener

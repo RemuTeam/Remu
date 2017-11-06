@@ -10,13 +10,13 @@ from unittest.mock import Mock
 from Domain.MessageKeys import MessageKeys
 from unittest.mock import patch
 from Domain.ContentType import ContentType
-from Domain.WorkingDirectories import WorkingDirectories
+from Domain.PathConstants import PathConstants
 
 class SlaveTest(unittest.TestCase):
 
     def setUp(self):
         self.slave = Slave()
-        self.slave.presentation.set_source_folder(WorkingDirectories.TEST_MEDIA_FOLDER)
+        self.slave.presentation.set_source_folder(PathConstants.TEST_MEDIA_FOLDER)
 
     def test_init_with_no_layout(self):
         self.assertIsNone(self.slave.layout)
@@ -49,7 +49,7 @@ class SlaveTest(unittest.TestCase):
         data_key = MessageKeys.presentation_content_key
         index_key = MessageKeys.index_key
         presentation = PresentationFactory.PicPresentation()
-        presentation.set_source_folder(WorkingDirectories.TEST_MEDIA_FOLDER)
+        presentation.set_source_folder(PathConstants.TEST_MEDIA_FOLDER)
         presentation.load()
         self.slave.set_presentation(presentation)
         msg = Message()

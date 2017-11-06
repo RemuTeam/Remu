@@ -2,16 +2,16 @@ import os
 import unittest
 from Domain.TextPresentation import TextPresentation
 from Domain.ContentType import ContentType
-from Domain.WorkingDirectories import WorkingDirectories
+from Domain.PathConstants import PathConstants
 
 class TextPresentationTest(unittest.TestCase):
 
     def setUp(self):
         filename = "test_text.txt"
         filename2 = "test_text2.txt"
-        pathname = WorkingDirectories.TEST_MEDIA_FOLDER
+        pathname = PathConstants.TEST_MEDIA_FOLDER
         self.tp = TextPresentation()
-        self.tp.set_source_folder(WorkingDirectories.TEST_MEDIA_FOLDER)
+        self.tp.set_source_folder(PathConstants.TEST_MEDIA_FOLDER)
         self.textfile = os.path.join(os.getcwd(), pathname, filename)
         self.textfile2 = os.path.join(os.getcwd(), pathname, filename2)
 

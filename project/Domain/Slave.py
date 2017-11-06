@@ -1,4 +1,4 @@
-from Domain.PicPresentation import PicPresentation
+from Domain.Presentation import Presentation
 from Domain.Message import Message
 from Domain.Command import Command
 from Domain.MessageKeys import MessageKeys
@@ -14,7 +14,7 @@ class Slave:
     The master_connection is a RemuTCP object
     """
     def __init__(self, layout=None):
-        self.presentation = PicPresentation()
+        self.presentation = Presentation()
         self.layout = layout
         self.master_connection = None
         self.source = ''
