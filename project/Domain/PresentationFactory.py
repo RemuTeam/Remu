@@ -28,7 +28,7 @@ class PresentationFactory:
     Uses the parameter entries to update the presentation contents.
     """
     @staticmethod
-    def CreatePresentation(type, entries):
+    def CreatePresentation(entries):
         presentation = PresentationFactory.PicPresentation()
         presentation.add_elements(entries)
 

@@ -1,4 +1,4 @@
-from Domain.Presentation import Presentation
+from Domain.PicPresentation import PicPresentation
 from Domain.Message import Message
 from Domain.Command import Command
 from Domain.MessageKeys import MessageKeys
@@ -14,7 +14,7 @@ class Slave:
     The master_connection is a RemuTCP object
     """
     def __init__(self, layout=None):
-        self.presentation = Presentation()
+        self.presentation = PicPresentation()
         self.layout = layout
         self.master_connection = None
         self.source = ''
@@ -49,7 +49,6 @@ class Slave:
         self.beacon.stop_beaconing()
         self.load_presentation()
         metadata = {MessageKeys.response_key: Command.REQUEST_PRESENTATION.value,
-                    MessageKeys.presentation_type_key: 1,
                     MessageKeys.presentation_content_key: self.presentation.get_message_dictionary()}
         return self.create_response(Command.REQUEST_PRESENTATION.value, metadata)
 

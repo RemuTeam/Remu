@@ -11,7 +11,6 @@ of a picture presentation
 
 
 class PicPresentation(Presentation):
-    MEDIA_PATH = "temp_media"
     IMAGE_FORMATS = ["jpg"]
     VIDEO_FORMATS = ["mp4"]
     TEXT_FORMATS = ["txt"]
@@ -24,6 +23,7 @@ class PicPresentation(Presentation):
         """
         self.presentation_content = []
         self.index = 0
+        self.media_path = "temp_media"
 
     def set_source_folder(self, path):
         """
@@ -33,7 +33,7 @@ class PicPresentation(Presentation):
         :param path: String, sets the path that contains files for the presentation
         :return: Nothing
         """
-        self.MEDIA_PATH = path
+        self.media_path = path
 
     """
     Loads the pictures to the presentation
@@ -41,7 +41,7 @@ class PicPresentation(Presentation):
     """
     def __create_presentation(self):
         if len(self.presentation_content) == 0:
-            path = os.path.join(os.getcwd(), self.MEDIA_PATH)
+            path = os.path.join(os.getcwd(), self.media_path)
             print(path)
             self.get_presentation_elements_from_path(path)
 
@@ -52,7 +52,7 @@ class PicPresentation(Presentation):
     def get_presentation_elements_from_path(self, path):
         for filename in sorted(os.listdir(path)):
             extension = filename.split(".")[-1]
-            relative_filename = self.MEDIA_PATH + "/" + filename
+            relative_filename = self.media_path + "/" + filename
             print(relative_filename)
 
             if extension in self.VIDEO_FORMATS:

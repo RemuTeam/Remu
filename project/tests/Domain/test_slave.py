@@ -10,13 +10,17 @@ from unittest.mock import Mock
 from Domain.MessageKeys import MessageKeys
 from unittest.mock import patch
 from Domain.ContentType import ContentType
+from Domain.WorkingDirectories import WorkingDirectories
 
 class SlaveTest(unittest.TestCase):
+
+    def setUp(self):
+        self.slave = Slave()
+        self.slave.presentation.set_source_folder(WorkingDirectories.TEST_MEDIA_FOLDER)
+
     def test_init_with_no_layout(self):
-        slave = Slave()
-        self.assertIsNone(slave.layout)
-        self.assertIsNotNone(slave.presentation)
-        self.assertEqual(slave.presentation.__class__.__name__, "Presentation")
+        self.assertIsNone(self.slave.layout)
+        self.assertIsNotNone(self.slave.presentation)
 
     def test_set_presentation(self):
         slave = Slave()
@@ -44,18 +48,17 @@ class SlaveTest(unittest.TestCase):
     def test_handling_picpresentation_request(self):
         data_key = MessageKeys.presentation_content_key
         index_key = MessageKeys.index_key
-        slave = Slave()
         presentation = PresentationFactory.PicPresentation()
+        presentation.set_source_folder(WorkingDirectories.TEST_MEDIA_FOLDER)
         presentation.load()
-        slave.set_presentation(presentation)
+        self.slave.set_presentation(presentation)
         msg = Message()
         msg.set_field(MessageKeys.type_key, "command")
         msg.set_field(MessageKeys.command_key, Command.REQUEST_PRESENTATION.value)
-        response = slave.handle_message(msg)
+        response = self.slave.handle_message(msg)
         self.assertEqual(response.get_field(data_key)[index_key], 0)
-        self.assertEqual(response.get_field(MessageKeys.presentation_type_key), ContentType.Image)
         self.assertCountEqual(response.get_field(data_key)[MessageKeys.presentation_content_key],
-                              ["images/a.jpg", "images/b.jpg", "images/c.jpg", "images/d.jpg", "images/e.jpg"])
+                              presentation.get_presentation_content())
 
     def test_handling_show_next(self):
         slave = Slave(Mock(PresentationLayout))

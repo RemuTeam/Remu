@@ -9,6 +9,7 @@ CONTAINING TEXT OBJECTS
 
 class TextPresentation(Presentation):
     __PRESENTATION_TYPE = ContentType.Text
+    MEDIA_PATH = "texts"
 
     """
     Constructor
@@ -17,17 +18,23 @@ class TextPresentation(Presentation):
     initializes the index to keep track of the element to show
     """
     def __init__(self):
+        self.media_path = ""
         self.presentation_content = []
         self.index = 0
+
+    def set_source_folder(self, path):
+        self.media_path = path
 
     """
     Populates the text element list from text file
     """
     def __populate_text_elements(self):
         if len(self.presentation_content) == 0:
-            path = os.path.join(os.getcwd(), "texts")
+            path = os.path.join(os.getcwd(), self.media_path)
             for filename in sorted(os.listdir(path)):
-                relative_filename = "texts" + "/" + filename
+                if filename.split(".")[-1] != "txt":
+                    continue
+                relative_filename = self.media_path + "/" + filename
                 with open(relative_filename, "r") as file:
                     print(relative_filename)
                     self.__parse_text_file_to_list(file, self.presentation_content)

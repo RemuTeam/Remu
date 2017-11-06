@@ -10,6 +10,7 @@ from Domain.Master import Master
 from Domain.Command import Command
 from Domain.MessageKeys import MessageKeys
 from Domain.Command import Notification
+from Domain.WorkingDirectories import WorkingDirectories
 
 class SlaveConnectionTest(unittest.TestCase):
 
@@ -69,16 +70,16 @@ class SlaveConnectionTest(unittest.TestCase):
     def test_handle_picpresentation_response(self):
         slavecon = SlaveConnection(Mock(Master))
         slave = Slave()
-        slave.set_presentation(PresentationFactory.PicPresentation())
+        slave.presentation.set_source_folder(WorkingDirectories.TEST_MEDIA_FOLDER)
         msg = slave.handle_request_presentation()
         slavecon.handle_message(msg)
-        self.assertEqual(len(slavecon.presentation.get_presentation_content()), 5)
+        self.assertEqual(len(slavecon.presentation.get_presentation_content()), 4)
 
     def test_handle_show_next_response(self):
         slavecon = SlaveConnection(Mock(Master))
         slave = Slave()
         slave.set_presentation(PresentationFactory.PicPresentation())
-        slave.presentation.set_source_folder("test_media")
+        slave.presentation.set_source_folder(WorkingDirectories.TEST_MEDIA_FOLDER)
         msg = slave.handle_request_presentation()
         slavecon.handle_message(msg)
         msg = Message()
