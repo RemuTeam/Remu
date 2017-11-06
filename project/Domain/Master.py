@@ -4,19 +4,40 @@ from Networking.RemuUDP import MasterUDPListener
 from Networking.RemuFTP import RemuFTPServer
 
 class Master:
-
     """
-    Constructor
-
-    layout: the layout to be notified on changes
+    A service mode class that contains the master device's functionality
     """
+
     def __init__(self, layout):
+        """
+        Constructor
+
+        :param layout: the layout to be notified on changes
+        """
         self.slave_connections = {}
         self.layout = layout
-        self.master_chef = MasterUDPListener(self)
-        self.master_chef.listen_for_beacons()
-        self.FTPServer = RemuFTPServer('./media', 8005)
-        # self.FTPServer.start()
+        self.FTPServer = None
+        self.UDPListener = None
+
+    def start_ftp_server(self, path, port):
+        """
+        Starts an FTP server in a designated path and port
+
+        :param path: a string, the root path of the ftp server, e.g. './media'
+        :param port: an integer, the port to listen to
+        :return: None
+        """
+        self.FTPServer = RemuFTPServer(path, port)
+        self.FTPServer.start()
+
+    def start_udp_listening(self):
+        """
+        Starts listening for UDP broadcast
+
+        :return: None
+        """
+        self.UDPListener = MasterUDPListener(self)
+        self.UDPListener.listen_for_beacons()
 
     """
     Adds a slave connection by creating a new RemuTCP object
@@ -87,8 +108,10 @@ class Master:
     def update_connection(self, notification, full_address):
         self.layout.notify(notification, full_address)
         if notification == Notification.CONNECTION_ESTABLISHED:
-            print("now asking for the presentation")
-            self.slave_connections[full_address].request_presentation()
+            # print("now asking for the presentation")
+            # self.slave_connections[full_address].request_presentation()
+            print("informing slave to retrieve media")
+            self.slave_connections[full_address].retrieve_presentation_files(8005, '.')
         if notification == Notification.CONNECTION_FAILED:
             self.layout.update_presentation_status(full_address)
 
@@ -122,20 +145,19 @@ class Master:
         for slave in self.slave_connections.values():
             slave.connection.end_connection()
 
-    def close_UDP_connections(self):
-        self.master_chef.stop_listening_to_beacons()
-
     """
     Shuts down the FTP server
     """
     def close_FTP_connection(self):
-        self.FTPServer.stop()
+        if self.FTPServer is not None:
+            self.FTPServer.stop()
 
     """
     Closes the master's UDP protocol
     """
     def close_UDP_connection(self):
-        self.master_chef.stop_listening_to_beacons()
+        if self.UDPListener is not None:
+            self.UDPListener.stop_listening_to_beacons()
 
     """
     A dictionary of Notification-Function pairs for the purpose of

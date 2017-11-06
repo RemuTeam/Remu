@@ -93,7 +93,7 @@ class FileBufferingProtocol(Protocol):
     file:               the name of the file to write the
                         buffered data into
     """
-    def __init__(self, buffersize_limit=50000000, file=None):
+    def __init__(self, buffersize_limit=16000, file=None):
         self.__buffer = BytesIO()
         self.__file = file
         self.__buffersize_limit = buffersize_limit
@@ -106,8 +106,11 @@ class FileBufferingProtocol(Protocol):
     def dataReceived(self, data):
         print("data received!")
         self.__buffer.write(data)
+        print("data:\n", data, "\n")
+        print("buffer:\n", self.__buffer.getvalue(), "\n")
         if self.__file is not None and self.__buffersize_limit_reached():
-            self.__write_buffer_to_file()
+            self.write_buffer_to_file()
+            print("file written")
 
     """
     Set the name of the file to write buffer into
@@ -146,10 +149,15 @@ class FileBufferingProtocol(Protocol):
     Appends the buffer's content to the file 
     and flushes the buffer.
     """
-    def __write_buffer_to_file(self):
-        with open("copy_" + self.__file, "ab+") as file:
+    def write_buffer_to_file(self):
+        print("attempting to write file")
+        with open(self.__file, "ab+") as file:
+            print("writing file")
+            print(self.__buffer.getvalue())
             buffer_content = self.__flush_buffer()
+            print(self.__buffer.getvalue())
             file.write(buffer_content)
+            print("file is written")
 
 
 from twisted.python import usage
@@ -193,6 +201,7 @@ class RemuFTPClient:
         self.write_path = write_path
         self.bufferingProtocol = FileBufferingProtocol()
         self.configuration = self.set_config(Options(), {'port': port, 'host': host})
+        self.twisted_FTP_client = None
 
     """
     Sets the connection's configuration
@@ -241,6 +250,7 @@ class RemuFTPClient:
     """
     def connectionMade(self, ftpClient):
         # Get a detailed listing of the current directory
+        self.twisted_FTP_client = ftpClient
         fileList = FTPFileListProtocol()
         d = ftpClient.list(self.read_path, fileList)
         d.addCallbacks(self.__getFiles, self.fail, callbackArgs=(fileList, ftpClient))
@@ -261,33 +271,34 @@ class RemuFTPClient:
         self.files = fileListProtocol.files
         self.printFiles()
         if self.files is not None:
-            self.retrieveFiles(ftpClient)
+            self.retrieveFiles()
+
+    """
+    A callback function that writes the buffer to its file
+    """
+    def writeFile(self, result):
+        print("now writing file")
+        self.bufferingProtocol.write_buffer_to_file()
+        self.retrieveFiles()
 
     """
     A function that attempts to retrieve all the 
     files listed in the self.files object from the server
     """
-    def retrieveFiles(self, ftpClient):
+    def retrieveFiles(self):
         if self.fileCounter < len(self.files):
             print("-------------************----------------")
-            print("retrieving file number: " + str(self.fileCounter) + " out of " + str(len(self.files)))
+            print("retrieving file number: " + str(self.fileCounter + 1) + " out of " + str(len(self.files)))
             current_file = self.files[self.fileCounter]["filename"]
             self.fileCounter += 1
             self.bufferingProtocol.set_file(self.write_path + "/" + current_file)
             print("file set! ", self.bufferingProtocol.get_file())
-            d = ftpClient.retrieveFile(current_file, self.bufferingProtocol)
-            d.addCallbacks(self.writeFile, self.fail, callbackArgs=(ftpClient))
+            d = self.twisted_FTP_client.retrieveFile(current_file, self.bufferingProtocol)
+            d.addCallbacks(self.writeFile, self.fail)
+            print(self.fileCounter, len(self.files))
             if self.fileCounter == len(self.files):
                 self.disconnect()
                 self.fileCounter = 0
-
-    """
-    A callback function that writes the buffer to its file
-    """
-    def writeFile(self, result, ftpClient):
-        self.bufferingProtocol.write_buffer_to_file()
-        print(self.bufferingProtocol.currentfile + " written out")
-        self.retrieveFiles(ftpClient)
 
     """
     A debugging function to print the content of the 

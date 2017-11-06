@@ -117,7 +117,7 @@ class Slave:
         :param subpath: the subpath on the server to retrieve files from
         :return: doesn't return anything
         """
-        client = RemuFTPClient(host, port, subpath)
+        client = RemuFTPClient(host, port, subpath, 'slave_presentation_path')
         client.connect()
 
     def handle_file_retrieval(self, msg):
@@ -127,12 +127,13 @@ class Slave:
         :param msg: a Message object
         :return: a response to the received message
         """
+        print("file retrieval")
         params = msg.get_field(MessageKeys.params_key)
         host = msg.get_field(MessageKeys.sender_key)
         port = params[MessageKeys.ftp_port_key]
         subpath = params[MessageKeys.ftp_subpath_key]
         self.retrieve_files_over_ftp(host, port, subpath)
-        return self.create_response(msg.get_command)
+        return self.create_response(msg.get_command())
 
     # Messagehandler
     """

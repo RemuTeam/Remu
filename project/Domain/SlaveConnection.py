@@ -53,6 +53,7 @@ class SlaveConnection:
     """
     def __send_command(self, command, params=None):
         msg = Message()
+        print(params)
         msg.set_field(MessageKeys.type_key, "command")
         msg.set_field(MessageKeys.command_key, command)
         msg.set_field(MessageKeys.params_key, params)
@@ -136,6 +137,9 @@ class SlaveConnection:
     def handle_invalid_command_response(self, data=None):
         print("Invalid command given")
 
+    def handle_retrieve_files_response(self, fields):
+        print("Slave", fields["sender"], "retrieved files, yay!")
+
     """
     Forwards the information of connection being established to master and its layout
     """
@@ -146,7 +150,8 @@ class SlaveConnection:
     handle_responses = {Command.REQUEST_PRESENTATION.value: handle_presentation_response,
                         Command.SHOW_NEXT.value: handle_show_next_response,
                         Command.END_PRESENTATION.value: handle_ending_presentation,
-                        Command.INVALID_COMMAND.value: handle_invalid_command_response
+                        Command.INVALID_COMMAND.value: handle_invalid_command_response,
+                        Command.RETRIEVE_FILES.value: handle_retrieve_files_response
                         }
 
     """

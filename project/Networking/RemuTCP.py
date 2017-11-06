@@ -42,6 +42,7 @@ class RemuProtocol(protocol.Protocol):
         self.factory.connection.on_connection(self.transport)
 
     def dataReceived(self, data):
+        print("data:", data)
         response = self.factory.connection.handle_message(data.decode('utf-8'))
         if response:
             self.transport.write(response.encode('utf-8'))
@@ -132,6 +133,7 @@ class RemuTCP:
         response = self.parent.handle_message(msg)
         if response:
             response.set_field("address", msg.get_field("sender"))
+            print("response to json:", response.fields)
             return response.to_json()
         return None
 
