@@ -112,6 +112,7 @@ class Master:
             # self.slave_connections[full_address].request_presentation()
             print("informing slave to retrieve media")
             self.slave_connections[full_address].retrieve_presentation_files(8005, '.')
+
         if notification == Notification.CONNECTION_FAILED:
             self.layout.update_presentation_status(full_address)
 

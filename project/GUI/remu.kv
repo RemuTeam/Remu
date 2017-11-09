@@ -41,7 +41,12 @@ RemuSM:
             orientation: 'horizontal'
             size_hint: 1, 0.1
             Button:
-                text: "Send message to slave"
+                id: start_pres
+                text: "Start presentation"
+                on_press: root.start_presentation()
+            Button:
+                id: show_next
+                text: "show next"
                 on_press: root.send_message_to_slave()
             Button:
                 text: "Back"

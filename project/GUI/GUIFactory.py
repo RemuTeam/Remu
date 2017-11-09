@@ -49,6 +49,7 @@ class MasterGUILayout(Screen):
     def __init__(self, **kwargs):
         super(MasterGUILayout, self).__init__(**kwargs)
         self.presentation = None
+        self.hide_button(self.ids.show_next)
 
     def on_pre_enter(self):
         self.master = App.get_running_app().get_master(self)
@@ -64,6 +65,22 @@ class MasterGUILayout(Screen):
 
     def send_message_to_slave(self):
         self.master.request_next()
+
+    def start_presentation(self):
+        self.hide_button(self.ids.start_pres)
+        self.show_button(self.ids.show_next)
+        self.master.send_presentations_to_slaves()
+
+    def hide_button(self, widget):
+        widget.opacity = 0
+        widget.size_hint_y = 0
+        widget.size_hint_x = 0
+        widget.width = '0dp'
+
+    def show_button(self, widget):
+        widget.opacity = 1
+        widget.size_hint_y = 1
+        widget.size_hint_x = 1
 
     """
     Opens the warning pop-up to master, asking if they are sure they want to go back
