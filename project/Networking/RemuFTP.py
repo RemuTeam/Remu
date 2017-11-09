@@ -94,7 +94,7 @@ class FileBufferingProtocol(Protocol):
     file:               the name of the file to write the
                         buffered data into
     """
-    def __init__(self, buffersize_limit=16000, file=None):
+    def __init__(self, buffersize_limit=50000000, file=None):
         self.__buffer = BytesIO()
         self.__file = file
         self.__buffersize_limit = buffersize_limit
@@ -107,7 +107,7 @@ class FileBufferingProtocol(Protocol):
     def dataReceived(self, data):
         print("data received!")
         self.__buffer.write(data)
-        if self.__file is not None and self.__buffersize_limit_reached():
+        if self.__file is not None and self.buffersize_limit_reached():
             self.write_buffer_to_file()
             print("file written")
 
@@ -131,14 +131,14 @@ class FileBufferingProtocol(Protocol):
     A private function to check whether the buffer 
     size limit has been reached.
     """
-    def __buffersize_limit_reached(self):
+    def buffersize_limit_reached(self):
         print("buffer:", self.__buffer.getbuffer().nbytes, "/", self.__buffersize_limit)
         return self.__buffer.getbuffer().nbytes >= self.__buffersize_limit
 
     """
     Resets the buffer and returns its content.
     """
-    def __flush_buffer(self):
+    def flush_buffer(self):
         bufferContent = self.__buffer.getvalue()
         self.__buffer.truncate(0)
         self.__buffer.seek(0)
@@ -152,9 +152,34 @@ class FileBufferingProtocol(Protocol):
         print("attempting to write file")
         with open(self.__file, "ab+") as file:
             print("writing file")
-            buffer_content = self.__flush_buffer()
+            buffer_content = self.flush_buffer()
             file.write(buffer_content)
             print("file is written")
+
+    def set_buffersize_limit(self, new_buffersize_limit):
+        """
+        Set new limit for the buffer's size
+
+        :param new_buffersize_limit: an integer, the new limit
+        :return: None
+        """
+        self.__buffersize_limit = new_buffersize_limit
+
+    def get_buffersize_limit(self):
+        """
+        Get the set buffer's size limit
+
+        :return: an integer, the buffer's size limit in bytes
+        """
+        return self.__buffersize_limit
+
+    def get_buffer_value(self):
+        """
+        Get the BytesIO buffer object
+
+        :return: a BytesIO, the buffer
+        """
+        return self.__buffer.getvalue()
 
 
 from twisted.python import usage
@@ -175,6 +200,7 @@ class Options(usage.Options):
 
 from twisted.internet.protocol import ClientCreator
 from twisted.protocols.ftp import FTPClient, FTPFileListProtocol
+from queue import Queue
 
 
 class RemuFTPClient:
@@ -199,6 +225,7 @@ class RemuFTPClient:
         self.bufferingProtocol = FileBufferingProtocol()
         self.configuration = self.set_config(Options(), {'port': port, 'host': host})
         self.twisted_FTP_client = None
+        self.file_queue = Queue()
 
     """
     Sets the connection's configuration
@@ -266,6 +293,8 @@ class RemuFTPClient:
     def __getFiles(self, result, fileListProtocol, ftpClient):
         print('Processed file listing')
         self.files = fileListProtocol.files
+        for file in self.files:
+            self.file_queue.put(file["filename"])
         self.printFiles()
         if self.files is not None:
             self.retrieveFiles()
