@@ -217,31 +217,16 @@ class RemuFTPClient:
         :param write_path: a string, the path to write into
         """
         self.host = host
+        self.port = port
         self.client = None
         self.files = None
         self.fileCounter = 0
         self.read_path = read_path
         self.write_path = write_path
         self.bufferingProtocol = FileBufferingProtocol()
-        self.configuration = self.set_config(Options(), {'port': port, 'host': host})
+        self.configuration = Options()
         self.twisted_FTP_client = None
         self.file_queue = Queue()
-
-    """
-    Sets the connection's configuration
-    
-    options:            an Options object
-    additional_options: a dictionary of options to add 
-                        to the configuration
-    """
-    def set_config(self, options, additional_options):
-        config = options
-        config.parseOptions()
-
-        for key, value in additional_options.items():
-            config.opts[key] = value
-
-        return config
 
     """
     Connect the client
@@ -253,8 +238,8 @@ class RemuFTPClient:
                                 self.configuration.opts['username'],
                                 self.configuration.opts['password'],
                                 passive=self.configuration.opts['passive'])
-        self.client = creator.connectTCP(self.configuration.opts['host'],
-                                         self.configuration.opts['port']).addCallback(self.connectionMade).addErrback(self.connectionFailed)
+        self.client = creator.connectTCP(self.host,
+                                         self.port).addCallback(self.connectionMade).addErrback(self.connectionFailed)
 
     """
     Disconnect the client

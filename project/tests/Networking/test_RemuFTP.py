@@ -104,3 +104,32 @@ class FileBufferingProtocolTest(unittest.TestCase):
         data = self.buffer.flush_buffer()
         self.assertEqual(self.testData, data)
         self.assertEqual(bytearray("", "utf-8"), self.buffer.get_buffer_value())
+
+
+
+
+
+    ### POST PUSH!!!!
+    # Manual merge
+
+
+
+
+
+class RemuFTPClientTest(unittest.TestCase):
+    def setUp(self):
+        self.host = "el host"
+        self.new_host = "la hostesa"
+        self.port_key = "port"
+        self.host_key = "host"
+        self.port = 665
+        self.new_port = 667
+        self.read_path = "el pathos"
+        self.write_path = "la pathetica"
+        self.client = RemuFTPClient(self.host, self.port, self.read_path, self.write_path)
+
+    def test_variables_are_correctly_set(self):
+        self.assertEqual(self.host, self.client.host)
+        self.assertEqual(self.port, self.client.port)
+        self.assertEqual(self.read_path, self.read_path)
+        self.assertEqual(self.write_path, self.client.write_path)
