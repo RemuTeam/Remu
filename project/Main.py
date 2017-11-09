@@ -14,12 +14,19 @@ Accepts commandline arguments:
               slave-devices ip-address (not implemented)
 
 """
+
 if __name__ == '__main__':
+    windowed = True
     monitor = get_monitors()[0]
-    Config.set('graphics', 'fullscreen', '0')
-    Config.set('graphics', 'height', str(monitor.height))
-    Config.set('graphics', 'width', str(monitor.width))
-    Config.set('graphics', 'borderless', '1')
+    if windowed:
+        Config.set('graphics', 'height', 500)
+        Config.set('graphics', 'width', 700)
+        Config.set('graphics', 'borderless', '0')
+    else:
+        Config.set('graphics', 'fullscreen', '0')
+        Config.set('graphics', 'height', str(monitor.height))
+        Config.set('graphics', 'width', str(monitor.width))
+        Config.set('graphics', 'borderless', '1')
     Config.write()
     args = sys.argv
 
