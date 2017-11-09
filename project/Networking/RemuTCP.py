@@ -42,6 +42,7 @@ class RemuProtocol(protocol.Protocol):
         self.factory.connection.on_connection(self.transport)
 
     def dataReceived(self, data):
+        print("data:", data)
         response = self.factory.connection.handle_message(data.decode('utf-8'))
         if response:
             self.transport.write(response.encode('utf-8'))
@@ -75,6 +76,7 @@ class RemuTCP:
         self.listener = None
         self.port = port
         self.parent = parent
+        self.is_master = master
         if master:
             self.address = address
             self.connect_to_slave(port)
@@ -116,6 +118,8 @@ class RemuTCP:
         full_address = self.address if self.address else "localhost"
         full_address += ':' + str(self.port)
         self.parent.connection_established(full_address)
+        if not self.is_master:
+            self.parent.close_UDP_connection()
 
     """
     Sends the message given as parameter if the connection is valid and on
@@ -132,6 +136,7 @@ class RemuTCP:
         response = self.parent.handle_message(msg)
         if response:
             response.set_field("address", msg.get_field("sender"))
+            print("response to json:", response.fields)
             return response.to_json()
         return None
 

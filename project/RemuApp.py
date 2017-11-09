@@ -45,6 +45,9 @@ class RemuApp(App):
     def set_servicemode(self, servicemode, isMaster):
         self.isMaster = isMaster
         self.servicemode = servicemode
+        if self.isMaster:
+            self.servicemode.start_udp_listening()
+            self.servicemode.start_ftp_server('./media', 8005)
 
     """
     Get the app's Master

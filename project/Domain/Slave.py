@@ -3,6 +3,7 @@ from Domain.Message import Message
 from Domain.Command import Command
 from Domain.MessageKeys import MessageKeys
 from Networking.RemuUDP import Beacon
+from Networking.RemuFTP import RemuFTPClient
 
 """
 CONTAINS SLAVE'S ADMINISTRATIVE AND PRESENTATIONAL DATA
@@ -45,7 +46,7 @@ class Slave:
     Handles requests for the presentation made by the master, returns the
     presentation with the response
     """
-    def handle_request_presentation(self):
+    def handle_request_presentation(self, msg):
         self.beacon.stop_beaconing()
         self.load_presentation()
         metadata = {MessageKeys.response_key: Command.REQUEST_PRESENTATION.value,
@@ -57,7 +58,7 @@ class Slave:
     uses a callback to tell the layout to update its view.
     Returns a confirmation to master
     """
-    def handle_show_next(self):
+    def handle_show_next(self, msg):
         self.load_presentation()
         current = self.presentation.get_next()
         if self.layout:
@@ -72,13 +73,13 @@ class Slave:
     Handles invalid requests made by master, simply returns acknowledgement of 
     an invalid command without changing anything
     """
-    def handle_invalid_command(self):
+    def handle_invalid_command(self, msg):
         return self.create_response(Command.INVALID_COMMAND.value)
 
     """
     Handles the ending of the presentation.
     """
-    def handle_ending_presentation(self):
+    def handle_ending_presentation(self, msg):
         self.load_presentation()
         self.layout.reset_presentation()
 
@@ -89,7 +90,7 @@ class Slave:
     listening and doesn't reply to the message because the master doesn't have
     a connection to the slave anymore
     """
-    def handle_closing_connection(self):
+    def handle_closing_connection(self, msg):
         if self.presentation.get_presentation_content():
             self.presentation.reset()
         self.layout.reset_presentation()
@@ -106,6 +107,33 @@ class Slave:
                 resp.set_field(key, value)
         return resp
 
+    def retrieve_files_over_ftp(self, host, port, subpath):
+        """
+        Create a RemuFTPClient to retrieve files from a host
+
+        :param host: the server's ip-address
+        :param port: the server's port
+        :param subpath: the subpath on the server to retrieve files from
+        :return: doesn't return anything
+        """
+        client = RemuFTPClient(host, port, subpath, 'slave_presentation_path')
+        client.connect()
+
+    def handle_file_retrieval(self, msg):
+        """
+        Handles a command to retrieve files from a host
+
+        :param msg: a Message object
+        :return: a response to the received message
+        """
+        print("file retrieval")
+        params = msg.get_field(MessageKeys.params_key)
+        host = msg.get_field(MessageKeys.sender_key)
+        port = params[MessageKeys.ftp_port_key]
+        subpath = params[MessageKeys.ftp_subpath_key]
+        self.retrieve_files_over_ftp(host, port, subpath)
+        return self.create_response(msg.get_command())
+
     # Messagehandler
     """
     Python's replacement for a switch-case: gives methods given 
@@ -115,7 +143,8 @@ class Slave:
                       Command.SHOW_NEXT.value: handle_show_next,
                       Command.END_PRESENTATION.value: handle_ending_presentation,
                       Command.INVALID_COMMAND.value: handle_invalid_command,
-                      Command.DROP_CONNECTION.value: handle_closing_connection
+                      Command.DROP_CONNECTION.value: handle_closing_connection,
+                      Command.RETRIEVE_FILES.value: handle_file_retrieval
                       }
 
     """
@@ -125,8 +154,8 @@ class Slave:
         print("trying to parse")
         if MessageKeys.command_key in msg.fields:
             print(str(msg.get_command()))
-            return self.messagehandler[msg.get_command()](self)
-        return self.handle_invalid_command()
+            return self.messagehandler[msg.get_command()](self, msg)
+        return self.handle_invalid_command(msg)
 
     def connection_established(self, address):
         pass
