@@ -2,6 +2,7 @@ import os
 from PIL import Image
 from Domain.PresentationElement import PresentationElement
 from Domain.ContentType import ContentType
+from Domain.PathConstants import PathConstants
 
 """
 DEFINES A UNIFIED INTERFACE
@@ -12,16 +13,13 @@ class Presentation:
     VIDEO_FORMATS = ["mp4"]
     TEXT_FORMATS = ["txt"]
 
-    # IMAGE_PATH = "images"
-    # __PRESENTATION_TYPE = PresentationType.Image
-
     def __init__(self):
         """
         Construct the presentation
         """
         self.presentation_content = []
         self.index = 0
-        self.media_path = "temp_media"  # vaihda PathConstants -viittaukseen
+        self.media_path = PathConstants.MEDIA_FOLDER  # vaihda PathConstants -viittaukseen
 
     def set_source_folder(self, path):
         """
