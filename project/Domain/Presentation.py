@@ -37,6 +37,7 @@ class Presentation:
     """
 
     def __create_presentation(self):
+        print("creating PRESENTATIOOONNNN!!!!!")
         if len(self.presentation_content) == 0:
             path = os.path.join(os.getcwd(), self.media_path)
             print(path)

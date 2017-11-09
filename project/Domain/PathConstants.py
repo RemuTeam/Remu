@@ -5,5 +5,5 @@ through the PathConstant constants
 """
 class PathConstants:
     TEST_MEDIA_FOLDER = "test_media"
-    MEDIA_FOLDER = "slave_presentation_path"
+    MEDIA_FOLDER = "presentation_content"
 

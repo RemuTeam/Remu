@@ -2,8 +2,10 @@ from Domain.Presentation import Presentation
 from Domain.Message import Message
 from Domain.Command import Command
 from Domain.MessageKeys import MessageKeys
+from Domain.PathConstants import PathConstants
 from Networking.RemuUDP import Beacon
 from Networking.RemuFTP import RemuFTPClient
+import os
 
 """
 CONTAINS SLAVE'S ADMINISTRATIVE AND PRESENTATIONAL DATA
@@ -35,6 +37,9 @@ class Slave:
     def reset_presentation(self):
         self.source = ''
         self.presentation.reset()
+
+    def notify_file_transfer_completed(self):
+        self.presentation.load()
 
     """
     Sets the slave's presentation
@@ -116,7 +121,10 @@ class Slave:
         :param subpath: the subpath on the server to retrieve files from
         :return: doesn't return anything
         """
-        client = RemuFTPClient(host, port, subpath, 'slave_presentation_path')
+        write_path = os.path.join(os.getcwd(), PathConstants.MEDIA_FOLDER)
+        if not os.path.isdir(write_path):
+            os.mkdir(write_path)
+        client = RemuFTPClient(host, port, subpath, write_path, self)
         client.connect()
 
     def handle_file_retrieval(self, msg):
