@@ -16,17 +16,17 @@ Accepts commandline arguments:
 """
 
 if __name__ == '__main__':
-    windowed = True
+    fullscreen = False
     monitor = get_monitors()[0]
-    if windowed:
-        Config.set('graphics', 'height', 500)
-        Config.set('graphics', 'width', 700)
-        Config.set('graphics', 'borderless', '0')
-    else:
-        Config.set('graphics', 'fullscreen', '0')
+    if fullscreen:
+        Config.set('graphics', 'fullscreen', '1')
         Config.set('graphics', 'height', str(monitor.height))
         Config.set('graphics', 'width', str(monitor.width))
         Config.set('graphics', 'borderless', '1')
+    else:
+        Config.set('graphics', 'height', 500)
+        Config.set('graphics', 'width', 700)
+        Config.set('graphics', 'borderless', '0')
     Config.write()
     args = sys.argv
 
