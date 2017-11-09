@@ -194,6 +194,9 @@ class PresentationLayout(Screen):
         self.presentation_type = None
         self.start_screen = PresentationElement(ContentType.Image, "background/black_as_kivys_soul.png")
 
+    def on_pre_enter(self, *args):
+        self.hide_widgets()
+
     def on_enter(self, *args):
         self.set_slave(App.get_running_app().servicemode)
         self.set_visible_widget(self.start_screen)
