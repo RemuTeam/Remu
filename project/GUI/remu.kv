@@ -23,6 +23,40 @@ RemuSM:
                 text: "Slave"
                 size_hint: 0.3,0.3
                 on_release: app.root.add_slave_layout()
+            Button:
+                text: "Secret hideout"
+                size_hint: 0.3,0.3
+                on_release: app.root.add_presentation_creation_layout()
+
+<DraggablePresentationElement>:
+    drag_rectangle: self.x, self.y, self.width, self.height
+    drag_timeout: 10000000
+    drag_distance: 0
+    text_size: self.size
+    halign: 'center'
+    valign: 'middle'
+    size_hint: 0.05, 1
+
+<RobustPresentationEditView>:
+    size_hint: 1, 0.15
+    id: presentation_view
+    StackLayout:
+        id: presentation_elements
+        size_hint: 0.95, 0.25
+        spacing: 2
+    Button:
+        text: "Create Presentation"
+        halign:'right'
+        size_hint: 0.2, 1
+        on_press: presentation_view.create_presentation()
+
+<PresentationCreationLayout>:
+    id: presentation_creation_layout
+    orientation: 'vertical'
+    BoxLayout:
+        id: views
+        size_hint: 1, 1
+
 
 #
 # MasterGUILayout contains a options bar, a bottom bar and a main view. Upper bar contains connection control, lower bar

@@ -144,6 +144,7 @@ class SlaveGUILayout(Screen):
     def on_pre_enter(self, *args):
         if self.slave is None:
             self.slave = App.get_running_app().get_slave(self)
+            App.get_running_app().create_pic_presentation()
 
     """
     Prepares for a text presentation
@@ -333,6 +334,86 @@ class SlaveVisualProperty(Button):
     def set_inactive(self):
         self.background_color = [0.5, 0.5, 0.5, 1]
 
+from kivy.uix.behaviors import DragBehavior
+from Domain.PicPresentation import PicPresentation
+
+class DraggablePresentationElement(DragBehavior, Button):
+
+    ELEMENT_WIDTH = 200
+    ELEMENT_HEIGHT = 0
+
+    def __init__(self, pres, parent):
+        super(DraggablePresentationElement, self).__init__()
+        self.text = pres
+        self.pseudoparent = parent
+        self.updating = False
+        self.old_x = self.x
+
+    def on_y(self, *largs):
+        self.y = DraggablePresentationElement.ELEMENT_HEIGHT
+
+    def on_x(self, *largs):
+        if not self.updating and abs(self.x-self.old_x) > self.ELEMENT_WIDTH:
+            self.pseudoparent.update_us(self)
+
+    def on_touch_up(self, touch):
+        super(DraggablePresentationElement, self).on_touch_up(touch)
+        self.pseudoparent.update_us(self)
+
+    def __lt__(self, other):
+        return self.x < other.x
+
+
+class RobustPresentationEditView(BoxLayout):
+
+    def __init__(self, **kwargs):
+        super(RobustPresentationEditView, self).__init__(**kwargs)
+        self.content = []
+
+    def create_dynamically_editable_presentation_view_that_works_like_kivy(self):
+        slave = App.get_running_app().get_slave(self)
+        App.get_running_app().create_pic_presentation()
+        slave.presentation.load()
+        for pres in slave.presentation.get_presentation_content():
+            print(pres)
+            temp = DraggablePresentationElement(pres, self)
+            self.ids.presentation_elements.add_widget(temp)
+            self.content.append(temp)
+
+    def update_us(self, element=None):
+        self.content.sort()
+        for i in range(len(self.content)):
+            self.content[i].old_x = self.content[i].x
+            if element and element.text == self.content[i].text:
+                continue
+            self.content[i].updating = True
+            self.content[i].y = DraggablePresentationElement.ELEMENT_HEIGHT
+            self.content[i].x = i*DraggablePresentationElement.ELEMENT_WIDTH+40
+            self.content[i].updating = False
+        print("updated!")
+
+    def create_presentation(self):
+        presentation = PicPresentation()
+        for i in range(len(self.content)):
+            presentation.presentation_content.append(self.content[i].text)
+        print("jee")
+        return presentation
+
+
+
+class PresentationCreationLayout(Screen):
+
+
+    def on_pre_enter(self, *args):
+        self.edit_views = []
+        view = RobustPresentationEditView()
+        view.create_dynamically_editable_presentation_view_that_works_like_kivy()
+        self.ids.views.add_widget(view)
+        self.edit_views.append(view)
+
+
+
+
 
 """
 Handles changing the GUI-layouts as different screens for the 
@@ -350,6 +431,7 @@ class RemuSM(ScreenManager):
         self.master_screen = None
         self.slave_screen = None
         self.presentation_screen = None
+        self.presentation_creation_screen = None
 
     """
     Creates a new master layout, and sets it to be the current screen
@@ -371,6 +453,12 @@ class RemuSM(ScreenManager):
             self.add_widget(self.slave_screen)
             self.add_widget(self.presentation_screen)
         self.current = 'slave_gui_layout'
+
+    def add_presentation_creation_layout(self):
+        if self.presentation_creation_screen is None:
+            self.presentation_creation_screen = PresentationCreationLayout(name='presentation_creation_layout')
+            self.add_widget(self.presentation_creation_screen)
+        self.current = 'presentation_creation_layout'
 
     """
     Changes the screen according to the screen name parameter
