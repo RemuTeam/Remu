@@ -1,11 +1,10 @@
+import unittest
 from Domain.Slave import Slave
 from Domain.Message import Message
 from Domain.Command import Command
-from Domain.PresentationFactory import PresentationFactory
+from Domain.Presentation import Presentation
 from Networking.RemuTCP import RemuTCP
 from GUI.GUIFactory import PresentationLayout
-from Domain.TextPresentation import TextPresentation
-import unittest
 from unittest.mock import Mock
 from Domain.MessageKeys import MessageKeys
 from unittest.mock import patch
@@ -24,8 +23,8 @@ class SlaveTest(unittest.TestCase):
 
     def test_set_presentation(self):
         slave = Slave()
-        slave.set_presentation(TextPresentation())
-        self.assertEqual(slave.presentation.__class__.__name__, "TextPresentation")
+        slave.set_presentation(Presentation())
+        self.assertEqual(slave.presentation.__class__.__name__, "Presentation")
 
     """
     def test_init_with_no_connection(self):
@@ -48,7 +47,7 @@ class SlaveTest(unittest.TestCase):
     def test_handling_picpresentation_request(self):
         data_key = MessageKeys.presentation_content_key
         index_key = MessageKeys.index_key
-        presentation = PresentationFactory.PicPresentation()
+        presentation = Presentation()
         presentation.set_source_folder(PathConstants.TEST_MEDIA_FOLDER)
         presentation.load()
         self.slave.set_presentation(presentation)
@@ -103,7 +102,7 @@ class SlaveTest(unittest.TestCase):
 
     def test_handling_show_next_resetting_presentation(self):
         slave = Slave()
-        slave.set_presentation(PresentationFactory.PicPresentation())
+        slave.set_presentation(Presentation())
         slave.presentation.load()
         for i in range(0, len(slave.presentation.get_presentation_content())):
             slave.presentation.get_next()

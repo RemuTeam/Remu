@@ -146,18 +146,8 @@ class SlaveGUILayout(Screen):
         if self.slave is None:
             self.slave = App.get_running_app().get_slave(self)
 
-    """
-    Prepares for a text presentation
-    """
-    def text_presentation_chosen(self):
-        App.get_running_app().create_text_presentation()
-        self.prepare_for_presentation_mode()
-
-    """
-    Prepares for a text presentation
-    """
-    def pic_presentation_chosen(self):
-        App.get_running_app().create_pic_presentation()
+    def init_presentation(self):
+        App.get_running_app().init_presentation()
         self.prepare_for_presentation_mode()
 
     """
@@ -198,14 +188,10 @@ class PresentationLayout(Screen):
         self.hide_widgets()
 
     def on_enter(self, *args):
-        self.set_slave(App.get_running_app().servicemode)
-        self.set_visible_widget(self.start_screen)
+        self.slave = App.get_running_app().servicemode
         self.slave.set_layout(self)
+        self.set_visible_widget(self.start_screen)
         self.slave.reset_presentation()
-
-
-    def set_slave(self, slave):
-        self.slave = slave
 
     """
     Sets the right media widget based on the presentation mode.

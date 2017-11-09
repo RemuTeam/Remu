@@ -6,7 +6,7 @@ from kivy.app import App
 from kivy.lang.builder import Builder
 from Domain.Slave import Slave
 from Domain.Master import Master
-from Domain.PresentationFactory import PresentationFactory
+from Domain.Presentation import Presentation
 
 """
     HANDLES THE NAMING OF SLAVES AND MASTER AND THE MESSAGE SENT
@@ -107,26 +107,5 @@ class RemuApp(App):
         if self.servicemode:
             self.servicemode.close_all_connections()
 
-    """
-    Creates a new pic presentation and sets it as the service mode's
-    presentation
-    """
-    def create_pic_presentation(self):
-        self.__set_service_mode_presentation(PresentationFactory.PicPresentation())
-
-    """
-    Creates a new text presentation and sets it as the service mode's
-    presentation
-    """
-    def create_text_presentation(self):
-        self.__set_service_mode_presentation(PresentationFactory.TextPresentation())
-
-    """
-    Private method that sets the service mode's presentation.
-    The presentation is only set if the service mode is not Master
-    
-    presentation:   the presentation object to set
-    """
-    def __set_service_mode_presentation(self, presentation):
-        if not self.isMaster:
-            self.servicemode.set_presentation(presentation)
+    def init_presentation(self):
+        self.servicemode.set_presentation(Presentation())

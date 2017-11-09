@@ -146,3 +146,14 @@ class Presentation:
         content = element_dict["presentation_content"]
         for element in content:
             self.presentation_content.append(PresentationElement(element[1], element[0]))
+
+    @staticmethod
+    def CreatePresentation(entries):
+        """
+                Creates a Presentation based on the PresentationType given.
+                Uses the parameter entries to update the presentation contents.
+        """
+        presentation = Presentation()
+        presentation.add_elements(entries)
+
+        return presentation

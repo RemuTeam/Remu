@@ -1,10 +1,9 @@
 import ipaddress
 from Networking.RemuTCP import RemuTCP
 from Domain.Message import Message
-from Domain.PicPresentation import PicPresentation
 from Domain.Command import *
 from Domain.MessageKeys import MessageKeys
-from Domain.PresentationFactory import PresentationFactory
+from Domain.Presentation import Presentation
 from functools import partial
 
 """
@@ -104,7 +103,7 @@ class SlaveConnection:
     def handle_presentation_response(self, data):
         presentation = None
         if MessageKeys.presentation_content_key in data:
-            presentation = PresentationFactory.CreatePresentation(data[MessageKeys.presentation_content_key])
+            presentation = Presentation.CreatePresentation(data[MessageKeys.presentation_content_key])
         self.set_presentation(presentation)
         self.master.notify(Notification.PRESENTATION_UPDATE, self)
 

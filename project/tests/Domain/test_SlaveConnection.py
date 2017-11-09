@@ -2,8 +2,6 @@ import unittest
 from Domain.SlaveConnection import SlaveConnection
 from Networking.RemuTCP import RemuTCP
 from unittest.mock import Mock
-from Domain.PicPresentation import PicPresentation
-from Domain.PresentationFactory import PresentationFactory
 from Domain.Slave import Slave
 from Domain.Message import Message
 from Domain.Master import Master
@@ -79,7 +77,7 @@ class SlaveConnectionTest(unittest.TestCase):
     def test_handle_show_next_response(self):
         slavecon = SlaveConnection(Mock(Master))
         slave = Slave()
-        slave.set_presentation(PresentationFactory.PicPresentation())
+        slave.set_presentation(Presentation())
         slave.presentation.set_source_folder(PathConstants.TEST_MEDIA_FOLDER)
         msg = slave.handle_request_presentation()
         slavecon.handle_message(msg)
@@ -110,7 +108,7 @@ class SlaveConnectionTest(unittest.TestCase):
 
     def test_presentation_resets_when_next_item_is_none(self):
         self.sc.master = Mock(Master)
-        self.sc.presentation = Mock(PicPresentation)
+        self.sc.presentation = Mock(Presentation)
         self.sc.presentation.get_next = Mock(return_value=None)
         self.sc.handle_show_next_response()
         self.sc.presentation.get_next.assert_called_once_with()
