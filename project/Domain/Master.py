@@ -50,6 +50,12 @@ class Master:
         slave_to_connect.connect_to_IP(slave_address)
         self.slave_connections[slave_to_connect.full_address] = slave_to_connect
 
+        #POISTA JOSKUS JOOKO
+        presentations = [["a.jpg", "b.jpg"], ["b.jpg", "a.jpg", "g.mp4"]]
+        presentation = presentations[(len(self.slave_connections)-1) % 2]
+        slave_to_connect.presentation = presentation
+        self.layout.notify(Notification.PRESENTATION_UPDATE, slave_to_connect)
+
     """
     Adds a pre-constructed SlaveConnection object to slave_connections
     
@@ -114,6 +120,7 @@ class Master:
             #print("informing slave to retrieve media")
             #self.slave_connections[full_address].retrieve_presentation_files(8005, '.')
 
+
         if notification == Notification.CONNECTION_FAILED:
             self.layout.update_presentation_status(full_address)
 
@@ -126,7 +133,7 @@ class Master:
         self.layout.notify(notification, data)
 
     def send_presentations_to_slaves(self):
-        presentations = [["a.jpg", "b.jpg"], ["g.mp4", "a.jpg"]]
+        presentations = [["a.jpg", "b.jpg"], ["b.jpg", "a.jpg", "g.mp4"]]
         i = 0
         for slavec in self.slave_connections.values():
             presentation = presentations[i%2]

@@ -48,7 +48,7 @@ class SlaveConnectionTest(unittest.TestCase):
         presentation = Presentation()
         presentation.presentation_elements.append("first")
         presentation.presentation_elements.append("second")
-        self.sc.presentation_filenames = presentation
+        self.sc.presentation = presentation
         self.sc.response_next()
         self.assertEqual(self.sc.currently_showing, "first")
         self.sc.response_next()
@@ -73,7 +73,7 @@ class SlaveConnectionTest(unittest.TestCase):
         slave.presentation.set_source_folder(PathConstants.TEST_MEDIA_FOLDER)
         msg = slave.handle_request_presentation(None)
         slavecon.handle_message(msg)
-        self.assertEqual(len(slavecon.presentation_filenames.get_presentation_content()), 4)
+        self.assertEqual(len(slavecon.presentation.get_presentation_content()), 4)
 
     def test_handle_show_next_response(self):
         slavecon = SlaveConnection(Mock(Master))
@@ -85,7 +85,7 @@ class SlaveConnectionTest(unittest.TestCase):
         msg = Message()
         msg.set_field(MessageKeys.response_key, Command.SHOW_NEXT.value)
         slavecon.handle_message(msg)
-        self.assertEqual(len(slavecon.presentation_filenames.get_presentation_content()), 4)
+        self.assertEqual(len(slavecon.presentation.get_presentation_content()), 4)
         self.assertEqual(slavecon.currently_showing.get_content(), "test_media/a.jpg")
 
         slavecon.handle_message(msg)
@@ -109,11 +109,11 @@ class SlaveConnectionTest(unittest.TestCase):
 
     def test_presentation_resets_when_next_item_is_none(self):
         self.sc.master = Mock(Master)
-        self.sc.presentation_filenames = Mock(Presentation)
-        self.sc.presentation_filenames.get_next = Mock(return_value=None)
+        self.sc.presentation = Mock(Presentation)
+        self.sc.presentation.get_next = Mock(return_value=None)
         self.sc.handle_show_next_response()
-        self.sc.presentation_filenames.get_next.assert_called_once_with()
-        self.sc.presentation_filenames.reset.assert_called_once_with()
+        self.sc.presentation.get_next.assert_called_once_with()
+        self.sc.presentation.reset.assert_called_once_with()
 
     def test_connection_established_sets_connected_true(self):
         slavecon = SlaveConnection(Mock(Master))

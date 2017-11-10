@@ -19,9 +19,10 @@ class SlaveConnection:
     def __init__(self, master, connection=None):
         self.master = master
         self.set_connection(connection)
-        self.presentation_filenames = None
+        self.presentation = None
         self.full_address = "localhost:8000"
         self.connected = self.connection is not None
+        self.currently_showing = -1
 
     """
     Sets the connection to the slave
@@ -84,13 +85,13 @@ class SlaveConnection:
         Advances presentation to next item
     """
     def response_next(self):
-        self.currently_showing = self.presentation_filenames.get_next()
+        self.currently_showing = self.presentation.get_next()
 
     """
         Sets the connection's presentation object
     """
     def set_presentation(self, presentation):
-        self.presentation_filenames = presentation
+        self.presentation = presentation
 
     def send_presentation(self, presentation_filenames):
         self.set_presentation(presentation_filenames)
@@ -106,7 +107,7 @@ class SlaveConnection:
         self.__send_command(Command.END_PRESENTATION.value)
 
     def retrieve_presentation_files(self, port, subpath, filenames):
-        self.presentation_filenames = filenames
+        self.presentation = filenames
         params = {MessageKeys.ftp_port_key: port,
                   MessageKeys.ftp_subpath_key: subpath,
                   MessageKeys.presentation_content_key: filenames}
@@ -125,19 +126,16 @@ class SlaveConnection:
     """
     Handles command to show next file
     """
-    def handle_show_next_response(self, data=None):
-        next_item = self.presentation_filenames.get_next()
-        if next_item is None:
-            self.presentation_filenames.reset()
-        self.currently_showing = next_item
-        self.master.notify(Notification.PRESENTATION_STATUS_CHANGE, next_item)
+    def handle_show_next_response(self, response=None):
+        self.currently_showing = response[MessageKeys.index_key]
+        self.master.notify(Notification.PRESENTATION_STATUS_CHANGE, self.currently_showing)
 
     """
     Resets the presentation on master's side, called when slave is told to 
     reset its presentation
     """
     def handle_ending_presentation(self, data=None):
-        self.presentation_filenames.reset()
+        self.presentation.reset()
 
     """
     Invalid command handler, doesn't do anything useful except catch bad mistakes

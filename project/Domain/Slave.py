@@ -2,8 +2,10 @@ from Domain.Presentation import Presentation
 from Domain.Message import Message
 from Domain.Command import Command
 from Domain.MessageKeys import MessageKeys
+from Domain.PathConstants import PathConstants
 from Networking.RemuUDP import Beacon
 from Networking.RemuFTP import RemuFTPClient
+import os
 
 """
 CONTAINS SLAVE'S ADMINISTRATIVE AND PRESENTATIONAL DATA
@@ -36,6 +38,10 @@ class Slave:
         self.source = ''
         self.presentation.reset()
 
+    def notify_file_transfer_completed(self):
+        self.presentation.load()
+
+
     """
     Sets the slave's presentation
     """
@@ -66,8 +72,9 @@ class Slave:
                 self.layout.set_visible_widget(current)
             else:
                 self.layout.reset_presentation()
+                return self.create_response(Command.SHOW_NEXT.value, {MessageKeys.index_key: -1})
 
-        return self.create_response(Command.SHOW_NEXT.value)
+        return self.create_response(Command.SHOW_NEXT.value, {MessageKeys.index_key: self.presentation.index})
 
     """
     Handles invalid requests made by master, simply returns acknowledgement of 
@@ -116,7 +123,10 @@ class Slave:
         :param subpath: the subpath on the server to retrieve files from
         :return: doesn't return anything
         """
-        client = RemuFTPClient(host, port, subpath, 'slave_presentation_path')
+        write_path = os.path.join(os.getcwd(), PathConstants.MEDIA_FOLDER)
+        if not os.path.isdir(write_path):
+            os.mkdir(write_path)
+        client = RemuFTPClient(host, port, subpath, write_path, self)
         client.connect()
 
     def handle_file_retrieval(self, msg):
@@ -132,7 +142,7 @@ class Slave:
         port = params[MessageKeys.ftp_port_key]
         subpath = params[MessageKeys.ftp_subpath_key]
         self.presentation.set_files(params[MessageKeys.presentation_content_key])
-        
+
         self.retrieve_files_over_ftp(host, port, subpath)
         return self.create_response(msg.get_command())
 

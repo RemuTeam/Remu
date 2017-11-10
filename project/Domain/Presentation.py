@@ -19,7 +19,7 @@ class Presentation:
         """
         self.presentation_elements = None
         self.presentation_filenames = None
-        self.index = 0
+        self.index = -1
         self.media_path = PathConstants.MEDIA_FOLDER
 
     def set_source_folder(self, path):
@@ -38,7 +38,8 @@ class Presentation:
     """
 
     def __create_presentation(self):
-        if len(self.presentation_elements) == 0:
+        print("creating PRESENTATIOOONNNN!!!!!")
+        if self.presentation_elements is None or len(self.presentation_elements) == 0:
             path = os.path.join(os.getcwd(), self.media_path)
             print(path)
             self.get_presentation_elements_from_path()
@@ -50,6 +51,7 @@ class Presentation:
 
     def get_presentation_elements_from_path(self):
         self.presentation_elements = []
+        print("Jessss")
         for filename in self.presentation_filenames:
             extension = filename.split(".")[-1]
             relative_filename = self.media_path + "/" + filename
@@ -84,6 +86,7 @@ class Presentation:
     """
 
     def get_next(self):
+        self.index += 1
         return self.get(self.index)
 
     """
@@ -96,7 +99,6 @@ class Presentation:
     def get(self, index):
         if -1 < index < len(self.presentation_elements):
             next_file = self.presentation_elements[index]
-            self.index = index + 1
             return next_file
         else:
             return None
@@ -107,7 +109,7 @@ class Presentation:
 
         :return: Nothing
         """
-        self.index = 0
+        self.index = -1
 
     """
     Loads the presentation's elements and resets the presentation

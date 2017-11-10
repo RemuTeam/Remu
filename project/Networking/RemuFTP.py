@@ -2,6 +2,7 @@ from twisted.protocols.ftp import FTPFactory, FTPRealm
 from twisted.cred.portal import Portal
 from twisted.cred.checkers import AllowAnonymousAccess, FilePasswordDB
 from twisted.internet import reactor
+from Domain.Command import Notification
 import os
 
 """
@@ -105,7 +106,7 @@ class FileBufferingProtocol(Protocol):
     data:   the received data
     """
     def dataReceived(self, data):
-        print("data received!")
+        # print("data received!")
         self.__buffer.write(data)
         if self.__file is not None and self.buffersize_limit_reached():
             self.write_buffer_to_file()
@@ -132,7 +133,7 @@ class FileBufferingProtocol(Protocol):
     size limit has been reached.
     """
     def buffersize_limit_reached(self):
-        print("buffer:", self.__buffer.getbuffer().nbytes, "/", self.__buffersize_limit)
+        # print("buffer:", self.__buffer.getbuffer().nbytes, "/", self.__buffersize_limit)
         return self.__buffer.getbuffer().nbytes >= self.__buffersize_limit
 
     """
@@ -207,7 +208,7 @@ class RemuFTPClient:
     """
     A FILE TRANSFER PROTOCOL CLIENT
     """
-    def __init__(self, host, port, read_path, write_path):
+    def __init__(self, host, port, read_path, write_path, listener=None):
         """
         Initializes the client to a server
 
@@ -227,6 +228,7 @@ class RemuFTPClient:
         self.configuration = Options()
         self.twisted_FTP_client = None
         self.file_queue = Queue()
+        self.listener = listener
 
     """
     Connect the client
@@ -312,9 +314,10 @@ class RemuFTPClient:
                 d = self.twisted_FTP_client.retrieveFile(current_file, self.bufferingProtocol)
                 d.addCallbacks(self.writeFile, self.fail)
                 print(self.fileCounter, len(self.files))
-                if self.fileCounter == len(self.files):
-                    self.disconnect()
-                    self.fileCounter = 0
+        elif self.fileCounter == len(self.files):
+            self.listener.notify_file_transfer_completed()
+            self.disconnect()
+            self.fileCounter = 0
 
     """
     A debugging function to print the content of the 
