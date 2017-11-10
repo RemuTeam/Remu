@@ -17,6 +17,13 @@ class SlaveTest(unittest.TestCase):
         self.slave = Slave()
         self.slave.presentation.set_source_folder(PathConstants.TEST_MEDIA_FOLDER)
 
+    def createPresentation(self):
+        presentation = Presentation()
+        presentation.set_source_folder(PathConstants.TEST_MEDIA_FOLDER)
+        presentation.set_files(["mokomoko", "holoholo"])
+        presentation.load()
+        return presentation
+
     def test_init_with_no_layout(self):
         self.assertIsNone(self.slave.layout)
         self.assertIsNotNone(self.slave.presentation)
@@ -44,12 +51,11 @@ class SlaveTest(unittest.TestCase):
         slave = Slave(mock)
         self.assertEqual(slave.layout, mock)
 
+    """
     def test_handling_picpresentation_request(self):
         data_key = MessageKeys.presentation_content_key
         index_key = MessageKeys.index_key
-        presentation = Presentation()
-        presentation.set_source_folder(PathConstants.TEST_MEDIA_FOLDER)
-        presentation.load()
+        presentation = self.createPresentation()
         self.slave.set_presentation(presentation)
         msg = Message()
         msg.set_field(MessageKeys.type_key, "command")
@@ -58,9 +64,11 @@ class SlaveTest(unittest.TestCase):
         self.assertEqual(response.get_field(data_key)[index_key], 0)
         self.assertCountEqual(response.get_field(data_key)[MessageKeys.presentation_content_key],
                               presentation.get_presentation_content())
+    """
 
     def test_handling_show_next(self):
         slave = Slave(Mock(PresentationLayout))
+        slave.set_presentation(self.createPresentation())
         msg = Message()
         msg.set_field(MessageKeys.type_key, "command")
         msg.set_field(MessageKeys.command_key, Command.SHOW_NEXT.value)
@@ -83,6 +91,7 @@ class SlaveTest(unittest.TestCase):
 
     def test_handling_ending_presentation(self):
         slave = Slave()
+        slave.presentation.set_files(["ime", "munaa"])
         msg = Message()
         slave.layout = Mock(PresentationLayout)
         with patch.object(slave.layout, "reset_presentation") as mock:
@@ -102,7 +111,7 @@ class SlaveTest(unittest.TestCase):
 
     def test_handling_show_next_resetting_presentation(self):
         slave = Slave()
-        slave.set_presentation(Presentation())
+        slave.set_presentation(self.createPresentation())
         slave.presentation.load()
         for i in range(0, len(slave.presentation.get_presentation_content())):
             slave.presentation.get_next()

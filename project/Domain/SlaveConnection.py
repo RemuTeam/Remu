@@ -81,13 +81,6 @@ class SlaveConnection:
         self.master.notify(Notification.CONNECTION_TERMINATED, self)
 
     """
-        Called when slave responds to command "show_next"
-        Advances presentation to next item
-    """
-    def response_next(self):
-        self.currently_showing = self.presentation.get_next()
-
-    """
         Sets the connection's presentation object
     """
     def set_presentation(self, presentation):

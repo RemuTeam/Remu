@@ -17,6 +17,7 @@ class Slave:
     The master_connection is a RemuTCP object
     """
     def __init__(self, layout=None):
+        self.presentation_ended = False
         self.presentation = Presentation()
         self.layout = layout
         self.master_connection = None
@@ -49,30 +50,21 @@ class Slave:
         self.presentation = presentation
 
     """
-    Handles requests for the presentation made by the master, returns the
-    presentation with the response
-    """
-    def handle_request_presentation(self, msg):
-        self.beacon.stop_beaconing()
-        self.load_presentation()
-        metadata = {MessageKeys.response_key: Command.REQUEST_PRESENTATION.value,
-                    MessageKeys.presentation_content_key: self.presentation.get_message_dictionary()}
-        return self.create_response(Command.REQUEST_PRESENTATION.value, metadata)
-
-    """
     Handles requests to show the next picture in the presentation, 
     uses a callback to tell the layout to update its view.
     Returns a confirmation to master
     """
     def handle_show_next(self, msg):
+        if self.presentation_ended:
+            return self.create_response(Command.SHOW_NEXT.value, {MessageKeys.index_key: -1})
         #self.load_presentation()
         current = self.presentation.get_next()
         if self.layout:
             if current is not None:
                 self.layout.set_visible_widget(current)
             else:
+                self.presentation_ended = True
                 self.layout.reset_presentation()
-                return self.create_response(Command.SHOW_NEXT.value, {MessageKeys.index_key: -1})
 
         return self.create_response(Command.SHOW_NEXT.value, {MessageKeys.index_key: self.presentation.index})
 
@@ -156,8 +148,7 @@ class Slave:
     Python's replacement for a switch-case: gives methods given 
     by the Command-enumerator, essentially just a dictionary that has function calls
     """
-    messagehandler = {Command.REQUEST_PRESENTATION.value: handle_request_presentation,
-                      Command.SHOW_NEXT.value: handle_show_next,
+    messagehandler = {Command.SHOW_NEXT.value: handle_show_next,
                       Command.END_PRESENTATION.value: handle_ending_presentation,
                       Command.INVALID_COMMAND.value: handle_invalid_command,
                       Command.DROP_CONNECTION.value: handle_closing_connection,
