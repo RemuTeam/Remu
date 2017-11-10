@@ -49,17 +49,6 @@ class Slave:
         self.presentation = presentation
 
     """
-    Handles requests for the presentation made by the master, returns the
-    presentation with the response
-    """
-    def handle_request_presentation(self, msg):
-        self.beacon.stop_beaconing()
-        self.load_presentation()
-        metadata = {MessageKeys.response_key: Command.REQUEST_PRESENTATION.value,
-                    MessageKeys.presentation_content_key: self.presentation.get_message_dictionary()}
-        return self.create_response(Command.REQUEST_PRESENTATION.value, metadata)
-
-    """
     Handles requests to show the next picture in the presentation, 
     uses a callback to tell the layout to update its view.
     Returns a confirmation to master
@@ -156,8 +145,7 @@ class Slave:
     Python's replacement for a switch-case: gives methods given 
     by the Command-enumerator, essentially just a dictionary that has function calls
     """
-    messagehandler = {Command.REQUEST_PRESENTATION.value: handle_request_presentation,
-                      Command.SHOW_NEXT.value: handle_show_next,
+    messagehandler = {Command.SHOW_NEXT.value: handle_show_next,
                       Command.END_PRESENTATION.value: handle_ending_presentation,
                       Command.INVALID_COMMAND.value: handle_invalid_command,
                       Command.DROP_CONNECTION.value: handle_closing_connection,
