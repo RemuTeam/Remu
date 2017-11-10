@@ -134,6 +134,11 @@ class Slave:
         self.retrieve_files_over_ftp(host, port, subpath)
         return self.create_response(msg.get_command())
 
+    def handle_received_presentation(self, msg):
+        print("Presentation received")
+        if MessageKeys.presentation_content_key in msg.fields:
+            print("asd")
+
     # Messagehandler
     """
     Python's replacement for a switch-case: gives methods given 
@@ -144,7 +149,8 @@ class Slave:
                       Command.END_PRESENTATION.value: handle_ending_presentation,
                       Command.INVALID_COMMAND.value: handle_invalid_command,
                       Command.DROP_CONNECTION.value: handle_closing_connection,
-                      Command.RETRIEVE_FILES.value: handle_file_retrieval
+                      Command.RETRIEVE_FILES.value: handle_file_retrieval,
+                      Command.SEND_PRESENTATION.value: handle_received_presentation
                       }
 
     """
@@ -156,6 +162,7 @@ class Slave:
             print(str(msg.get_command()))
             return self.messagehandler[msg.get_command()](self, msg)
         return self.handle_invalid_command(msg)
+
 
     def connection_established(self, address):
         pass

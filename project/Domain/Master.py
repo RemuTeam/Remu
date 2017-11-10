@@ -108,10 +108,11 @@ class Master:
     def update_connection(self, notification, full_address):
         self.layout.notify(notification, full_address)
         if notification == Notification.CONNECTION_ESTABLISHED:
+            print("Connection established")
             # print("now asking for the presentation")
             # self.slave_connections[full_address].request_presentation()
-            print("informing slave to retrieve media")
-            self.slave_connections[full_address].retrieve_presentation_files(8005, '.')
+            #print("informing slave to retrieve media")
+            #self.slave_connections[full_address].retrieve_presentation_files(8005, '.')
 
         if notification == Notification.CONNECTION_FAILED:
             self.layout.update_presentation_status(full_address)
@@ -123,6 +124,15 @@ class Master:
         if data.full_address in self.slave_connections:
             self.slave_connections.pop(data.full_address, None)
         self.layout.notify(notification, data)
+
+    def send_presentations_to_slaves(self):
+        presentations = [["a.jpg", "b.jpg"], ["g.mp4", "a.jpg"]]
+        i = 0
+        for slavec in self.slave_connections.values():
+            presentation = presentations[i%2]
+            i += 1
+            slavec.retrieve_presentation_files(8005, '.', presentation)
+
 
     """
     Informs the slave connection about the presentation ending

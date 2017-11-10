@@ -10,6 +10,7 @@ class Command(IntEnum):
     DROP_CONNECTION = 3         # for informing the slave that the connection is terminated
     INVALID_COMMAND = -1        # for invalid requests
     RETRIEVE_FILES = 4          # for requesting the slave to retrieve files from the master
+    SEND_PRESENTATION = 5       # for sending presentation from master to slave
 
 """
 Enumerators for observer notifications

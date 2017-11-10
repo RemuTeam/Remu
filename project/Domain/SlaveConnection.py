@@ -92,15 +92,23 @@ class SlaveConnection:
     def set_presentation(self, presentation):
         self.presentation = presentation
 
+    def send_presentation(self, presentation_filenames):
+        self.set_presentation(presentation_filenames)
+        params = {}
+        params[MessageKeys.presentation_content_key] = presentation_filenames
+
+        self.__send_command(Command.SEND_PRESENTATION.value, params)
+
     """
         Ends the current presentation
     """
     def end_presentation(self):
         self.__send_command(Command.END_PRESENTATION.value)
 
-    def retrieve_presentation_files(self, port, subpath):
+    def retrieve_presentation_files(self, port, subpath, filenames):
         params = {MessageKeys.ftp_port_key: port,
-                  MessageKeys.ftp_subpath_key: subpath}
+                  MessageKeys.ftp_subpath_key: subpath,
+                  MessageKeys.presentation_content_key: filenames}
         self.__send_command(Command.RETRIEVE_FILES.value, params)
 
     """
