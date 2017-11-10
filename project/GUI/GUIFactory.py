@@ -334,6 +334,7 @@ class SlaveVisualProperty(Button):
     def set_inactive(self):
         self.background_color = [0.5, 0.5, 0.5, 1]
 
+
 from kivy.uix.behaviors import DragBehavior
 from Domain.PicPresentation import PicPresentation
 
@@ -371,12 +372,11 @@ class RobustPresentationEditView(BoxLayout):
         self.content = []
 
     def create_dynamically_editable_presentation_view_that_works_like_kivy(self):
-        slave = App.get_running_app().get_slave(self)
-        App.get_running_app().create_pic_presentation()
-        slave.presentation.load()
-        for pres in slave.presentation.get_presentation_content():
-            print(pres)
-            temp = DraggablePresentationElement(pres, self)
+        pres = PicPresentation()
+        pres.load()
+        for prescontent in pres.get_presentation_content():
+            print(prescontent)
+            temp = DraggablePresentationElement(prescontent, self)
             self.ids.presentation_elements.add_widget(temp)
             self.content.append(temp)
 
