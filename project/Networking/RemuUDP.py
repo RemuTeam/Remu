@@ -28,8 +28,8 @@ class EchoClientDatagramProtocol(DatagramProtocol):
     Sends the beaconing signal as a broadcast.
     """
     def sendDatagram(self, dt=None):
-        #self.transport.write("connect to me".encode(), ('<broadcast>', DEFAULT_PORT_NUMBER))
-        #print("message sent")
+        self.transport.write("connect to me".encode(), ('<broadcast>', DEFAULT_PORT_NUMBER))
+        print("message sent")
         address = App.get_running_app().localip
 
         stop = address.rfind('.')
