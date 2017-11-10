@@ -351,7 +351,7 @@ class DraggablePresentationElement(DragBehavior, Button):
         self.old_x = self.x
 
     def on_y(self, *largs):
-        self.y = DraggablePresentationElement.ELEMENT_HEIGHT
+        self.y = self.parent.y
 
     def on_x(self, *largs):
         if not self.updating and abs(self.x-self.old_x) > self.ELEMENT_WIDTH:
@@ -387,7 +387,7 @@ class RobustPresentationEditView(BoxLayout):
             if element and element.text == self.content[i].text:
                 continue
             self.content[i].updating = True
-            self.content[i].y = DraggablePresentationElement.ELEMENT_HEIGHT
+            #self.content[i].y = DraggablePresentationElement.ELEMENT_HEIGHT
             self.content[i].x = i*DraggablePresentationElement.ELEMENT_WIDTH+40
             self.content[i].updating = False
         print("updated!")
@@ -396,7 +396,7 @@ class RobustPresentationEditView(BoxLayout):
         presentation = PicPresentation()
         for i in range(len(self.content)):
             presentation.presentation_content.append(self.content[i].text)
-        print("jee")
+        print(presentation.get_presentation_content())
         return presentation
 
 
@@ -411,6 +411,11 @@ class PresentationCreationLayout(Screen):
         self.ids.views.add_widget(view)
         self.edit_views.append(view)
 
+    def create_a_new_presentation_to_edit(self):
+        view = RobustPresentationEditView()
+        view.create_dynamically_editable_presentation_view_that_works_like_kivy()
+        self.ids.views.add_widget(view)
+        self.edit_views.append(view)
 
 
 

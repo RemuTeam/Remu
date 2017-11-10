@@ -53,9 +53,14 @@ RemuSM:
 <PresentationCreationLayout>:
     id: presentation_creation_layout
     orientation: 'vertical'
-    BoxLayout:
+    StackLayout:
         id: views
-        size_hint: 1, 1
+        size_hint: 1, 0.9
+    Button:
+        id: newpres
+        text: "Create a new presentation"
+        size_hint: 1, 0.1
+        on_press: presentation_creation_layout.create_a_new_presentation_to_edit()
 
 
 #
