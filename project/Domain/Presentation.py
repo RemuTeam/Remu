@@ -17,13 +17,14 @@ class Presentation:
         """
         Construct the presentation
         """
-        self.presentation_content = []
+        self.presentation_elements = None
+        self.presentation_filenames = None
         self.index = 0
-        self.media_path = PathConstants.MEDIA_FOLDER  # vaihda PathConstants -viittaukseen
+        self.media_path = PathConstants.MEDIA_FOLDER
 
     def set_source_folder(self, path):
         """
-        Primarily used for testing purposes, set_source_folder, changes MEDIA_PATH to the one given in the parameter.
+        Primarily used for testing purposes, set_source_folder, changes media_path to the one given in the parameter.
         The presentation needs to be loaded again to work properly
 
         :param path: String, sets the path that contains files for the presentation
@@ -37,28 +38,29 @@ class Presentation:
     """
 
     def __create_presentation(self):
-        if len(self.presentation_content) == 0:
+        if len(self.presentation_elements) == 0:
             path = os.path.join(os.getcwd(), self.media_path)
             print(path)
-            self.get_presentation_elements_from_path(path)
+            self.get_presentation_elements_from_path()
 
     """
     Gets supported files' names from the path given
     as parameter
     """
 
-    def get_presentation_elements_from_path(self, path):
-        for filename in sorted(os.listdir(path)):
+    def get_presentation_elements_from_path(self):
+        self.presentation_elements = []
+        for filename in self.presentation_filenames:
             extension = filename.split(".")[-1]
             relative_filename = self.media_path + "/" + filename
             print(relative_filename)
 
             if extension in self.VIDEO_FORMATS:
-                self.presentation_content.append(PresentationElement(ContentType.Video, relative_filename))
+                self.presentation_elements.append(PresentationElement(ContentType.Video, relative_filename))
             elif extension in self.IMAGE_FORMATS:
-                self.presentation_content.append(PresentationElement(ContentType.Image, relative_filename))
+                self.presentation_elements.append(PresentationElement(ContentType.Image, relative_filename))
             elif extension in self.TEXT_FORMATS:
-                self.presentation_content.append(PresentationElement(ContentType.Text, relative_filename))
+                self.presentation_elements.append(PresentationElement(ContentType.Text, relative_filename))
             else:
                 print("Unsupported filetype: " + extension)
 
@@ -92,8 +94,8 @@ class Presentation:
     """
 
     def get(self, index):
-        if -1 < index < len(self.presentation_content):
-            next_file = self.presentation_content[index]
+        if -1 < index < len(self.presentation_elements):
+            next_file = self.presentation_elements[index]
             self.index = index + 1
             return next_file
         else:
@@ -121,7 +123,7 @@ class Presentation:
     """
 
     def reload(self):
-        del self.presentation_content[:]
+        del self.presentation_elements[:]
         self.__create_presentation()
 
     """
@@ -129,10 +131,7 @@ class Presentation:
     """
 
     def get_presentation_content(self):
-        content = []
-        for presentation_element in self.presentation_content:
-            content.append([presentation_element.source_file, presentation_element.type])
-        return content
+        return self.presentation_filenames
 
     def get_message_dictionary(self):
         dict = {}
@@ -143,7 +142,10 @@ class Presentation:
     def add_elements(self, element_dict):
         content = element_dict["presentation_content"]
         for element in content:
-            self.presentation_content.append(PresentationElement(element[1], element[0]))
+            self.presentation_elements.append(PresentationElement(element[1], element[0]))
+
+    def set_files(self, filenamelist):
+        self.presentation_filenames = filenamelist
 
     @staticmethod
     def CreatePresentation(entries):
