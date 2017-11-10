@@ -315,7 +315,7 @@ class RemuFTPClient:
                 d.addCallbacks(self.writeFile, self.fail)
                 print(self.fileCounter, len(self.files))
                 if self.fileCounter == len(self.files):
-                    self.disconnect()
+                    d.addCallback(self.disconnect)
                     self.fileCounter = 0
                     self.listener.notify_file_transfer_completed()
 
