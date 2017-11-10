@@ -17,6 +17,7 @@ class Slave:
     The master_connection is a RemuTCP object
     """
     def __init__(self, layout=None):
+        self.presentation_ended = False
         self.presentation = Presentation()
         self.layout = layout
         self.master_connection = None
@@ -54,14 +55,16 @@ class Slave:
     Returns a confirmation to master
     """
     def handle_show_next(self, msg):
+        if self.presentation_ended:
+            return self.create_response(Command.SHOW_NEXT.value, {MessageKeys.index_key: -1})
         #self.load_presentation()
         current = self.presentation.get_next()
         if self.layout:
             if current is not None:
                 self.layout.set_visible_widget(current)
             else:
+                self.presentation_ended = True
                 self.layout.reset_presentation()
-                return self.create_response(Command.SHOW_NEXT.value, {MessageKeys.index_key: -1})
 
         return self.create_response(Command.SHOW_NEXT.value, {MessageKeys.index_key: self.presentation.index})
 
