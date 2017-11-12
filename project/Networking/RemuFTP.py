@@ -54,103 +54,105 @@ class RemuFTPServer:
         """
         self.__path = path
 
-    """
-    Set the port that the server listens to
-
-    Note! Does not change the port of a running server.
-    The server must be stopped and started for the change of
-    port to take effect.
-
-    new_port:   an integer, the server's new port to listen to
-    """
     def set_port(self, new_port):
+        """
+        Set the port that the server listens to
+
+        Note! Does not change the port of a running server.
+        The server must be stopped and started for the change of
+        port to take effect.
+
+        new_port:   an integer, the server's new port to listen to
+        """
         self.__port = new_port
 
-    """
-    Returns the server's root path
-    """
     def get_path(self):
+        """
+        Returns the server's root path
+        """
         return self.__path
 
-    """
-    Returns the server's port
-    """
     def get_port(self):
+        """
+        Returns the server's port
+        """
         return self.__port
 
 
 from twisted.internet.protocol import Protocol
 from io import BytesIO
 
-"""
-PROTOCOL FOR BUFFERING DATA RETRIEVED VIA AN FTP CONNECTION
-AND WRITING IT TO A DESIGNATED FILE
-"""
+
 class FileBufferingProtocol(Protocol):
     """
-    Initialize a new FileBufferingProtocol object.
-
-    buffersize_limit:   an integer, the limit
-                        of the buffer's size in bytes,
-                        defaults to 50MB
-    file:               the name of the file to write the
-                        buffered data into
+    PROTOCOL FOR BUFFERING DATA RETRIEVED VIA AN FTP CONNECTION
+    AND WRITING IT TO A DESIGNATED FILE
     """
+
     def __init__(self, buffersize_limit=50000000, file=None):
+        """
+        Initialize a new FileBufferingProtocol object.
+
+        buffersize_limit:   an integer, the limit
+                            of the buffer's size in bytes,
+                            defaults to 50MB
+        file:               the name of the file to write the
+                            buffered data into
+        """
         self.__buffer = BytesIO()
         self.__file = file
         self.__buffersize_limit = buffersize_limit
 
-    """
-    En event called upon receiving data.
-    
-    data:   the received data
-    """
     def dataReceived(self, data):
+        """
+        En event called upon receiving data.
+
+        data:   the received data
+        """
         # print("data received!")
         self.__buffer.write(data)
         if self.__file is not None and self.buffersize_limit_reached():
             self.write_buffer_to_file()
             print("file written")
 
-    """
-    Set the name of the file to write buffer into
-    
-    filename:   a string, the name of the file 
-                to write buffer into
-    """
     def set_file(self, filename):
+        """
+        Set the name of the file to write buffer into
+
+        filename:   a string, the name of the file
+                    to write buffer into
+        """
         self.__file = filename
 
-    """
-    Returns the name of the file that the buffer
-    writes into
-    """
     def get_file(self):
+        """
+        Returns the name of the file that the buffer
+        writes into
+        """
         return self.__file
 
-    """
-    A private function to check whether the buffer 
-    size limit has been reached.
-    """
     def buffersize_limit_reached(self):
+        """
+        A private function to check whether the buffer
+        size limit has been reached.
+        """
         # print("buffer:", self.__buffer.getbuffer().nbytes, "/", self.__buffersize_limit)
         return self.__buffer.getbuffer().nbytes >= self.__buffersize_limit
 
-    """
-    Resets the buffer and returns its content.
-    """
     def flush_buffer(self):
+        """
+        Resets the buffer and returns its content.
+        """
         bufferContent = self.__buffer.getvalue()
         self.__buffer.truncate(0)
         self.__buffer.seek(0)
         return bufferContent
 
-    """
-    Appends the buffer's content to the file 
-    and flushes the buffer.
-    """
     def write_buffer_to_file(self):
+        """
+        Appends the buffer's content to the file
+        and flushes the buffer.
+        """
         print("attempting to write file")
         with open(self.__file, "ab+") as file:
             print("writing file")
@@ -187,10 +189,11 @@ class FileBufferingProtocol(Protocol):
 from twisted.python import usage
 
 
-"""
-Connection options used by the FTPClient class
-"""
 class Options(usage.Options):
+    """
+    Connection options used by the FTPClient class
+    """
+
     optParameters = [['host', 'h', 'localhost'],
                      ['port', 'p', 8005],
                      ['username', 'u', 'anonymous'],
@@ -231,10 +234,10 @@ class RemuFTPClient:
         self.file_queue = Queue()
         self.listener = listener
 
-    """
-    Connect the client
-    """
     def connect(self):
+        """
+        Connect the client
+        """
         FTPClient.debug = self.configuration.opts['debug']
         creator = ClientCreator(reactor,
                                 FTPClient,
@@ -244,41 +247,42 @@ class RemuFTPClient:
         self.client = creator.connectTCP(self.host,
                                          self.port).addCallback(self.connectionMade).addErrback(self.connectionFailed)
 
-    """
-    Disconnect the client
-    """
     def disconnect(self):
+        """
+        Disconnect the client
+        """
         if self.client is not None:
             self.client.disconnect()
 
-    """
-    A callback function for a failed connection
-    """
     def connectionFailed(self, f):
+        """
+        A callback function for a failed connection
+        """
         print("Connection Failed:" + f)
 
-    """
-    A callback function for a successful connection
-    """
     def connectionMade(self, ftpClient):
+        """
+        A callback function for a successful connection
+        """
+
         # Get a detailed listing of the current directory
         self.twisted_FTP_client = ftpClient
         fileList = FTPFileListProtocol()
         d = ftpClient.list(self.read_path, fileList)
         d.addCallbacks(self.__getFiles, self.fail, callbackArgs=(fileList, ftpClient))
 
-    """
-    A callback function for a failed request
-    """
     def fail(self, error):
+        """
+        A callback function for a failed request
+        """
         print('Failed.  Error was:')
         print(error)
 
-    """
-    A callback function for handling a successful 
-    file listing retrieval from the server
-    """
     def __getFiles(self, result, fileListProtocol, ftpClient):
+        """
+        A callback function for handling a successful
+        file listing retrieval from the server
+        """
         print('Processed file listing')
         self.files = fileListProtocol.files
         for file in self.files:
@@ -287,19 +291,19 @@ class RemuFTPClient:
         if self.files is not None:
             self.retrieveFiles()
 
-    """
-    A callback function that writes the buffer to its file
-    """
     def writeFile(self, result):
+        """
+        A callback function that writes the buffer to its file
+        """
         print("now writing file")
         self.bufferingProtocol.write_buffer_to_file()
         self.retrieveFiles()
 
-    """
-    A function that attempts to retrieve all the 
-    files listed in the self.files object from the server
-    """
     def retrieveFiles(self):
+        """
+        A function that attempts to retrieve all the
+        files listed in the self.files object from the server
+        """
         existing_files = self.get_existing_files(self.write_path)
         if self.fileCounter < len(self.files):
             print("-------------************----------------")
@@ -320,11 +324,11 @@ class RemuFTPClient:
             self.disconnect()
             self.fileCounter = 0
 
-    """
-    A debugging function to print the content of the 
-    retrieved file listing
-    """
     def printFiles(self):
+        """
+        A debugging function to print the content of the
+        retrieved file listing
+        """
         if self.files is not None:
             for file in self.files:
                 print('    %s: %d bytes, %s' \

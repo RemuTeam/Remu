@@ -29,56 +29,55 @@ class RemuApp(App):
         self.servicemode = None
         self.localip = IP.get_local_ip_address()
 
-    """
-    The building method uses the GUI/remu.kv file that produces the look of the requested layouts
-    and GUIFactory that adds the functionalities to those layouts.
-    """
-
     def build(self):
+        """
+        The building method uses the GUI/remu.kv file that produces the look of the requested layouts
+        and GUIFactory that adds the functionalities to those layouts.
+        """
         return BuildKV
 
-    """
-    Sets the given object as service mode
-    
-    servicemode: the object to set as master or slave
-    """
     def set_servicemode(self, servicemode, isMaster):
+        """
+        Sets the given object as service mode
+
+        servicemode: the object to set as master or slave
+        """
         self.isMaster = isMaster
         self.servicemode = servicemode
         if self.isMaster:
             self.servicemode.start_udp_listening()
             self.servicemode.start_ftp_server('./media', 8005)
 
-    """
-    Get the app's Master
-    Creates a new Master object as self.servicemode if not set
-    
-    layout: the layout to bind with self.servicemode
-    """
     def get_master(self, layout):
+        """
+        Get the app's Master
+        Creates a new Master object as self.servicemode if not set
+
+        layout: the layout to bind with self.servicemode
+        """
         if self.servicemode is None:
             self.create_servicemode(layout, True)
 
         return self.servicemode
 
-    """
-    Get the app's Slave
-    Creates a new Slave object as self.servicemode if not set
-
-    layout: the layout to bind with self.servicemode
-    """
     def get_slave(self, layout):
+        """
+        Get the app's Slave
+        Creates a new Slave object as self.servicemode if not set
+
+        layout: the layout to bind with self.servicemode
+        """
         if self.servicemode is None:
             self.create_servicemode(layout, False)
 
         return self.servicemode
 
-    """
-    Creates a new service object and sets it in the self.servicemode
-    
-    layout: the layout to bind with self.servicemode
-    """
     def create_servicemode(self, layout, is_master):
+        """
+        Creates a new service object and sets it in the self.servicemode
+
+        layout: the layout to bind with self.servicemode
+        """
         if is_master:
             new_master = Master(layout)
             self.set_servicemode(new_master, True)
@@ -87,11 +86,11 @@ class RemuApp(App):
             new_slave.set_master_connection(RemuTCP(new_slave))
             self.set_servicemode(new_slave, False)
 
-    """
-    Ends the presentation by calling the current servicemode's end_presentation method.
-    slave servicemode end_presentation not yet implemented
-    """
     def end_presentation(self):
+        """
+        Ends the presentation by calling the current servicemode's end_presentation method.
+        slave servicemode end_presentation not yet implemented
+        """
         if self.isMaster:
             self.servicemode.end_presentation()
 
@@ -102,11 +101,10 @@ class RemuApp(App):
         self.servicemode = None
         print("and is now " + str(self.servicemode))
 
-    """
-        Closes all established connections and stops listening to any future connection attempts.
-    """
-
     def close_connections(self):
+        """
+        Closes all established connections and stops listening to any future connection attempts.
+        """
         if self.servicemode:
             self.servicemode.close_all_connections()
 

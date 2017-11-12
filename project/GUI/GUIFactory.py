@@ -421,6 +421,7 @@ class RemuSM(ScreenManager):
         self.remove_widget(self.presentation_screen)
         self.change_screen_to("switch_layout")
 
+
 class GUIFactory:
     """
     GUIFactory defines the functions for the layout components
