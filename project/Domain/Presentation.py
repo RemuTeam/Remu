@@ -149,8 +149,12 @@ class Presentation:
         :return: Nothing
         """
         content = element_dict[MessageKeys.presentation_content_key]
-        for element in content:
-            self.presentation_elements.append(PresentationElement(element[1], element[0]))
+        if content is not None:
+            if self.presentation_elements is None:
+                self.presentation_elements = []
+
+            for element in content:
+                self.presentation_elements.append(PresentationElement(element[1], element[0]))
 
     def set_files(self, filenamelist):
         """
