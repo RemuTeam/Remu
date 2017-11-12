@@ -1,4 +1,7 @@
 class MessageKeys:
+    """
+    MessageKeys contains string constants for Message class
+    """
     index_key = "index"
     type_key = "type"
     command_key = "command"

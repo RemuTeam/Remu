@@ -39,13 +39,13 @@ class Master:
         self.UDPListener = MasterUDPListener(self)
         self.UDPListener.listen_for_beacons()
 
-    """
-    Adds a slave connection by creating a new RemuTCP object
-    and adding it to the dictionary self.slave_connections
-    
-    address: an ip-string formatted as "ipa.ddr.es.s:port"
-    """
     def add_slave(self, slave_address):
+        """
+        Adds a slave connection by creating a new RemuTCP object
+        and adding it to the dictionary self.slave_connections
+
+        address: an ip-string formatted as "ipa.ddr.es.s:port"
+        """
         slave_to_connect = SlaveConnection(self)
         slave_to_connect.connect_to_IP(slave_address)
         self.slave_connections[slave_to_connect.full_address] = slave_to_connect
@@ -57,62 +57,63 @@ class Master:
         slave_to_connect.presentation = presentation
         self.layout.notify(Notification.PRESENTATION_UPDATE, slave_to_connect)
 
-    """
-    Adds a pre-constructed SlaveConnection object to slave_connections
-    
-    slave_connection: SlaveConnection object
-    """
     def add_slave_connection(self, slave_connection):
+        """
+        Adds a pre-constructed SlaveConnection object to slave_connections
+
+        slave_connection: SlaveConnection object
+        """
         self.slave_connections[slave_connection.full_address] = slave_connection
 
-    """
-    Asks the slaves to show their next visuals
-    """
     def request_next(self):
+        """
+        Asks the slaves to show their next visuals
+        """
         for connection in self.slave_connections.values():
             connection.show_next()
 
-    """
-    Requests a slave to retrieve presentation files from the master
-    
-    connection: the SlaveConnection to make the request to
-    subpath:    the path to the files under the root folder
-    """
     def request_retrieve_presentation_files(self, connection, subpath="."):
+        """
+        Requests a slave to retrieve presentation files from the master
+
+        connection: the SlaveConnection to make the request to
+        subpath:    the path to the files under the root folder
+        """
         connection.retrieve_presentation_files(self.FTPServer.get_port(), subpath)
 
-    """
-    Asks a slave to show their next visual.
-    Slave is chosen by its IP-address
-    """
     def request_specific_next(self, address):
+        """
+        Asks a slave to show their next visual.
+        Slave is chosen by its IP-address
+        """
         if self.slave_connections[address]:
             self.slave_connections[address].show_next()
-    """
-    Handles the received notification from a slave connection
 
-    notification:   a Notification enum
-    data:           an object
-    """
     def notify(self, notification, data):
+        """
+        Handles the received notification from a slave connection
+
+        notification:   a Notification enum
+        data:           an object
+        """
         return self.messagehandler[notification](self, notification, data)
 
-    """
-    Handles a presentation status update event
-    
-    notification:   a Notification enum object instance
-    data:           an object instance
-    """
     def update_presentation_status_to_layout(self, notification, data):
+        """
+        Handles a presentation status update event
+
+        notification:   a Notification enum object instance
+        data:           an object instance
+        """
         self.layout.notify(notification, data)
 
-    """
-    Handles a connection update event
-    
-    notification:   a Notification enum object instance
-    data:           an object instance
-    """
     def update_connection(self, notification, full_address):
+        """
+        Handles a connection update event
+
+        notification:   a Notification enum object instance
+        data:           an object instance
+        """
         self.layout.notify(notification, full_address)
         if notification == Notification.CONNECTION_ESTABLISHED:
             print("Connection established")
@@ -125,10 +126,10 @@ class Master:
         if notification == Notification.CONNECTION_FAILED:
             self.layout.update_presentation_status(full_address)
 
-    """
-    Removes the knowledge of a slave from master and notifies GUI of the change
-    """
     def remove_slave(self, notification, data):
+        """
+        Removes the knowledge of a slave from master and notifies GUI of the change
+        """
         if data.full_address in self.slave_connections:
             self.slave_connections.pop(data.full_address, None)
         self.layout.notify(notification, data)
@@ -141,40 +142,39 @@ class Master:
             i += 1
             slavec.retrieve_presentation_files(8005, '.', presentation)
 
-
-    """
-    Informs the slave connection about the presentation ending
-    """
     def end_presentation(self):
+        """
+        Informs the slave connection about the presentation ending
+        """
         for slave in self.slave_connections.values():
             slave.end_presentation()
 
-    """
-    Closes all connections to slaves
-    """
     def close_all_connections(self):
+        """
+        Closes all connections to slaves
+        """
         self.close_TCP_connections()
         self.close_UDP_connection()
         self.close_FTP_connection()
 
-    """
-    Closes all connections to slaves
-    """
     def close_TCP_connections(self):
+        """
+        Closes TCP connections to slaves
+        """
         for slave in self.slave_connections.values():
             slave.connection.end_connection()
 
-    """
-    Shuts down the FTP server
-    """
     def close_FTP_connection(self):
+        """
+        Shuts down the FTP server
+        """
         if self.FTPServer is not None:
             self.FTPServer.stop()
 
-    """
-    Closes the master's UDP protocol
-    """
     def close_UDP_connection(self):
+        """
+        Closes the master's UDP protocol
+        """
         if self.UDPListener is not None:
             self.UDPListener.stop_listening_to_beacons()
 
