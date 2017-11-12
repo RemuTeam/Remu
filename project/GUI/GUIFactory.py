@@ -19,30 +19,27 @@ are defined in the layout file:
 project/GUI/remu.kv
 """
 
-"""
-Produces the GUI-layout that allows the user to choose
-between Master- and Slave-mode.
 
-Inherits kivy.uix.screenmanager.Screen
-"""
 class SwitchLayout(Screen):
+    """
+    Produces the GUI-layout that allows the user to choose
+    between Master- and Slave-mode.
+
+    Inherits kivy.uix.screenmanager.Screen
+    """
     text = StringProperty('')
 
     def add_address(self, address):
         self.text = address
 
-"""
-Produces the Master-mode's GUI-layout that allows the
-user to communicate with Slave-devices.
-
-Inherits kivy.uix.screenmanager.Screen
-"""
 class MasterGUILayout(Screen):
+    """
+    Produces the Master-mode's GUI-layout that allows the
+    user to communicate with Slave-devices.
 
+    Inherits kivy.uix.screenmanager.Screen
     """
-    A variable for debugging purposes to track the amount
-    of clicks in the GUI
-    """
+
     label_text = StringProperty('')
     slave_presentation = {}
 
@@ -54,10 +51,10 @@ class MasterGUILayout(Screen):
     def on_pre_enter(self):
         self.master = App.get_running_app().get_master(self)
 
-    """
-    Sets the address for GUI purposes, but does not control the actual connection
-    """
     def set_address_to_gui(self, address):
+        """
+        Sets the address for GUI purposes, but does not control the actual connection
+        """
         self.label_text = address
 
     def add_slave_connection(self, address):
@@ -82,51 +79,51 @@ class MasterGUILayout(Screen):
         widget.size_hint_y = 1
         widget.size_hint_x = 1
 
-    """
-    Opens the warning pop-up to master, asking if they are sure they want to go back
-    """
     def show_master_back_popup(self):
+        """
+        Opens the warning pop-up to master, asking if they are sure they want to go back
+        """
         MasterBackPopUp().open()
 
-    """
-    Generate the presentation information on the layout on connection to a slave.
-    """
     def generate_presentation(self, data):
+        """
+        Generate the presentation information on the layout on connection to a slave.
+        """
         self.remove_slave_presentation(data)
         print("Creating a new slave presentation widget")
         slave_widget = SlavePresentation(data)
         self.slave_presentation[data.full_address] = slave_widget
         self.ids.middle.add_widget(slave_widget)
 
-    """
-    Remove possibly existing SlavePresentation widget based on the 
-    SlaveConnection object
-    """
     def remove_slave_presentation(self, data):
+        """
+        Remove possibly existing SlavePresentation widget based on the
+        SlaveConnection object
+        """
         if data.full_address in self.slave_presentation:
             self.ids.middle.remove_widget(self.slave_presentation[data.full_address])
 
-    """
-    Update the presentation status on the layout
-    """
     def update_presentation_status(self, data=None):
+        """
+        Update the presentation status on the layout
+        """
         print("päivitetään")
         for slave_connection in self.slave_presentation.values():
             slave_connection.update_status()
 
-    """
-    Sets the slave address to be shown in the gui
-    """
     def update_connection_to_gui(self, data):
+        """
+        Sets the slave address to be shown in the gui
+        """
         self.set_address_to_gui(str(data))
 
-    """
-    Handles the received notification from master
-    
-    notification:   a Notification enum
-    data:           an object
-    """
     def notify(self, notification, data):
+        """
+        Handles the received notification from master
+
+        notification:   a Notification enum
+        data:           an object
+        """
         return self.messagehandler[notification](self, data)
 
     """
@@ -140,22 +137,22 @@ class MasterGUILayout(Screen):
                       Notification.CONNECTION_TERMINATED: remove_slave_presentation}
 
 
-"""
-Produces the Slave-mode's GUI-layout that reacts to
-the Master-devices commands.
-
-Inherits kivy.uix.screenmanager.Screen
-"""
 class SlaveGUILayout(Screen):
+    """
+    Produces the Slave-mode's GUI-layout that reacts to
+    the Master-devices commands.
+
+    Inherits kivy.uix.screenmanager.Screen
+    """
 
     # layout uses this StringProperty to show current service mode
     info_text = StringProperty('Currently in slave mode')
 
-    """
-    In the constructor the class and instance are passed
-    to the superclass' __init__ function
-    """
     def __init__(self, **kwargs):
+        """
+        In the constructor the class and instance are passed
+        to the superclass' __init__ function
+        """
         super(SlaveGUILayout, self).__init__(**kwargs)
         self.slave = None
 
@@ -167,35 +164,37 @@ class SlaveGUILayout(Screen):
         App.get_running_app().init_presentation()
         self.prepare_for_presentation_mode()
 
-    """
-    Sets the app's main window to full screen and hides the
-    mouse cursor.
-    """
     def prepare_for_presentation_mode(self):
+        """
+        Sets the app's main window to full screen and hides the
+        mouse cursor.
+        """
         window = self.get_root_window()
         window.show_cursor = False
-    """
-     Opens the warning pop-up to slave, asking if they are sure they want to go back
-    """
+
     def show_slave_back_popup(self):
+        """
+        Opens the warning pop-up to slave, asking if they are sure they want to go back
+        """
         SlaveBackPopUp().open()
 
     def set_info_text(self, info_text):
         self.info_text = info_text
 
-"""
-Fullscreen layout for presenting content
-"""
+
 class PresentationLayout(Screen):
+    """
+    Fullscreen layout for presenting content
+    """
     image_source = StringProperty('')
     text_element = StringProperty('')
     video_source = StringProperty('')
 
-    """
-    In the constructor the class and instance are passed
-    to the superclass' __init__ function
-    """
     def __init__(self, **kwargs):
+        """
+        In the constructor the class and instance are passed
+        to the superclass' __init__ function
+        """
         super(PresentationLayout, self).__init__(**kwargs)
         self.slave = None
         self.presentation_type = None
@@ -210,25 +209,25 @@ class PresentationLayout(Screen):
         self.set_visible_widget(self.start_screen)
         self.slave.reset_presentation()
 
-    """
-    Sets the right media widget based on the presentation mode.
-    
-    presentation_type:  a PresentationType object
-    """
     def set_presentation_mode(self, presentation_type):
+        """
+        Sets the right media widget based on the presentation mode.
+
+        presentation_type:  a PresentationType object
+        """
         self.set_visible_widget(presentation_type)
         self.presentation_type = presentation_type
         print(self.presentation_type)
 
-    """
-    Sets the visible widget according to the presentation's type
-    
-    Hides the "picture" widget if TextPresentation
-    Hides the "text_field" widget if PicPresentation
-    
-    presentation_type:  a PresentationType object
-    """
     def set_visible_widget(self, element):
+        """
+        Sets the visible widget according to the presentation's type
+
+        Hides the "picture" widget if TextPresentation
+        Hides the "text_field" widget if PicPresentation
+
+        presentation_type:  a PresentationType object
+        """
         self.hide_widgets()
 
         if element.type == ContentType.Text:
@@ -256,41 +255,45 @@ class PresentationLayout(Screen):
         widget.size_hint_y = 0
         widget.height = '0dp'
 
-    """
-    Shows the next element of the show
-    """
     def show(self, content):
+        """
+        Shows the next element of the show
+        """
         if self.presentation_type == ContentType.Image:
             self.image_source = content
         elif self.presentation_type == ContentType.Text:
             self.text_element = content
 
-    """
-    Resets the presentation to the starting state
-    """
     def reset_presentation(self):
+        """
+        Resets the presentation to the starting state
+        """
         self.ids.picture.source = ''
         self.get_root_window().show_cursor = True
         self.slave.reset_presentation()
         self.parent.get_screen('slave_gui_layout').set_info_text("Presentation ended\nCurrently in slave mode")
         App.get_running_app().root.current = "slave_gui_layout"
 
+
 """
-These represent the popups that take the maste or slave back to the switch layout if they decide to 
-break the connection
+MasterBackPopUp and SlaveBackPopUp classes represent the popups that take the master or slave back to the switch layout 
+if they decide to break the connection
 """
+
+
 class MasterBackPopUp(Popup):
     pass
+
 
 class SlaveBackPopUp(Popup):
     pass
 
-"""
-SlavePresentation is the visual presentation of the slave in the master view. It contains information about the slave's
-state and visuals associated with it
-"""
-class SlavePresentation(BoxLayout):
 
+class SlavePresentation(BoxLayout):
+    """
+    SlavePresentation is the visual presentation of the slave in the master view. It contains information about the slave's
+    state and visuals associated with it
+    """
     presentation_data = None
 
     def __init__(self, data):
@@ -302,11 +305,10 @@ class SlavePresentation(BoxLayout):
         self.current_active = data.currently_showing
         self.create_visual_widgets()
 
-
-    """
-    Creates the visual widgets for the slave's visuals
-    """
     def create_visual_widgets(self):
+        """
+        Creates the visual widgets for the slave's visuals
+        """
         for i in range(0, len(self.presentation_data)):
             filename = self.presentation_data[i][0][:100]
             if len(filename) == 100:
@@ -316,34 +318,31 @@ class SlavePresentation(BoxLayout):
             self.ids.visuals.add_widget(visual)
         self.show_next()
 
-
-    """
-    Highlights the next visual, indicating it is the currently active visual
-    """
     def show_next(self):
+        """
+        Highlights the next visual, indicating it is the currently active visual
+        """
         self.visuals[self.current_active].set_inactive()
         self.current_active = self.slave.currently_showing
         if self.current_active is not -1:
             self.visuals[self.current_active].set_active()
 
-    """
-    Checks if the tracked SlaveConnection has updated; updates the widget if needed
-    """
     def update_status(self):
+        """
+        Checks if the tracked SlaveConnection has updated; updates the widget if needed
+        """
         if not self.slave.connected:
             self.ids["btn_address"].background_color = [0.94, 0.025, 0.15, 1]
         self.show_next()
-
 
     def get_address(self):
         return self.ids["btn_address"].text
 
 
-
-"""
-SlaveVisualProperty is the class of the slave's visuals. It represents a single visual property of the slave's properties
-"""
 class SlaveVisualProperty(Button):
+    """
+    SlaveVisualProperty is the class of the slave's visuals. It represents a single visual property of the slave's properties
+    """
 
     visual_name = StringProperty('')
 
@@ -363,37 +362,37 @@ class SlaveVisualProperty(Button):
         self.background_color = [0.5, 0.5, 0.5, 1]
 
 
-"""
-Handles changing the GUI-layouts as different screens for the 
-application, and also acts as the root widget
-
-Inherits kivy.uix.screenmanager.ScreenManager
-"""
 class RemuSM(ScreenManager):
+    """
+    Handles changing the GUI-layouts as different screens for the
+    application, and also acts as the root widget
 
+    Inherits kivy.uix.screenmanager.ScreenManager
     """
-    Initializes references to differents screens as 'None'
-    """
+
     def __init__(self, **kwargs):
+        """
+        Initializes references to differents screens as 'None'
+        """
         super(RemuSM, self).__init__(**kwargs)
         self.master_screen = None
         self.slave_screen = None
         self.presentation_screen = None
 
-    """
-    Creates a new master layout, and sets it to be the current screen
-    """
     def add_master_layout(self):
+        """
+        Creates a new master layout, and sets it to be the current screen
+        """
         if self.master_screen is None:
             self.master_screen = MasterGUILayout(name='master_gui_layout')
             self.add_widget(self.master_screen)
         self.current = 'master_gui_layout'
 
-    """
-    Creates a new slave layout and a presentation layout, and sets the slave layout
-    to be the current screen
-    """
     def add_slave_layout(self):
+        """
+        Creates a new slave layout and a presentation layout, and sets the slave layout
+        to be the current screen
+        """
         if self.slave_screen is None:
             self.slave_screen = SlaveGUILayout(name='slave_gui_layout')
             self.presentation_screen = PresentationLayout(name='presentation_layout')
@@ -401,45 +400,41 @@ class RemuSM(ScreenManager):
             self.add_widget(self.presentation_screen)
         self.current = 'slave_gui_layout'
 
-    """
-    Changes the screen according to the screen name parameter
-    """
     def change_screen_to(self, name):
+        """
+        Changes the screen according to the screen name parameter
+        """
         self.current = name
 
-    """
-    Removes the master layout from screenmanager's screens
-    """
     def rm_master_layout(self):
+        """
+        Removes the master layout from screenmanager's screens
+        """
         self.remove_widget(self.master_screen)
         self.change_screen_to("switch_layout")
 
-    """
-    Removes the slave layout and the presentation layout from screenmanager's screens
-    """
     def rm_slave_layout(self):
+        """
+        Removes the slave layout and the presentation layout from screenmanager's screens
+        """
         self.remove_widget(self.slave_screen)
         self.remove_widget(self.presentation_screen)
         self.change_screen_to("switch_layout")
 
-
-"""
-GUIFactory defines the functions for the layout components
-The current running app is set as the GUIFactory instance's 
-parent in Main.py
-"""
 class GUIFactory:
+    """
+    GUIFactory defines the functions for the layout components
+    The current running app is set as the GUIFactory instance's
+    parent in Main.py
+    """
     remuapp = None
 
-    """
-    Empty constructor
-    """
     def __init__(self):
         pass
 
-    """
-    Sets the current running app as the GUIFactory instance's
-    parent
-    """
     def set_parent(self, remuapp):
+        """
+        Sets the current running app as the GUIFactory instance's
+        parent
+        """
         self.remuapp = remuapp
