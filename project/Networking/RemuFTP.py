@@ -5,25 +5,25 @@ from twisted.internet import reactor
 from Domain.Command import Notification
 import os
 
-"""
-A FILE TRANSFER PROTOCOL SERVER
-"""
 class RemuFTPServer:
     """
-    Initializes the server to a given path and port
-
-    path:   the root path of the FTP-server
-    port:   the port to listen, defaults to 21
+    A FILE TRANSFER PROTOCOL SERVER
     """
     def __init__(self, path=None, port=21):
+        """
+        Initializes the server to a given path and port
+        :param path: a string, the root path of the FTP-server
+        :param port: an integer, the port to listen, defaults to 21
+        """
         self.__path = path
         self.__port = port
         self.__server = None
 
-    """
-    Starts the server.
-    """
     def start(self):
+        """
+        Starts the server.
+        :return: None
+        """
         if self.__path is None:
             raise AttributeError("The server's root path cannot be None")
 
@@ -33,24 +33,25 @@ class RemuFTPServer:
         self.__server = reactor.listenTCP(self.__port, f)
         print("started ftp server in path", self.get_path(), "listening for port", self.get_port())
 
-    """
-    Stops the server.
-    """
     def stop(self):
+        """
+        Stops the server.
+        :return: None
+        """
         if self.__server is not None:
             self.__server.stopListening()
             print("ftp server stopped")
 
-    """
-    Set the root path of the server
-    
-    Note! Does not change the path of a running server.
-    The server must be stopped and started for the change of
-    path to take effect.
-    
-    new_path:   a string, the server's new root path
-    """
     def set_path(self, path):
+        """
+        Set the root path of the server
+
+        Note! Does not change the path of a running server.
+        The server must be stopped and started for the change of
+        path to take effect.
+        :param path: a string, the server's new root path
+        :return: None
+        """
         self.__path = path
 
     """
