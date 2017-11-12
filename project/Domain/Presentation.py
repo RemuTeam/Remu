@@ -3,6 +3,7 @@ from PIL import Image
 from Domain.PresentationElement import PresentationElement
 from Domain.ContentType import ContentType
 from Domain.PathConstants import PathConstants
+from Domain.MessageKeys import MessageKeys
 
 """
 DEFINES A UNIFIED INTERFACE
@@ -97,11 +98,11 @@ class Presentation:
     """
 
     def get(self, index):
-        if -1 < index < len(self.presentation_elements):
-            next_file = self.presentation_elements[index]
-            return next_file
-        else:
-            return None
+        if self.presentation_elements is not None:
+            if -1 < index < len(self.presentation_elements):
+                next_file = self.presentation_elements[index]
+                return next_file
+        return None
 
     def reset(self):
         """
@@ -137,12 +138,12 @@ class Presentation:
 
     def get_message_dictionary(self):
         dict = {}
-        dict["index"] = self.index
-        dict["presentation_content"] = self.get_presentation_content()
+        dict[MessageKeys.index_key] = self.index
+        dict[MessageKeys.presentation_content_key] = self.get_presentation_content()
         return dict
 
     def add_elements(self, element_dict):
-        content = element_dict["presentation_content"]
+        content = element_dict[MessageKeys.presentation_content_key]
         for element in content:
             self.presentation_elements.append(PresentationElement(element[1], element[0]))
 
