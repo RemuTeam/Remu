@@ -367,7 +367,7 @@ from Domain.Presentation import Presentation
 
 class DraggablePresentationElement(DragBehavior, Button):
 
-    ELEMENT_WIDTH = 200
+    ELEMENT_WIDTH = 40
     ELEMENT_HEIGHT = 0
 
     def __init__(self, pres, parent):
@@ -381,15 +381,20 @@ class DraggablePresentationElement(DragBehavior, Button):
         self.y = self.parent.y
 
     def on_x(self, *largs):
+        pass
+        """
         if not self.updating and abs(self.x-self.old_x) > self.ELEMENT_WIDTH:
+            self.old_x = self.x
             self.pseudoparent.update_us(self)
+            self.x = self.old_x
+        """
 
     def on_touch_up(self, touch):
         super(DraggablePresentationElement, self).on_touch_up(touch)
         self.pseudoparent.update_us(self)
 
     def __lt__(self, other):
-        return self.x < other.x
+        return self.x > other.x
 
 
 class RobustPresentationEditView(BoxLayout):
@@ -409,6 +414,8 @@ class RobustPresentationEditView(BoxLayout):
 
     def update_us(self, element=None):
         self.content.sort()
+        self.ids.presentation_elements.children.sort()
+        """
         for i in range(len(self.content)):
             self.content[i].old_x = self.content[i].x
             if element and element.text == self.content[i].text:
@@ -417,6 +424,7 @@ class RobustPresentationEditView(BoxLayout):
             #self.content[i].y = DraggablePresentationElement.ELEMENT_HEIGHT
             self.content[i].x = i*DraggablePresentationElement.ELEMENT_WIDTH+40
             self.content[i].updating = False
+        """
         print("updated!")
 
     def create_presentation(self):
