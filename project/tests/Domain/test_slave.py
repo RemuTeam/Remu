@@ -1,27 +1,37 @@
+import unittest
 from Domain.Slave import Slave
 from Domain.Message import Message
 from Domain.Command import Command
-from Domain.PresentationFactory import PresentationFactory
+from Domain.Presentation import Presentation
 from Networking.RemuTCP import RemuTCP
 from GUI.GUIFactory import PresentationLayout
-from Domain.TextPresentation import TextPresentation
-import unittest
 from unittest.mock import Mock
 from Domain.MessageKeys import MessageKeys
 from unittest.mock import patch
-from Domain.PresentationType import PresentationType
+from Domain.ContentType import ContentType
+from Domain.PathConstants import PathConstants
 
 class SlaveTest(unittest.TestCase):
+
+    def setUp(self):
+        self.slave = Slave()
+        self.slave.presentation.set_source_folder(PathConstants.TEST_MEDIA_FOLDER)
+
+    def createPresentation(self):
+        presentation = Presentation()
+        presentation.set_source_folder(PathConstants.TEST_MEDIA_FOLDER)
+        presentation.set_files(["mokomoko", "holoholo"])
+        presentation.load()
+        return presentation
+
     def test_init_with_no_layout(self):
-        slave = Slave()
-        self.assertIsNone(slave.layout)
-        self.assertIsNotNone(slave.presentation)
-        self.assertEqual(slave.presentation.__class__.__name__, "Presentation")
+        self.assertIsNone(self.slave.layout)
+        self.assertIsNotNone(self.slave.presentation)
 
     def test_set_presentation(self):
         slave = Slave()
-        slave.set_presentation(TextPresentation())
-        self.assertEqual(slave.presentation.__class__.__name__, "TextPresentation")
+        slave.set_presentation(Presentation())
+        self.assertEqual(slave.presentation.__class__.__name__, "Presentation")
 
     """
     def test_init_with_no_connection(self):
@@ -41,24 +51,24 @@ class SlaveTest(unittest.TestCase):
         slave = Slave(mock)
         self.assertEqual(slave.layout, mock)
 
+    """
     def test_handling_picpresentation_request(self):
         data_key = MessageKeys.presentation_content_key
         index_key = MessageKeys.index_key
-        slave = Slave()
-        presentation = PresentationFactory.PicPresentation()
-        presentation.load()
-        slave.set_presentation(presentation)
+        presentation = self.createPresentation()
+        self.slave.set_presentation(presentation)
         msg = Message()
         msg.set_field(MessageKeys.type_key, "command")
         msg.set_field(MessageKeys.command_key, Command.REQUEST_PRESENTATION.value)
-        response = slave.handle_message(msg)
+        response = self.slave.handle_message(msg)
         self.assertEqual(response.get_field(data_key)[index_key], 0)
-        self.assertEqual(response.get_field(MessageKeys.presentation_type_key), PresentationType.Image)
         self.assertCountEqual(response.get_field(data_key)[MessageKeys.presentation_content_key],
-                              ["images/a.jpg", "images/b.jpg", "images/c.jpg", "images/d.jpg", "images/e.jpg"])
+                              presentation.get_presentation_content())
+    """
 
     def test_handling_show_next(self):
         slave = Slave(Mock(PresentationLayout))
+        slave.set_presentation(self.createPresentation())
         msg = Message()
         msg.set_field(MessageKeys.type_key, "command")
         msg.set_field(MessageKeys.command_key, Command.SHOW_NEXT.value)
@@ -81,6 +91,7 @@ class SlaveTest(unittest.TestCase):
 
     def test_handling_ending_presentation(self):
         slave = Slave()
+        slave.presentation.set_files(["ime", "munaa"])
         msg = Message()
         slave.layout = Mock(PresentationLayout)
         with patch.object(slave.layout, "reset_presentation") as mock:
@@ -100,7 +111,7 @@ class SlaveTest(unittest.TestCase):
 
     def test_handling_show_next_resetting_presentation(self):
         slave = Slave()
-        slave.set_presentation(PresentationFactory.PicPresentation())
+        slave.set_presentation(self.createPresentation())
         slave.presentation.load()
         for i in range(0, len(slave.presentation.get_presentation_content())):
             slave.presentation.get_next()
