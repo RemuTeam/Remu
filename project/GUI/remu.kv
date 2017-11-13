@@ -41,7 +41,12 @@ RemuSM:
             orientation: 'horizontal'
             size_hint: 1, 0.1
             Button:
-                text: "Send message to slave"
+                id: start_pres
+                text: "Start presentation"
+                on_press: root.start_presentation()
+            Button:
+                id: show_next
+                text: "show next"
                 on_press: root.send_message_to_slave()
             Button:
                 text: "Back"
@@ -55,6 +60,7 @@ RemuSM:
                 on_press: root.add_slave_connection(txt_input.text)
         StackLayout:
             id: middle
+            spacing: 2
             orientation: 'tb-lr'
         BoxLayout:
             id: bottom_panel
@@ -81,13 +87,8 @@ RemuSM:
             orientation: 'horizontal'
             Button:
                 size_hint: 0.3,0.3
-                text: "Go to image presentation"
-                on_press: root.pic_presentation_chosen()
-                on_press: app.root.change_screen_to("presentation_layout")
-            Button:
-                size_hint: 0.3,0.3
-                text: "Go to text presentation"
-                on_press: root.text_presentation_chosen()
+                text: "Go to presentation"
+                on_press: root.init_presentation()
                 on_press: app.root.change_screen_to("presentation_layout")
             Button:
                 size_hint:0.3,0.3
@@ -102,13 +103,16 @@ RemuSM:
         orientation: 'vertical'
         Image:
             id: picture
-            source: root.source
+            source: root.image_source
         Label:
             id: text_field
             text: root.text_element
             text_size: self.size
             halign: 'center'
             valign: 'middle'
+        Video:
+            id: video
+            source: root.video_source
 
 #
 # SlavePresentation represents a single slave of the master, with all of its visuals included

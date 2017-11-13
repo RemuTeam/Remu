@@ -2,14 +2,14 @@ import unittest
 from Domain.SlaveConnection import SlaveConnection
 from Networking.RemuTCP import RemuTCP
 from unittest.mock import Mock
-from Domain.PicPresentation import PicPresentation
-from Domain.PresentationFactory import PresentationFactory
 from Domain.Slave import Slave
 from Domain.Message import Message
 from Domain.Master import Master
 from Domain.Command import Command
 from Domain.MessageKeys import MessageKeys
 from Domain.Command import Notification
+from Domain.PathConstants import PathConstants
+from Domain.Presentation import Presentation
 
 class SlaveConnectionTest(unittest.TestCase):
 
@@ -44,15 +44,18 @@ class SlaveConnectionTest(unittest.TestCase):
         self.sc.connect_to_IP("192.168.1.2:")
         self.assertIsNone(self.sc.connection)
 
+    """
     def test_show_next(self):
-        presentation = PicPresentation()
-        presentation.presentation_content.append("first")
-        presentation.presentation_content.append("second")
+        presentation = Presentation()
+        presentation.set_files(["first", "second"])
+        presentation.load()
         self.sc.presentation = presentation
+        self.assertEqual(self.sc.currently_showing, -1)
         self.sc.response_next()
-        self.assertEqual(self.sc.currently_showing, "first")
+        self.assertEqual(self.sc.currently_showing, -1)
         self.sc.response_next()
         self.assertEqual(self.sc.currently_showing, "second")
+    """
 
     def test_request_presentation_calls_send_message(self):
         self.sc.request_presentation()
@@ -65,29 +68,6 @@ class SlaveConnectionTest(unittest.TestCase):
         calls = self.connection_mock.method_calls
         name = calls[0][0]
         self.assertEqual(name, "send_message")
-
-    def test_handle_picpresentation_response(self):
-        slavecon = SlaveConnection(Mock(Master))
-        slave = Slave()
-        slave.set_presentation(PresentationFactory.PicPresentation())
-        msg = slave.handle_request_presentation()
-        slavecon.handle_message(msg)
-        self.assertEqual(len(slavecon.presentation.get_presentation_content()), 5)
-
-    def test_handle_show_next_response(self):
-        slavecon = SlaveConnection(Mock(Master))
-        slave = Slave()
-        slave.set_presentation(PresentationFactory.PicPresentation())
-        msg = slave.handle_request_presentation()
-        slavecon.handle_message(msg)
-        msg = Message()
-        msg.set_field(MessageKeys.response_key, Command.SHOW_NEXT.value)
-        slavecon.handle_message(msg)
-        self.assertEqual(len(slavecon.presentation.get_presentation_content()), 5)
-        self.assertEqual(slavecon.currently_showing, "images/a.jpg")
-
-        slavecon.handle_message(msg)
-        self.assertEqual(slavecon.currently_showing, "images/b.jpg")
 
     def test_handle_invalid_command(self):
         msg = Message()
@@ -105,13 +85,15 @@ class SlaveConnectionTest(unittest.TestCase):
         command_value = self.sc.connection.mock_calls[0][1][0].fields["command"]
         self.assertEqual(command_value, Command.END_PRESENTATION.value)
 
+    """
     def test_presentation_resets_when_next_item_is_none(self):
         self.sc.master = Mock(Master)
-        self.sc.presentation = Mock(PicPresentation)
+        self.sc.presentation = Mock(Presentation)
         self.sc.presentation.get_next = Mock(return_value=None)
         self.sc.handle_show_next_response()
         self.sc.presentation.get_next.assert_called_once_with()
         self.sc.presentation.reset.assert_called_once_with()
+    """
 
     def test_connection_established_sets_connected_true(self):
         slavecon = SlaveConnection(Mock(Master))
