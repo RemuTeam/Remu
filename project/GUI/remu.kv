@@ -90,6 +90,9 @@ RemuSM:
             Button:
                 text: "Back"
                 on_press: root.show_master_back_popup()
+            Button:
+                text: "Open files"
+                on_press: root.show_open_file_popup()
             TextInput:
                 id: txt_input
                 text: ""
@@ -224,6 +227,29 @@ RemuSM:
                 text: "No"
                 on_press: root.dismiss()
                 size_hint: 0.3,0.3
+
+<OpenFilePopUp>:
+    title: "Open files"
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserIconView:
+            id: filechooser
+            multiselect: True
+            path: root.default_path
+            filters: root.supportedFormats
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release: root.dismiss()
+            Button:
+                text: "Open"
+                on_release: root.open_files(filechooser.path, filechooser.selection)
+                on_release: root.dismiss()
 
 #MasterBackPopUp : A popup that asks if master is sure they want to go back to the switch layout.
 #If he presses yes, connection is broken and switching layout comes up, if he presses no, connection is not lost and we return to master layout

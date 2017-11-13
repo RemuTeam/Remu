@@ -3,11 +3,16 @@ from kivy.uix.popup import Popup
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.properties import StringProperty
+from kivy.properties import ListProperty
+from Domain.SupportedFileTypes import AllSupportedFormats
 from Domain.Command import Notification
 from Domain.ContentType import ContentType
 from Domain.MessageKeys import MessageKeys
+from Domain.PathConstants import PathConstants
 from Domain.PresentationElement import PresentationElement
 from kivy.app import App
+from shutil import copyfile
+import os
 
 """
 CLASS LIBRARY TO HANDLE THE FUNCTIONALITY OF GUI LAYOUTS
@@ -84,6 +89,13 @@ class MasterGUILayout(Screen):
         Opens the warning pop-up to master, asking if they are sure they want to go back
         """
         MasterBackPopUp().open()
+
+    def show_open_file_popup(self):
+        """
+        Opens a Filechooser to load files
+        :return: None
+        """
+        OpenFilePopUp().open()
 
     def generate_presentation(self, data):
         """
@@ -287,6 +299,37 @@ class MasterBackPopUp(Popup):
 
 class SlaveBackPopUp(Popup):
     pass
+
+
+class OpenFilePopUp(Popup):
+    """
+    A file selection and opening popup
+    """
+    default_path = StringProperty(os.path.join(os.getcwd(), PathConstants.MEDIA_FOLDER))
+    supportedFormats = ListProperty([])
+
+    def __init__(self):
+        """
+        Well well well... a constructor method. Whaddaya know...
+        """
+        super(OpenFilePopUp, self).__init__()
+        self.supportedFormats = AllSupportedFormats
+
+    def open_files(self, path, selection):
+        """
+        Opens one or multiple files from a path
+        :param path: the path to open files from
+        :param selection: a list the selected files in the path
+        :return: None
+        """
+        for selected_file in selection:
+            path_separated = selected_file.split(os.sep)
+            file_to_write = os.path.join(PathConstants.MEDIA_FOLDER, path_separated[len(path_separated) - 1])
+            if not os.path.isfile(file_to_write):
+                print("file", selected_file, "copied as", file_to_write)
+                copyfile(selected_file, file_to_write)
+            else:
+                print(file_to_write, "already exists")
 
 
 class SlavePresentation(BoxLayout):
