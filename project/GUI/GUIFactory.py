@@ -159,7 +159,6 @@ class SlaveGUILayout(Screen):
     def on_pre_enter(self, *args):
         if self.slave is None:
             self.slave = App.get_running_app().get_slave(self)
-            App.get_running_app().create_pic_presentation()
 
     def init_presentation(self):
         App.get_running_app().init_presentation()
