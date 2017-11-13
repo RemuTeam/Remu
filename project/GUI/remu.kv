@@ -118,18 +118,33 @@ RemuSM:
 # SlaveOverview is within the master's GUI, and contains the information about the slaves. It is divided into two parts,
 # slave_names and slave_presentations, which show the names and presentations of the slaves respectively
 #
-<SlaveOverview@GridLayout>
-    size_hint_y: None
-    height: root.cumulative_height
-    cols: 2
+<SlaveOverview>
     BoxLayout:
-        id: slave_names
-        orientation: 'vertical'
-        size_hint_x: 0.2
-    BoxLayout:
-        id: slave_presentations
-        size_hint_x: 0.8
-
+        orientation: 'horizontal'
+        size: self.parent.size
+        StackLayout:
+            id: slave_names
+            orientation: 'lr-tb'
+            size_hint_x: 0.2
+        ScrollView:
+            StackLayout:
+                size_hint_x: 1
+                orientation: 'lr-tb'
+                padding: 5, 5, 10, 10
+                StackLayout:
+                    size_hint: 0.2, 0.15
+                    orientation: 'lr-tb'
+                    Button:
+                        text: "Elem1"
+                    Button:
+                        text: "Elem2"
+                StackLayout:
+                    size_hint: 0.2, 0.15
+                    orientation: 'lr-tb'
+                    Button:
+                        text: "Elem1"
+                    Button:
+                        text: "Elem2"
 
 #
 # SlavePresentation represents a single slave of the master, with all of its visuals included
@@ -208,3 +223,10 @@ RemuSM:
 
 #SlaveBackPopUp : A popup that asks if slave is sure they want to go back to the switch layout.
 #If he presses yes, connection is broken and switching layout comes up, if he presses no, connection is not lost and we return to slave layout
+
+<Widget>:
+    canvas.after:
+        Line:
+            rectangle: self.x+1,self.y+1,self.width-1,self.height-1
+            dash_offset: 5
+            dash_length:

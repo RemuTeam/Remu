@@ -306,10 +306,10 @@ class SlaveOverview(GridLayout):
 
     def update_slave_to_overview(self, data):
         # if exists, delete and recreate
-        self.slave_buttons[data.full_address] = Button(text=data.full_address, on_press=lambda a: self.show_slave_info(data.full_address))
+        self.slave_buttons[data.full_address] = Button(text=data.full_address, size_hint_y=0.1, on_press=lambda a: self.show_slave_info(data.full_address))
         self.slave_presentations[data.full_address] = SlavePresentation(data)
         self.ids.slave_names.add_widget(self.slave_buttons[data.full_address])
-        self.ids.slave_presentations.add_widget(self.slave_presentations[data.full_address])
+        #self.ids.slave_presentations.add_widget(self.slave_presentations[data.full_address])
 
     def show_slave_info(self, address):
         print(address + " info called")
