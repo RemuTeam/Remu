@@ -25,6 +25,7 @@ project/GUI/remu.kv
 """
 
 
+
 class SwitchLayout(Screen):
     """
     Produces the GUI-layout that allows the user to choose
@@ -381,8 +382,9 @@ class SlavePresentation(BoxLayout):
     def get_address(self):
         return self.ids["btn_address"].text
 
+from kivy.uix.behaviors import DragBehavior
 
-class SlaveVisualProperty(Button):
+class SlaveVisualProperty(DragBehavior, Button):
     """
     SlaveVisualProperty is the class of the slave's visuals. It represents a single visual property of the slave's properties
     """
@@ -394,6 +396,9 @@ class SlaveVisualProperty(Button):
         self.visual_name = image_source
         self.background_normal = ''
         self.background_color = [0.5, 0.5, 0.5, 1]
+        self.old_x = self.x
+        self.being_moved = False
+        self.going_forward = True
 
     def on_press(self):
         print("Showing visual property information not yet implemented!")
@@ -404,13 +409,44 @@ class SlaveVisualProperty(Button):
     def set_inactive(self):
         self.background_color = [0.5, 0.5, 0.5, 1]
 
+    def on_y(self, *largs):
+        self.y = self.parent.y
 
-from kivy.uix.behaviors import DragBehavior
+    def on_touch_down(self, touch):
+        super(SlaveVisualProperty, self).on_touch_down(touch)
+        self.old_x = self.x
+        self.being_moved = True
+
+    def __lt__(self, other):
+        return self.x > other.x
+
+    def on_touch_up(self, touch):
+        super(SlaveVisualProperty, self).on_touch_up(touch)
+        self.parent.children.sort()
+
+    def do_i_have_to(self):
+        if self.going_forward:
+            return self.x-self.old_x > self.width + 5 or abs(self.x-self.old_x) > self.width + 20
+        return self.old_x-self.x < self.width + 5 or abs(self.x-self.old_x) > self.width + 20
+
+    def on_x(self, *largs):
+        print (abs(self.x - self.old_x), self.width)
+        if self.do_i_have_to() and self.being_moved:
+            self.going_forward = self.x - self.old_x > 0
+            print("I should update myself!", self.x - self.old_x, self.width)
+            self.old_x = self.x
+            self.parent.children.sort()
+            temp = self.x
+            print("new position", temp)
+            self.x = self.old_x
+            self.old_x = temp
+
+
 from Domain.Presentation import Presentation
 
 class DraggablePresentationElement(DragBehavior, Button):
 
-    ELEMENT_WIDTH = 200
+    ELEMENT_WIDTH = 40
     ELEMENT_HEIGHT = 0
 
     def __init__(self, pres, parent):
@@ -424,15 +460,20 @@ class DraggablePresentationElement(DragBehavior, Button):
         self.y = self.parent.y
 
     def on_x(self, *largs):
+        pass
+        """
         if not self.updating and abs(self.x-self.old_x) > self.ELEMENT_WIDTH:
+            self.old_x = self.x
             self.pseudoparent.update_us(self)
+            self.x = self.old_x
+        """
 
     def on_touch_up(self, touch):
         super(DraggablePresentationElement, self).on_touch_up(touch)
         self.pseudoparent.update_us(self)
 
     def __lt__(self, other):
-        return self.x < other.x
+        return self.x > other.x
 
 
 class RobustPresentationEditView(BoxLayout):
@@ -452,6 +493,8 @@ class RobustPresentationEditView(BoxLayout):
 
     def update_us(self, element=None):
         self.content.sort()
+        self.ids.presentation_elements.children.sort()
+        """
         for i in range(len(self.content)):
             self.content[i].old_x = self.content[i].x
             if element and element.text == self.content[i].text:
@@ -460,6 +503,7 @@ class RobustPresentationEditView(BoxLayout):
             #self.content[i].y = DraggablePresentationElement.ELEMENT_HEIGHT
             self.content[i].x = i*DraggablePresentationElement.ELEMENT_WIDTH+40
             self.content[i].updating = False
+        """
         print("updated!")
 
     def create_presentation(self):

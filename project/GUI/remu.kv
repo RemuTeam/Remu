@@ -181,7 +181,10 @@ RemuSM:
 # SlaveVisualProperty is the visual representation of slave's visual property. It inherits Button, so that
 # it can be pressed to show more information about the property
 #
-<SlaveVisualProperty@Button>
+<SlaveVisualProperty>
+    drag_rectangle: self.x, self.y, self.width, self.height
+    drag_timeout: 10000000
+    drag_distance: 0
     size_hint: 0.2, 1
     text: root.visual_name
     text_size: self.size
