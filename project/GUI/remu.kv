@@ -58,10 +58,10 @@ RemuSM:
             Button:
                 text: "Add Slave"
                 on_press: root.add_slave_connection(txt_input.text)
-        StackLayout:
-            id: middle
-            spacing: 2
-            orientation: 'tb-lr'
+        ScrollView:
+            do_scroll_x: False
+            SlaveOverview:
+                id: slave_overview
         BoxLayout:
             id: bottom_panel
             orientation: 'horizontal'
@@ -115,17 +115,28 @@ RemuSM:
             source: root.video_source
 
 #
+# SlaveOverview is within the master's GUI, and contains the information about the slaves. It is divided into two parts,
+# slave_names and slave_presentations, which show the names and presentations of the slaves respectively
+#
+<SlaveOverview@GridLayout>
+    size_hint_y: None
+    height: root.cumulative_height
+    cols: 2
+    BoxLayout:
+        id: slave_names
+        orientation: 'vertical'
+        size_hint_x: 0.2
+    BoxLayout:
+        id: slave_presentations
+        size_hint_x: 0.8
+
+
+#
 # SlavePresentation represents a single slave of the master, with all of its visuals included
 #
 <SlavePresentation@BoxLayout>
-    id: slave
-    size_hint: 1, 0.15
+    size: 2, 1
     orientation: 'horizontal'
-    Button:
-        id: btn_address
-        size_hint: 0.2, 1
-        text: "Name of the slave"
-        on_press: slave.slave.show_next()
     StackLayout:
         id: visuals
         orientation: 'lr-tb'
@@ -135,6 +146,11 @@ RemuSM:
         size_hint: 0.1, 1
         text: " Terminate \nconnection"
         on_press: slave.slave.terminate_connection()
+
+<SlaveInfo@Button>
+    id: btn_address
+    text: "Name of the slave"
+    on_press: slave.slave.show_next()
 
 #
 # SlaveVisualProperty is the visual representation of slave's visual property. It inherits Button, so that

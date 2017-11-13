@@ -2,7 +2,8 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.popup import Popup
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
-from kivy.properties import StringProperty
+from kivy.uix.gridlayout import GridLayout
+from kivy.properties import StringProperty, BoundedNumericProperty
 from Domain.Command import Notification
 from Domain.ContentType import ContentType
 from Domain.MessageKeys import MessageKeys
@@ -89,11 +90,12 @@ class MasterGUILayout(Screen):
         """
         Generate the presentation information on the layout on connection to a slave.
         """
-        self.remove_slave_presentation(data)
+        #self.remove_slave_presentation(data)
         print("Creating a new slave presentation widget")
-        slave_widget = SlavePresentation(data)
-        self.slave_presentation[data.full_address] = slave_widget
-        self.ids.middle.add_widget(slave_widget)
+        self.ids.slave_overview.update_slave_to_overview(data)
+        #slave_widget = SlavePresentation(data)
+        #self.slave_presentation[data.full_address] = slave_widget
+        #self.ids.middle.add_widget(slave_widget)
 
     def remove_slave_presentation(self, data):
         """
@@ -289,6 +291,30 @@ class SlaveBackPopUp(Popup):
     pass
 
 
+class SlaveOverview(GridLayout):
+    """
+    SlaveOverview class is used in the master GUI, to keep track of the slaves in the presentation
+    """
+    cumulative_height = BoundedNumericProperty(0, min=0)
+
+    def __init__(self, **kwargs):
+        super(SlaveOverview, self).__init__(**kwargs)
+        self.cumulative_height = 1000
+        self.slave_buttons = {}
+        self.slave_presentations = {}
+        self.element_height = 100
+
+    def update_slave_to_overview(self, data):
+        # if exists, delete and recreate
+        self.slave_buttons[data.full_address] = Button(text=data.full_address, on_press=lambda a: self.show_slave_info(data.full_address))
+        self.slave_presentations[data.full_address] = SlavePresentation(data)
+        self.ids.slave_names.add_widget(self.slave_buttons[data.full_address])
+        self.ids.slave_presentations.add_widget(self.slave_presentations[data.full_address])
+
+    def show_slave_info(self, address):
+        print(address + " info called")
+
+
 class SlavePresentation(BoxLayout):
     """
     SlavePresentation is the visual presentation of the slave in the master view. It contains information about the slave's
@@ -299,7 +325,7 @@ class SlavePresentation(BoxLayout):
     def __init__(self, data):
         super(SlavePresentation, self).__init__()
         self.slave = data
-        self.ids["btn_address"].text = data.full_address
+        #self.ids["btn_address"].text = data.full_address
         self.presentation_data = data.presentation
         self.visuals = []
         self.current_active = data.currently_showing
