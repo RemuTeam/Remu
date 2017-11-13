@@ -310,7 +310,7 @@ class SlavePresentation(BoxLayout):
         Creates the visual widgets for the slave's visuals
         """
         for i in range(0, len(self.presentation_data)):
-            filename = self.presentation_data[i][0][:100]
+            filename = self.presentation_data[i][:100] #[0][:100]
             if len(filename) == 100:
                 filename += "..."
             visual = SlaveVisualProperty(filename)
