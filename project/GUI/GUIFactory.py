@@ -29,6 +29,8 @@ class SwitchLayout(Screen):
     """
     text = StringProperty('')
 
+
+
     def add_address(self, address):
         self.text = address
 
