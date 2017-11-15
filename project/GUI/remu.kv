@@ -158,7 +158,7 @@ RemuSM:
 
 #
 # SlaveVisualProperty is the visual representation of slave's visual property. It inherits Button, so that
-# it can be pressed to show more information about the property
+# it can be pressed to show more information about the property.
 #
 <SlaveVisualProperty@Button>
     size_hint: 0.2, 1
@@ -213,9 +213,11 @@ RemuSM:
 #SlaveBackPopUp : A popup that asks if slave is sure they want to go back to the switch layout.
 #If he presses yes, connection is broken and switching layout comes up, if he presses no, connection is not lost and we return to slave layout
 
-<Widget>:
-    canvas.after:
-        Line:
-            rectangle: self.x+1,self.y+1,self.width-1,self.height-1
-            dash_offset: 5
-            dash_length:
+# USE THIS FOR GUI DEBUG
+# This widget overrides the default Widget, and draws lines on all of the widgets.
+#<Widget>:
+#    canvas.after:
+#        Line:
+#            rectangle: self.x+1,self.y+1,self.width-1,self.height-1
+#            dash_offset: 5
+#            dash_length:

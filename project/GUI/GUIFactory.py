@@ -111,7 +111,7 @@ class MasterGUILayout(Screen):
         """
         Update the presentation status on the layout
         """
-        print("päivitetään")
+        print("update_presentation_status called")
         for slave_connection in self.slave_presentation.values():
             slave_connection.update_status()
 
@@ -246,15 +246,32 @@ class PresentationLayout(Screen):
             self.ids.video.state = 'play'
 
     def show_widget(self, widget):
+        """
+        Shows a given widget. Unlike in the hiding, height doesn't need to be modified when showing widget. Otherwise
+        acts as a counter-method for the hide_widget method.
+        :param widget:
+        :return: Nothing
+        """
         widget.opacity = 1
         widget.size_hint_y = 1
 
     def hide_widgets(self):
+        """
+        Hides all of the different type of widgets.
+        :return: Nothing
+        """
         self.hide_widget(self.ids.picture)
         self.hide_widget(self.ids.text_field)
         self.hide_widget(self.ids.video)
 
     def hide_widget(self, widget):
+        """
+        Hides a widget. Size_hint_y and height are set to zero, so that the widgets do not take up space in the screen.
+        Opacity is also set to zero, in case the widget would be still visible (text-elements need this to be hidden
+        properly)
+        :param widget:
+        :return: Nothing
+        """
         widget.opacity = 0
         widget.size_hint_y = 0
         widget.height = '0dp'
@@ -295,40 +312,41 @@ class SlaveBackPopUp(Popup):
 
 class SlaveOverview(ScrollView):
     """
-    SlaveOverview class is used in the master GUI, to keep track of the slaves in the presentation
+    SlaveOverview class is used in the master GUI, to keep track of the slaves in the presentation. It maintains two
+    lists: slave_buttons and slave_presentations. For each slave, SlaveOverview has a button in slave_buttons and a
+    SlavePresentation in slave_presentations.
     """
-    cumulative_width = BoundedNumericProperty(0, min=0)
-    cumulative_height = BoundedNumericProperty(0, min=0)
 
     def __init__(self, **kwargs):
         super(SlaveOverview, self).__init__(**kwargs)
-        #self.cumulative_width = Window.size[0]
-        #self.cumulative_height = 0.8 * Window.size[1]
         self.slave_buttons = {}
         self.slave_presentations = {}
 
     def update_slave_to_overview(self, data):
-        # if exists, delete and recreate
-        self.slave_buttons[data.full_address] = Button(text=data.full_address, size_hint=(1, 0.2), on_press=lambda a: self.show_slave_info(data.full_address))
+        if data.full_address in self.slave_buttons.keys():
+            self.ids.slave_names.remove_widget(self.slave_buttons[data.full_address])
+            self.ids.slave_presentations.remove_widget(self.slave_presentations[data.data.full_address])
+        self.slave_buttons[data.full_address] = Button(text=data.full_address,
+                                                       size_hint=(1, 0.2),
+                                                       on_press=lambda a: self.advance_presentation(self.slave_presentations[data.full_address]))
         self.slave_presentations[data.full_address] = SlavePresentation(data)
         self.ids.slave_names.add_widget(self.slave_buttons[data.full_address])
         self.ids.slave_presentations.add_widget(self.slave_presentations[data.full_address])
 
-    def show_slave_info(self, address):
-        print(address + " info called")
+    def advance_presentation(self, presentation):
+        presentation.show_next()
 
 
 class SlavePresentation(StackLayout):
     """
-    SlavePresentation is the visual presentation of the slave in the master view. It contains information about the slave's
-    state and visuals associated with it
+    SlavePresentation represents slave's presentation in the master view. It contains information about the visuals it
+    holds, as well as the current state of the presentation
     """
     presentation_data = None
 
     def __init__(self, data):
         super(SlavePresentation, self).__init__()
         self.slave = data
-        #self.ids["btn_address"].text = data.full_address
         self.presentation_data = data.presentation
         self.visuals = []
         self.current_active = data.currently_showing
