@@ -34,8 +34,8 @@ RemuSM:
     spacing: 10
     padding: 10
 
-    BoxLayout:
-        orientation: 'vertical'
+    StackLayout:
+        orientation: 'tb-lr'
         BoxLayout:
             id: options
             orientation: 'horizontal'
@@ -60,9 +60,66 @@ RemuSM:
                 on_press: root.add_slave_connection(txt_input.text)
         ScrollView:
             do_scroll_x: False
-            size: 1000, 1000
-            SlaveOverview:
-                id: slave_overview
+            size_hint: 1, 0.8
+            StackLayout:
+                size_hint_y: None
+                height: 1000
+                orientation: 'lr-tb'
+                StackLayout:
+                    id: slave_names
+                    size_hint: 0.2, 1
+                    orientation: 'lr-tb'
+                    Button:
+                        size_hint: 1, 0.2
+                        text: "1"
+                    Button:
+                        size_hint: 1, 0.2
+                        text: "2"
+                    Button:
+                        size_hint: 1, 0.2
+                        text: "3"
+                    Button:
+                        size_hint: 1, 0.2
+                        text: "4"
+                    Button:
+                        size_hint: 1, 0.2
+                        text: "5"
+                    Button:
+                        size_hint: 1, 0.2
+                        text: "6"
+                ScrollView:
+                    do_scroll_y: False
+                    size_hint: 0.8, 1
+                    StackLayout:
+                        id: slave_presentations
+                        size_hint_y: 1
+                        size_hint_x: None
+                        width: 1000
+                        StackLayout:
+                            spacing: 5
+                            padding: 5, 5, 5, 5
+                            size_hint_y: 0.2
+                            orientation: 'lr-tb'
+                            Button:
+                                size_hint: 0.2, 1
+                                text: "VIHEIUGTHYE"
+                            Button:
+                                size_hint: 0.2, 1
+                                text: "hauisdhfuiashdsfiuh"
+                        StackLayout:
+                            spacing: 5
+                            padding: 5, 5, 5, 5
+                            size_hint: 1, 0.2
+                            orientation: 'lr-tb'
+                            Button:
+                                size_hint: 0.2, 1
+                                text: "VIHEIUGTHYE"
+                            Button:
+                                size_hint: 0.2, 1
+                                text: "hauisdhfuiashdsfiuh"
+            #size_hint: 1, 1.2
+            #SlaveOverview:
+            #    id: slave_overview
         BoxLayout:
             id: bottom_panel
             orientation: 'horizontal'
@@ -127,10 +184,11 @@ RemuSM:
         StackLayout:
             id: slave_names
             orientation: 'lr-tb'
-            size_hint_x: 0.2
+            size_hint: 0.2, 1
         RemuScroll:
             do_scroll_y: False
-            size_hint_y: 1
+            size_hint: 0.8, 1
+
             StackLayout:
                 id: slave_presentations
                 size: self.parent.size
