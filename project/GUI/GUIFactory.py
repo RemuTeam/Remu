@@ -1,14 +1,16 @@
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.popup import Popup
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.scrollview import ScrollView
 from kivy.uix.button import Button
-from kivy.uix.gridlayout import GridLayout
+from kivy.uix.stacklayout import StackLayout
 from kivy.properties import StringProperty, BoundedNumericProperty
 from Domain.Command import Notification
 from Domain.ContentType import ContentType
 from Domain.MessageKeys import MessageKeys
 from Domain.PresentationElement import PresentationElement
 from kivy.app import App
+from kivy.core.window import Window
 
 """
 CLASS LIBRARY TO HANDLE THE FUNCTIONALITY OF GUI LAYOUTS
@@ -291,22 +293,23 @@ class SlaveBackPopUp(Popup):
     pass
 
 
-class SlaveOverview(GridLayout):
+class SlaveOverview(ScrollView):
     """
     SlaveOverview class is used in the master GUI, to keep track of the slaves in the presentation
     """
+    cumulative_width = BoundedNumericProperty(0, min=0)
     cumulative_height = BoundedNumericProperty(0, min=0)
 
     def __init__(self, **kwargs):
         super(SlaveOverview, self).__init__(**kwargs)
-        self.cumulative_height = 1000
+        #self.cumulative_width = Window.size[0]
+        #self.cumulative_height = 0.8 * Window.size[1]
         self.slave_buttons = {}
         self.slave_presentations = {}
-        self.element_height = 100
 
     def update_slave_to_overview(self, data):
         # if exists, delete and recreate
-        self.slave_buttons[data.full_address] = Button(text=data.full_address, size_hint_y=0.1, on_press=lambda a: self.show_slave_info(data.full_address))
+        self.slave_buttons[data.full_address] = Button(text=data.full_address, size_hint=(1, 0.2), on_press=lambda a: self.show_slave_info(data.full_address))
         self.slave_presentations[data.full_address] = SlavePresentation(data)
         self.ids.slave_names.add_widget(self.slave_buttons[data.full_address])
         self.ids.slave_presentations.add_widget(self.slave_presentations[data.full_address])
@@ -315,7 +318,7 @@ class SlaveOverview(GridLayout):
         print(address + " info called")
 
 
-class SlavePresentation(GridLayout):
+class SlavePresentation(StackLayout):
     """
     SlavePresentation is the visual presentation of the slave in the master view. It contains information about the slave's
     state and visuals associated with it
@@ -341,7 +344,7 @@ class SlavePresentation(GridLayout):
                 filename += "..."
             visual = SlaveVisualProperty(filename)
             self.visuals.append(visual)
-            self.ids.visuals.add_widget(visual)
+            self.add_widget(visual)
         self.show_next()
 
     def show_next(self):
@@ -363,6 +366,9 @@ class SlavePresentation(GridLayout):
 
     def get_address(self):
         return self.ids["btn_address"].text
+
+    def get_presentation_size(self):
+        return len(self.presentation_data)
 
 
 class SlaveVisualProperty(Button):

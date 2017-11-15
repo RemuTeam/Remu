@@ -58,68 +58,8 @@ RemuSM:
             Button:
                 text: "Add Slave"
                 on_press: root.add_slave_connection(txt_input.text)
-        ScrollView:
-            do_scroll_x: False
-            size_hint: 1, 0.8
-            StackLayout:
-                size_hint_y: None
-                height: 1000
-                orientation: 'lr-tb'
-                StackLayout:
-                    id: slave_names
-                    size_hint: 0.2, 1
-                    orientation: 'lr-tb'
-                    Button:
-                        size_hint: 1, 0.2
-                        text: "1"
-                    Button:
-                        size_hint: 1, 0.2
-                        text: "2"
-                    Button:
-                        size_hint: 1, 0.2
-                        text: "3"
-                    Button:
-                        size_hint: 1, 0.2
-                        text: "4"
-                    Button:
-                        size_hint: 1, 0.2
-                        text: "5"
-                    Button:
-                        size_hint: 1, 0.2
-                        text: "6"
-                ScrollView:
-                    do_scroll_y: False
-                    size_hint: 0.8, 1
-                    StackLayout:
-                        id: slave_presentations
-                        size_hint_y: 1
-                        size_hint_x: None
-                        width: 1000
-                        StackLayout:
-                            spacing: 5
-                            padding: 5, 5, 5, 5
-                            size_hint_y: 0.2
-                            orientation: 'lr-tb'
-                            Button:
-                                size_hint: 0.2, 1
-                                text: "VIHEIUGTHYE"
-                            Button:
-                                size_hint: 0.2, 1
-                                text: "hauisdhfuiashdsfiuh"
-                        StackLayout:
-                            spacing: 5
-                            padding: 5, 5, 5, 5
-                            size_hint: 1, 0.2
-                            orientation: 'lr-tb'
-                            Button:
-                                size_hint: 0.2, 1
-                                text: "VIHEIUGTHYE"
-                            Button:
-                                size_hint: 0.2, 1
-                                text: "hauisdhfuiashdsfiuh"
-            #size_hint: 1, 1.2
-            #SlaveOverview:
-            #    id: slave_overview
+        SlaveOverview:
+            id: slave_overview
         BoxLayout:
             id: bottom_panel
             orientation: 'horizontal'
@@ -176,77 +116,40 @@ RemuSM:
 # SlaveOverview is within the master's GUI, and contains the information about the slaves. It is divided into two parts,
 # slave_names and slave_presentations, which show the names and presentations of the slaves respectively
 #
-<SlaveOverview>
-    GridLayout:
-        rows: 1
-        cols: 2
-        size: self.parent.size
+<SlaveOverview@ScrollView>
+    do_scroll_x: False
+    size_hint: 1, 0.8
+    StackLayout:
+        size_hint_y: None
+        height: root.height
+        orientation: 'lr-tb'
         StackLayout:
             id: slave_names
-            orientation: 'lr-tb'
             size_hint: 0.2, 1
-        RemuScroll:
+            orientation: 'lr-tb'
+        ScrollView:
             do_scroll_y: False
             size_hint: 0.8, 1
-
             StackLayout:
                 id: slave_presentations
-                size: self.parent.size
-                orientation: 'tb-lr'
-                padding: 5, 5, 5, 5
-            #    StackLayout:
-            #        size_hint: 1, 0.2
-            #        spacing: 1
-            #        orientation: 'lr-tb'
-            #        Button:
-            #            size_hint: 0.2, 1
-            #            text: "Elem1"
-            #        Button:
-            #            size_hint: 0.2, 1
-            #            text: "Elem2"
-            #        Button:
-            #            size_hint: 0.2, 1
-            #            text: "Elem3"
-            #        Button:
-            #            size_hint: 0.2, 1
-            #            text: "Elem7"
-            #        Button:
-            #            size_hint: 0.2, 1
-            #            text: "Elem8"
-            #        Button:
-            #            size_hint: 0.2, 1
-            #            text: "Elem9"
-                StackLayout:
-                    size_hint: 1, 0.2
-                    spacing: 1
-                    orientation: 'lr-tb'
-                    Button:
-                        size_hint: 0.2, 1
-                        text: "Elem4"
-            #        Button:
-            #            size_hint: 0.2, 1
-            #            text: "Elem5"
-            #        Button:
-            #            size_hint: 0.2, 1
-            #            text: "Elem6"
-
-<RemuScroll@ScrollView>
-    on_scroll_start: print("Elder scrolls")
+                size_hint_y: 1
+                size_hint_x: None
+                width: root.width
 
 #
 # SlavePresentation represents a single slave of the master, with all of its visuals included
 #
-<SlavePresentation@GridLayout>
-    rows: 1
-    StackLayout:
-        id: visuals
-        orientation: 'lr-tb'
-        spacing: 2
-    Button:
-        id: killswitch
-        size_hint: 0.1, 1
-        text: " Terminate \nconnection"
-        on_press: slave.slave.terminate_connection()
+<SlavePresentation@StackLayout>
+    spacing: 5
+    padding: 5, 5, 5, 5
+    size_hint_y: 0.2
+    orientation: 'lr-tb'
+
+    #Button:
+    #    id: killswitch
+    #    size_hint: 0.1, 1
+    #    text: " Terminate \nconnection"
+    #    on_press: slave.slave.terminate_connection()
 
 <SlaveInfo@Button>
     id: btn_address
