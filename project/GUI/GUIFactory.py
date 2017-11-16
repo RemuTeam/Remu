@@ -44,7 +44,6 @@ class MasterGUILayout(Screen):
     """
 
     label_text = StringProperty('')
-    slave_presentation = {}
 
     def __init__(self, **kwargs):
         super(MasterGUILayout, self).__init__(**kwargs)
@@ -88,32 +87,30 @@ class MasterGUILayout(Screen):
         """
         MasterBackPopUp().open()
 
-    def generate_presentation(self, data):
+    def generate_presentation(self, slave_connection):
         """
         Generate the presentation information on the layout on connection to a slave.
         """
-        #self.remove_slave_presentation(data)
         print("Creating a new slave presentation widget")
-        self.ids.slave_overview.update_slave_to_overview(data)
-        #slave_widget = SlavePresentation(data)
-        #self.slave_presentation[data.full_address] = slave_widget
-        #self.ids.middle.add_widget(slave_widget)
+        self.ids.slave_overview.update_slave_to_overview(slave_connection)
 
     def remove_slave_presentation(self, data):
         """
         Remove possibly existing SlavePresentation widget based on the
         SlaveConnection object
         """
-        if data.full_address in self.slave_presentation:
-            self.ids.middle.remove_widget(self.slave_presentation[data.full_address])
+        self.ids.slave_overview.remove_slave_from_overview(data.full_address)
+        #if data.full_address in self.slave_presentation:
+        #    self.ids.middle.remove_widget(self.slave_presentation[data.full_address])
 
     def update_presentation_status(self, data=None):
         """
         Update the presentation status on the layout
         """
         print("update_presentation_status called")
-        for slave_connection in self.slave_presentation.values():
-            slave_connection.update_status()
+        self.ids.slave_overview.update_presentation_state()
+        #for slave_connection in self.slave_presentation.values():
+        #    slave_connection.update_status()
 
     def update_connection_to_gui(self, data):
         """
@@ -322,19 +319,37 @@ class SlaveOverview(ScrollView):
         self.slave_buttons = {}
         self.slave_presentations = {}
 
-    def update_slave_to_overview(self, data):
-        if data.full_address in self.slave_buttons.keys():
-            self.ids.slave_names.remove_widget(self.slave_buttons[data.full_address])
-            self.ids.slave_presentations.remove_widget(self.slave_presentations[data.data.full_address])
-        self.slave_buttons[data.full_address] = Button(text=data.full_address,
-                                                       size_hint=(1, 0.2),
-                                                       on_press=lambda a: self.advance_presentation(self.slave_presentations[data.full_address]))
-        self.slave_presentations[data.full_address] = SlavePresentation(data)
-        self.ids.slave_names.add_widget(self.slave_buttons[data.full_address])
-        self.ids.slave_presentations.add_widget(self.slave_presentations[data.full_address])
+    def update_slave_to_overview(self, slave_connection):
+        """
+        Updates the SlaveOverview in the master's GUI. If a slave with an IP is already in the list, it is still deleted
+        so that all changes in the slave's presentation will show.
+        :param slave_connection: Slave's presentation data
+        :return:
+        """
+        self.remove_slave_from_overview(slave_connection.full_address)
+        self.slave_buttons[slave_connection.full_address] = Button(text=slave_connection.full_address,
+                                                                   size_hint=(1, 0.2),
+                                                                   on_press=lambda a: slave_connection.show_next())
+        self.slave_presentations[slave_connection.full_address] = SlavePresentation(slave_connection)
+        self.ids.slave_names.add_widget(self.slave_buttons[slave_connection.full_address])
+        self.ids.slave_presentations.add_widget(self.slave_presentations[slave_connection.full_address])
 
-    def advance_presentation(self, presentation):
-        presentation.show_next()
+    def remove_slave_from_overview(self, address):
+        """
+        Removes the slave's information from the slave_buttons and slave_presentations list, and removes the widgets
+        associated with it.
+        :param address: The key which is used for deleting
+        :return: Nothing
+        """
+        if address in self.slave_buttons.keys() or address in self.slave_presentations.keys():
+            self.ids.slave_names.remove_widget(self.slave_buttons[address])
+            self.ids.slave_presentations.remove_widget(self.slave_presentations[address])
+            del self.slave_buttons[address]
+            del self.slave_presentations[address]
+
+    def update_presentation_state(self):
+        for slave_presentation in self.slave_presentations.values():
+            slave_presentation.update_status()
 
 
 class SlavePresentation(StackLayout):
@@ -344,12 +359,12 @@ class SlavePresentation(StackLayout):
     """
     presentation_data = None
 
-    def __init__(self, data):
+    def __init__(self, slave_connection):
         super(SlavePresentation, self).__init__()
-        self.slave = data
-        self.presentation_data = data.presentation
+        self.slave = slave_connection
+        self.presentation_data = slave_connection.presentation
         self.visuals = []
-        self.current_active = data.currently_showing
+        self.current_active = slave_connection.currently_showing
         self.create_visual_widgets()
 
     def create_visual_widgets(self):
@@ -363,9 +378,9 @@ class SlavePresentation(StackLayout):
             visual = SlaveVisualProperty(filename)
             self.visuals.append(visual)
             self.add_widget(visual)
-        self.show_next()
+        self.visualize_next()
 
-    def show_next(self):
+    def visualize_next(self):
         """
         Highlights the next visual, indicating it is the currently active visual
         """
@@ -380,7 +395,7 @@ class SlavePresentation(StackLayout):
         """
         if not self.slave.connected:
             self.ids["btn_address"].background_color = [0.94, 0.025, 0.15, 1]
-        self.show_next()
+        self.visualize_next()
 
     def get_address(self):
         return self.ids["btn_address"].text

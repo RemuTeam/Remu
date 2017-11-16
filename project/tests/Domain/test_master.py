@@ -64,7 +64,7 @@ class MasterTest(unittest.TestCase):
         self.mock_master.add_slave_connection(slavc)
         self.mock_master.request_next()
         for slaveconnection in self.mock_master.slave_connections.values():
-            slaveconnection.show_next.assert_called_once_with()
+            slaveconnection.visualize_next.assert_called_once_with()
 
     def test_update_presentation_status_to_layout_works(self):
         with patch.object(self.layout, 'notify', return_value=None) as mock_method:

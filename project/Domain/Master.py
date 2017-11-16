@@ -70,7 +70,7 @@ class Master:
         Asks the slaves to show their next visuals
         """
         for connection in self.slave_connections.values():
-            connection.show_next()
+            connection.visualize_next()
 
     def request_retrieve_presentation_files(self, connection, subpath="."):
         """
@@ -87,7 +87,7 @@ class Master:
         Slave is chosen by its IP-address
         """
         if self.slave_connections[address]:
-            self.slave_connections[address].show_next()
+            self.slave_connections[address].visualize_next()
 
     def notify(self, notification, data):
         """
