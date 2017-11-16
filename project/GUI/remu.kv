@@ -23,6 +23,10 @@ RemuSM:
                 text: "Slave"
                 size_hint: 0.3,0.3
                 on_release: app.root.add_slave_layout()
+            Button:
+                text: "Info"
+                size_hint:0.3,0.3
+                on_release: app.root.add_info_layout()
 
 #
 # MasterGUILayout contains a options bar, a bottom bar and a main view. Upper bar contains connection control, lower bar
@@ -148,6 +152,14 @@ RemuSM:
     valign: 'middle'
     padding: (5, 2)
 
+<InfoLayout>:
+    id:info_gui_layout
+    BoxLayout:
+        orientation:'vertical'
+        Label:
+            text:root.text
+            font_size: 28
+            valign: 'middle'
 
 <MasterBackPopUp>:
     title: "Are you sure you want to go back?"

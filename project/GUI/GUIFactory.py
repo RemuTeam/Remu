@@ -32,6 +32,11 @@ class SwitchLayout(Screen):
     def add_address(self, address):
         self.text = address
 
+class InfoLayout(Screen):
+    with open('infotext.txt') as f:
+        t = f.read()
+    text = t
+
 class MasterGUILayout(Screen):
     """
     Produces the Master-mode's GUI-layout that allows the
@@ -378,6 +383,7 @@ class RemuSM(ScreenManager):
         self.master_screen = None
         self.slave_screen = None
         self.presentation_screen = None
+        self.info_screen = None
 
     def add_master_layout(self):
         """
@@ -399,6 +405,12 @@ class RemuSM(ScreenManager):
             self.add_widget(self.slave_screen)
             self.add_widget(self.presentation_screen)
         self.current = 'slave_gui_layout'
+
+    def add_info_layout(self):
+        if self.info_screen is None:
+            self.info_screen = InfoLayout(name='info_gui_layout')
+            self.add_widget(self.info_screen)
+        self.current = 'info_gui_layout'
 
     def change_screen_to(self, name):
         """
