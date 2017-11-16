@@ -49,6 +49,7 @@ class MasterGUILayout(Screen):
 
     label_text = StringProperty('')
     slave_presentation = {}
+    presentation_counter = 1
 
     def __init__(self, **kwargs):
         super(MasterGUILayout, self).__init__(**kwargs)
@@ -66,6 +67,10 @@ class MasterGUILayout(Screen):
 
     def add_slave_connection(self, address):
         self.master.add_slave(address)
+
+    def new_presentation(self):
+        self.master.add_slave("slave" + str(self.presentation_counter))
+        self.presentation_counter += 1
 
     def send_message_to_slave(self):
         self.master.request_next()
@@ -99,14 +104,14 @@ class MasterGUILayout(Screen):
         """
         ImportFilesPopUp().open()
 
-    def generate_presentation(self, data):
+    def generate_presentation(self, slave_connection):
         """
         Generate the presentation information on the layout on connection to a slave.
         """
-        self.remove_slave_presentation(data)
+        self.remove_slave_presentation(slave_connection)
         print("Creating a new slave presentation widget")
-        slave_widget = SlavePresentation(data)
-        self.slave_presentation[data.full_address] = slave_widget
+        slave_widget = SlavePresentation(slave_connection, "slave" + str(self.presentation_counter))
+        self.slave_presentation["slave" + str(self.presentation_counter)] = slave_widget
         self.ids.middle.add_widget(slave_widget)
 
     def remove_slave_presentation(self, data):
@@ -427,13 +432,13 @@ class SlavePresentation(BoxLayout):
     """
     presentation_data = None
 
-    def __init__(self, data):
+    def __init__(self, slave_connection, presentation_name):
         super(SlavePresentation, self).__init__()
-        self.slave = data
-        self.ids["btn_address"].text = data.full_address
-        self.presentation_data = data.presentation
+        self.slave = slave_connection
+        self.ids["btn_address"].text = presentation_name
+        self.presentation_data = slave_connection.presentation
         self.visuals = []
-        self.current_active = data.currently_showing
+        self.current_active = slave_connection.currently_showing
         self.create_visual_widgets()
 
     def create_visual_widgets(self):

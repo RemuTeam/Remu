@@ -21,7 +21,7 @@ class Presentation:
         Construct the presentation
         """
         self.presentation_elements = None
-        self.presentation_filenames = ["a.jpg", "b.jpg", "c.jpg"]
+        self.presentation_filenames = []
         self.index = -1
         self.media_path = PathConstants.MEDIA_FOLDER
 
