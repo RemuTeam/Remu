@@ -231,12 +231,23 @@ RemuSM:
                 on_press: root.dismiss()
                 size_hint: 0.3,0.3
 
-<OpenFilePopUp>:
-    title: "Open files"
+<ImportFilesPopUp>:
+    title: "Select files to import"
     BoxLayout:
         size: root.size
         pos: root.pos
         orientation: "vertical"
+        BoxLayout:
+            size_hint: 1, 0.1
+            orientation: "horizontal"
+            Label:
+                size_hint: 0.25, 1
+                text: "Current directory:"
+            Label:
+                text: filechooser.path
+                text_size: self.size
+                halign: "left"
+                valign: "middle"
         FileChooserIconView:
             id: filechooser
             multiselect: True
@@ -251,7 +262,35 @@ RemuSM:
                 on_release: root.dismiss()
             Button:
                 text: "Open"
-                on_release: root.open_files(filechooser.path, filechooser.selection)
+                on_release: root.import_files_for_presentation(filechooser.path, filechooser.selection)
+                on_release: root.dismiss()
+
+<FileSavingDialogPopUp>:
+    title: "The file already exists"
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        Label:
+            text: "The file " + root.destination + " already exists. What do you want to do?"
+        BoxLayout:
+            orientation: "horizontal"
+            Label:
+                text: "Save copy as:"
+            TextInput:
+                text: root.new_filename
+        BoxLayout:
+            orientation: "horizontal"
+            Button:
+                text: "Cancel"
+                on_release: root.dismiss()
+            Button:
+                text: "Replace file"
+                on_release: root.replace_file()
+                on_release: root.dismiss()
+            Button:
+                text: "Copy file"
+                on_release: root.create_new_file()
                 on_release: root.dismiss()
 
 #MasterBackPopUp : A popup that asks if master is sure they want to go back to the switch layout.

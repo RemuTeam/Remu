@@ -12,6 +12,7 @@ from Domain.PathConstants import PathConstants
 from Domain.PresentationElement import PresentationElement
 from kivy.app import App
 from shutil import copyfile
+from shutil import copy
 import os
 
 """
@@ -96,7 +97,7 @@ class MasterGUILayout(Screen):
         Opens a Filechooser to load files
         :return: None
         """
-        OpenFilePopUp().open()
+        ImportFilesPopUp().open()
 
     def generate_presentation(self, data):
         """
@@ -302,7 +303,7 @@ class SlaveBackPopUp(Popup):
     pass
 
 
-class OpenFilePopUp(Popup):
+class ImportFilesPopUp(Popup):
     """
     A file selection and opening popup
     """
@@ -313,24 +314,110 @@ class OpenFilePopUp(Popup):
         """
         Well well well... a constructor method. Whaddaya know...
         """
-        super(OpenFilePopUp, self).__init__()
+        super(ImportFilesPopUp, self).__init__()
         self.supportedFormats = AllSupportedFormats
 
-    def open_files(self, path, selection):
+    def import_files_for_presentation(self, path, selection):
         """
         Opens one or multiple files from a path
         :param path: the path to open files from
         :param selection: a list the selected files in the path
+        :param presentation: the presentation to open the files to
         :return: None
         """
-        for selected_file in selection:
-            path_separated = selected_file.split(os.sep)
-            file_to_write = os.path.join(PathConstants.MEDIA_FOLDER, path_separated[len(path_separated) - 1])
-            if not os.path.isfile(file_to_write):
-                print("file", selected_file, "copied as", file_to_write)
-                copyfile(selected_file, file_to_write)
+        presentation_files = self.get_files_from_media_folder(path, selection)
+
+    def get_files_from_media_folder(self, path, selected_files):
+        """
+        Get the selected files from media folder.
+        If the file doesn't exists in the media folder,
+        it will be copied there first.
+
+        :param path: the path of the files to import from
+        :param selected_files: the files selected from some path
+        :return: a list of files copied to media folder
+        """
+        files_in_media_folder = []
+
+        for filee in selected_files:
+            separated_paths = filee.split(os.sep)
+            file_to_write = os.path.join(PathConstants.MEDIA_FOLDER, separated_paths[len(separated_paths) - 1])
+            copied_filename = self.copy_file(path, filee, file_to_write)
+            files_in_media_folder.append(copied_filename)
+
+        return files_in_media_folder
+
+    def copy_file(self, path, source, destination):
+        """
+        Copies the source file as the destination file
+        and returns the file with complete path.
+        If the destination file exists, it will not be
+        overwritten.
+
+        :param path: the path of the files to import from
+        :param source: a string, the source file with path
+        :param destination: a string, the derstination file with path
+        :return: the destination file
+        """
+        media_folder_full_path = os.path.join(os.getcwd(), PathConstants.MEDIA_FOLDER)
+        if path != media_folder_full_path and os.path.isfile(destination):
+            FileSavingDialogPopUp(source, destination).open()
+        elif path != media_folder_full_path:
+            copyfile(source, destination)
+            print("file", source, "copied as", destination)
+
+        return destination
+
+class FileSavingDialogPopUp(Popup):
+    """
+    A popup functionality to confirm actions
+    when copying a file that already exists.
+    """
+    destination = StringProperty('')
+    new_filename = StringProperty('')
+
+    def __init__(self, source, destination):
+        super(FileSavingDialogPopUp, self).__init__()
+        self.source = source
+        self.destination_name = destination
+        self.destination = destination
+        self.new_filename = self.prefilled_new_file_name(destination)
+
+    def prefilled_new_file_name(self, destination):
+        separated_path_list = destination.split(os.sep)
+        filename_and_extension = separated_path_list[len(separated_path_list) - 1].split('.')
+        filename_copy = ''
+        copy_extension = '_copy'
+        if len(filename_and_extension) > 1:
+            index = 0
+            if filename_and_extension[0]:
+                filename_copy += filename_and_extension[0]
+                filename_copy += copy_extension
+                index = 1
             else:
-                print(file_to_write, "already exists")
+                filename_copy += '.'
+                filename_copy += filename_and_extension[1]
+                filename_copy += copy_extension
+                index = 2
+            for i in range(index, len(filename_and_extension)):
+                filename_copy += '.' + filename_and_extension[i]
+        else:
+            filename_copy += filename_and_extension[0] + copy_extension
+        return filename_copy
+
+    def replace_file(self):
+        self.write_file_as(self.destination_name)
+
+    def create_new_file(self):
+        separated_path_list = self.destination_name.split(os.sep)
+        separated_path_list[len(separated_path_list) - 1] = self.new_filename
+        file_to_save = separated_path_list[0]
+        for i in range(1, len(separated_path_list)):
+            file_to_save += os.sep + separated_path_list[i]
+        self.write_file_as(file_to_save)
+
+    def write_file_as(self, filename):
+        copy(self.source, filename)
 
 
 class SlavePresentation(BoxLayout):
