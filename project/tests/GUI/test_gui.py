@@ -9,12 +9,12 @@ from tests.GUI.simulator_fixture import simulator
 def test_switch_layout_components(simulator):
 
     # widgets are selected with xpath
-    simulator.assert_count(get_from_layout("Switch", "Button"), 2)
+    simulator.assert_count(get_from_layout("Switch", "Button"), 3)
 
     # deep tree goes reversed through the tree
     simulator.assert_text(get_from_layout("Switch", "Button", 1), "Master")
     simulator.assert_text(get_from_layout("Switch", "Button", 2), "Slave")
-
+    simulator.assert_text(get_from_layout("Switch", "Button", 3), "Info")
 
 @pytest.mark.parametrize("params", [{}])
 @simulate

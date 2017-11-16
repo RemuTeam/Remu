@@ -157,9 +157,16 @@ RemuSM:
     BoxLayout:
         orientation:'vertical'
         Label:
+            padding_left: 5
             text:root.text
-            font_size: 28
             valign: 'middle'
+        Button:
+            text: "Back"
+            size_hint: 0.1,0.1
+            on_press: app.root.change_screen_to("switch_layout")
+
+
+
 
 <MasterBackPopUp>:
     title: "Are you sure you want to go back?"
