@@ -70,7 +70,7 @@ class Master:
         Asks the slaves to show their next visuals
         """
         for connection in self.slave_connections.values():
-            connection.visualize_next()
+            connection.show_next()
 
     def request_retrieve_presentation_files(self, connection, subpath="."):
         """
