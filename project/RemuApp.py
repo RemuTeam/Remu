@@ -51,15 +51,12 @@ class RemuApp(App):
         The building method uses the GUI/remu.kv file that produces the look of the requested layouts
         and GUIFactory that adds the functionalities to those layouts.
         """
-        config = self.load_config()['REMU']
-        self.config = config
-
+        self.config = self.load_config()['REMU']
         return BuildKV
 
     def on_start(self):
         """
         Starts the application in slave mode if the option is set in config file
-        :return:
         """
         if self.config.getboolean('start as slave'):
             self.root.add_slave_layout()
