@@ -51,7 +51,7 @@ class Master:
         self.slave_connections[slave_to_connect.full_address] = slave_to_connect
 
         #POISTA JOSKUS JOOKO
-        presentations = [["a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg"],
+        presentations = [["a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg", "a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg", "a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg", "a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg"],
                          ["b.jpg", "a.jpg", "g.mp4", "test_text2.txt"]]
         presentation = presentations[(len(self.slave_connections)-1) % 2]
         slave_to_connect.presentation = presentation
@@ -135,7 +135,7 @@ class Master:
         self.layout.notify(notification, data)
 
     def send_presentations_to_slaves(self):
-        presentations = [["a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg"],
+        presentations = [["a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg", "a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg", "a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg", "a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg"],
                          ["b.jpg", "a.jpg", "g.mp4", "test_text2.txt"]]
         i = 0
         for slavec in self.slave_connections.values():
