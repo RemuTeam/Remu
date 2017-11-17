@@ -378,8 +378,9 @@ class MasterBackPopUp(Popup):
 class SlaveBackPopUp(Popup):
     pass
 
+from kivy.effects.scroll import ScrollEffect
 
-class SlaveOverview(ScrollView):
+class SlaveOverview(BoxLayout):
     """
     SlaveOverview class is used in the master GUI, to keep track of the slaves in the presentation. It maintains two
     lists: slave_buttons and slave_presentations. For each slave, SlaveOverview has a button in slave_buttons and a
@@ -390,6 +391,8 @@ class SlaveOverview(ScrollView):
         super(SlaveOverview, self).__init__(**kwargs)
         self.slave_buttons = {}
         self.slave_presentations = {}
+        self.effect_cls = ScrollEffect
+        self.max = 0
 
     def update_slave_to_overview(self, slave_connection):
         """
@@ -400,12 +403,20 @@ class SlaveOverview(ScrollView):
         """
         #slave_connection, "slave" + str(self.presentation_counter)
         self.remove_slave_from_overview(slave_connection.full_address)
+        self.max = max(self.max, len(slave_connection.presentation))
         self.slave_buttons[slave_connection.full_address] = Button(text=slave_connection.full_address,
                                                                    size_hint=(1, 0.2),
                                                                    on_press=lambda a: slave_connection.show_next())
         self.slave_presentations[slave_connection.full_address] = SlavePresentation(slave_connection)
+        self.ids.slave_presentations.width = len(slave_connection.presentation)*self.width/5 if len(slave_connection.presentation) > self.ids.slave_presentations.width/150 else self.width
         self.ids.slave_names.add_widget(self.slave_buttons[slave_connection.full_address])
         self.ids.slave_presentations.add_widget(self.slave_presentations[slave_connection.full_address])
+        self.update_presentation_widths()
+
+    def update_presentation_widths(self):
+        for sp in self.slave_presentations.values():
+            for budons in sp.children:
+                budons.size_hint_x = 1/self.max
 
     def remove_slave_from_overview(self, address):
         """
@@ -421,8 +432,11 @@ class SlaveOverview(ScrollView):
             del self.slave_presentations[address]
 
     def update_presentation_state(self):
+        current = 9999
         for slave_presentation in self.slave_presentations.values():
-            slave_presentation.update_status()
+            current = min(current, slave_presentation.update_status())
+        self.ids.helvetti.scroll_x = current/self.max
+
 
 
 class ImportFilesPopUp(Popup, EventDispatcher):
@@ -687,6 +701,7 @@ class SlavePresentation(StackLayout):
         self.current_active = self.slave.currently_showing
         if self.current_active is not -1:
             self.visuals[self.current_active].set_active()
+        return self.slave.currently_showing
 
     def update_status(self):
         """
@@ -694,7 +709,7 @@ class SlavePresentation(StackLayout):
         """
         if not self.slave.connected:
             self.ids["btn_address"].background_color = [0.94, 0.025, 0.15, 1]
-        self.visualize_next()
+        return self.visualize_next()
 
     def get_address(self):
         return self.ids["btn_address"].text
@@ -743,6 +758,7 @@ class SlaveVisualProperty(DragBehavior, Button):
 
     def on_touch_up(self, touch):
         super(SlaveVisualProperty, self).on_touch_up(touch)
+        self.being_moved = False
         self.parent.children.sort()
 
     def do_i_have_to(self):

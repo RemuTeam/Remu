@@ -160,8 +160,8 @@ RemuSM:
 # SlaveOverview is within the master's GUI, and contains the information about the slaves. It is divided into two parts,
 # slave_names and slave_presentations, which show the names and presentations of the slaves respectively
 #
-<SlaveOverview@ScrollView>
-    do_scroll_x: False
+<SlaveOverview>
+    #do_scroll_x: False
     size_hint: 1, 0.8
     StackLayout:
         size_hint_y: None
@@ -172,6 +172,7 @@ RemuSM:
             size_hint: 0.2, 1
             orientation: 'lr-tb'
         ScrollView:
+            id: helvetti
             do_scroll_y: False
             size_hint: 0.8, 1
             StackLayout:
@@ -183,7 +184,7 @@ RemuSM:
 #
 # SlavePresentation represents a single slave of the master, with all of its visuals included
 #
-<SlavePresentation@StackLayout>
+<SlavePresentation>
     spacing: 5
     padding: 5, 5, 5, 5
     size_hint_y: 0.2
@@ -208,7 +209,7 @@ RemuSM:
     drag_rectangle: self.x, self.y, self.width, self.height
     drag_timeout: 10000000
     drag_distance: 0
-    size_hint: 0.2, 1
+    #size_hint: 0.2, 1
     text: root.visual_name
     text_size: self.size
     halign: 'center'
