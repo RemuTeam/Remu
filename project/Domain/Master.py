@@ -87,7 +87,7 @@ class Master:
         Slave is chosen by its IP-address
         """
         if self.slave_connections[address]:
-            self.slave_connections[address].show_next()
+            self.slave_connections[address].visualize_next()
 
     def notify(self, notification, data):
         """
@@ -135,7 +135,8 @@ class Master:
         self.layout.notify(notification, data)
 
     def send_presentations_to_slaves(self):
-        presentations = [["a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg"], ["b.jpg", "a.jpg", "g.mp4", "test_text2.txt"]]
+        presentations = [["a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg"],
+                         ["b.jpg", "a.jpg", "g.mp4", "test_text2.txt"]]
         i = 0
         for slavec in self.slave_connections.values():
             presentation = presentations[i%2]

@@ -1,0 +1,18 @@
+Welcome to RemuApp
+
+What is RemuApp?
+
+RemuApp is a tool to make the visual managing of music performances easy.
+It makes possible to command multiple screens with one computer.
+
+How to use RemuApp?
+
+Starting steps
+
+1. Start the App with your computer and the computers that will handle to visual show.
+2. Select "Master" for the computer that will be the one you will use during the show.
+3. Select "Slave" for the other computers
+
+Now it is time to connect the machines to your master computer:
+
+1. On the master machine....

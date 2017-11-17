@@ -23,6 +23,10 @@ RemuSM:
                 text: "Slave"
                 size_hint: 0.3,0.3
                 on_release: app.root.add_slave_layout()
+            Button:
+                text: "Info"
+                size_hint:0.3,0.3
+                on_release: app.root.add_info_layout()
 
 #
 # MasterGUILayout contains a options bar, a bottom bar and a main view. Upper bar contains connection control, lower bar
@@ -34,8 +38,8 @@ RemuSM:
     spacing: 10
     padding: 10
 
-    BoxLayout:
-        orientation: 'vertical'
+    StackLayout:
+        orientation: 'tb-lr'
         BoxLayout:
             id: options
             orientation: 'horizontal'
@@ -58,10 +62,8 @@ RemuSM:
             Button:
                 text: "Add Slave"
                 on_press: root.add_slave_connection(txt_input.text)
-        StackLayout:
-            id: middle
-            spacing: 2
-            orientation: 'tb-lr'
+        SlaveOverview:
+            id: slave_overview
         BoxLayout:
             id: bottom_panel
             orientation: 'horizontal'
@@ -115,30 +117,52 @@ RemuSM:
             source: root.video_source
 
 #
+# SlaveOverview is within the master's GUI, and contains the information about the slaves. It is divided into two parts,
+# slave_names and slave_presentations, which show the names and presentations of the slaves respectively
+#
+<SlaveOverview@ScrollView>
+    do_scroll_x: False
+    size_hint: 1, 0.8
+    StackLayout:
+        size_hint_y: None
+        height: root.height
+        orientation: 'lr-tb'
+        StackLayout:
+            id: slave_names
+            size_hint: 0.2, 1
+            orientation: 'lr-tb'
+        ScrollView:
+            do_scroll_y: False
+            size_hint: 0.8, 1
+            StackLayout:
+                id: slave_presentations
+                size_hint_y: 1
+                size_hint_x: None
+                width: root.width
+
+#
 # SlavePresentation represents a single slave of the master, with all of its visuals included
 #
-<SlavePresentation@BoxLayout>
-    id: slave
-    size_hint: 1, 0.15
-    orientation: 'horizontal'
-    Button:
-        id: btn_address
-        size_hint: 0.2, 1
-        text: "Name of the slave"
-        on_press: slave.slave.show_next()
-    StackLayout:
-        id: visuals
-        orientation: 'lr-tb'
-        spacing: 2
-    Button:
-        id: killswitch
-        size_hint: 0.1, 1
-        text: " Terminate \nconnection"
-        on_press: slave.slave.terminate_connection()
+<SlavePresentation@StackLayout>
+    spacing: 5
+    padding: 5, 5, 5, 5
+    size_hint_y: 0.2
+    orientation: 'lr-tb'
+
+    #Button:
+    #    id: killswitch
+    #    size_hint: 0.1, 1
+    #    text: " Terminate \nconnection"
+    #    on_press: slave.slave.terminate_connection()
+
+<SlaveInfo@Button>
+    id: btn_address
+    text: "Name of the slave"
+    on_press: slave.slave.show_next()
 
 #
 # SlaveVisualProperty is the visual representation of slave's visual property. It inherits Button, so that
-# it can be pressed to show more information about the property
+# it can be pressed to show more information about the property.
 #
 <SlaveVisualProperty@Button>
     size_hint: 0.2, 1
@@ -147,6 +171,21 @@ RemuSM:
     halign: 'center'
     valign: 'middle'
     padding: (5, 2)
+
+<InfoLayout>:
+    id:info_gui_layout
+    BoxLayout:
+        orientation:'vertical'
+        Label:
+            padding_left: 5
+            text:root.text
+            valign: 'middle'
+        Button:
+            text: "Back"
+            size_hint: 0.1,0.1
+            on_press: app.root.change_screen_to("switch_layout")
+
+
 
 
 <MasterBackPopUp>:
@@ -192,3 +231,12 @@ RemuSM:
 
 #SlaveBackPopUp : A popup that asks if slave is sure they want to go back to the switch layout.
 #If he presses yes, connection is broken and switching layout comes up, if he presses no, connection is not lost and we return to slave layout
+
+# USE THIS FOR GUI DEBUG
+# This widget overrides the default Widget, and draws lines on all of the widgets.
+#<Widget>:
+#    canvas.after:
+#        Line:
+#            rectangle: self.x+1,self.y+1,self.width-1,self.height-1
+#            dash_offset: 5
+#            dash_length:

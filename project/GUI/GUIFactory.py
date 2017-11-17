@@ -1,13 +1,16 @@
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.popup import Popup
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.scrollview import ScrollView
 from kivy.uix.button import Button
-from kivy.properties import StringProperty
+from kivy.uix.stacklayout import StackLayout
+from kivy.properties import StringProperty, BoundedNumericProperty
 from Domain.Command import Notification
 from Domain.ContentType import ContentType
 from Domain.MessageKeys import MessageKeys
 from Domain.PresentationElement import PresentationElement
 from kivy.app import App
+from kivy.core.window import Window
 
 """
 CLASS LIBRARY TO HANDLE THE FUNCTIONALITY OF GUI LAYOUTS
@@ -32,6 +35,11 @@ class SwitchLayout(Screen):
     def add_address(self, address):
         self.text = address
 
+class InfoLayout(Screen):
+    with open('infotext.txt') as f:
+        t = f.read()
+    text = t
+
 class MasterGUILayout(Screen):
     """
     Produces the Master-mode's GUI-layout that allows the
@@ -41,7 +49,6 @@ class MasterGUILayout(Screen):
     """
 
     label_text = StringProperty('')
-    slave_presentation = {}
 
     def __init__(self, **kwargs):
         super(MasterGUILayout, self).__init__(**kwargs)
@@ -85,31 +92,30 @@ class MasterGUILayout(Screen):
         """
         MasterBackPopUp().open()
 
-    def generate_presentation(self, data):
+    def generate_presentation(self, slave_connection):
         """
         Generate the presentation information on the layout on connection to a slave.
         """
-        self.remove_slave_presentation(data)
         print("Creating a new slave presentation widget")
-        slave_widget = SlavePresentation(data)
-        self.slave_presentation[data.full_address] = slave_widget
-        self.ids.middle.add_widget(slave_widget)
+        self.ids.slave_overview.update_slave_to_overview(slave_connection)
 
     def remove_slave_presentation(self, data):
         """
         Remove possibly existing SlavePresentation widget based on the
         SlaveConnection object
         """
-        if data.full_address in self.slave_presentation:
-            self.ids.middle.remove_widget(self.slave_presentation[data.full_address])
+        self.ids.slave_overview.remove_slave_from_overview(data.full_address)
+        #if data.full_address in self.slave_presentation:
+        #    self.ids.middle.remove_widget(self.slave_presentation[data.full_address])
 
     def update_presentation_status(self, data=None):
         """
         Update the presentation status on the layout
         """
-        print("päivitetään")
-        for slave_connection in self.slave_presentation.values():
-            slave_connection.update_status()
+        print("update_presentation_status called")
+        self.ids.slave_overview.update_presentation_state()
+        #for slave_connection in self.slave_presentation.values():
+        #    slave_connection.update_status()
 
     def update_connection_to_gui(self, data):
         """
@@ -242,15 +248,32 @@ class PresentationLayout(Screen):
             self.ids.video.state = 'play'
 
     def show_widget(self, widget):
+        """
+        Shows a given widget. Unlike in the hiding, height doesn't need to be modified when showing widget. Otherwise
+        acts as a counter-method for the hide_widget method.
+        :param widget:
+        :return: Nothing
+        """
         widget.opacity = 1
         widget.size_hint_y = 1
 
     def hide_widgets(self):
+        """
+        Hides all of the different type of widgets.
+        :return: Nothing
+        """
         self.hide_widget(self.ids.picture)
         self.hide_widget(self.ids.text_field)
         self.hide_widget(self.ids.video)
 
     def hide_widget(self, widget):
+        """
+        Hides a widget. Size_hint_y and height are set to zero, so that the widgets do not take up space in the screen.
+        Opacity is also set to zero, in case the widget would be still visible (text-elements need this to be hidden
+        properly)
+        :param widget:
+        :return: Nothing
+        """
         widget.opacity = 0
         widget.size_hint_y = 0
         widget.height = '0dp'
@@ -289,20 +312,64 @@ class SlaveBackPopUp(Popup):
     pass
 
 
-class SlavePresentation(BoxLayout):
+class SlaveOverview(ScrollView):
     """
-    SlavePresentation is the visual presentation of the slave in the master view. It contains information about the slave's
-    state and visuals associated with it
+    SlaveOverview class is used in the master GUI, to keep track of the slaves in the presentation. It maintains two
+    lists: slave_buttons and slave_presentations. For each slave, SlaveOverview has a button in slave_buttons and a
+    SlavePresentation in slave_presentations.
+    """
+
+    def __init__(self, **kwargs):
+        super(SlaveOverview, self).__init__(**kwargs)
+        self.slave_buttons = {}
+        self.slave_presentations = {}
+
+    def update_slave_to_overview(self, slave_connection):
+        """
+        Updates the SlaveOverview in the master's GUI. If a slave with an IP is already in the list, it is still deleted
+        so that all changes in the slave's presentation will show.
+        :param slave_connection: Slave's presentation data
+        :return:
+        """
+        self.remove_slave_from_overview(slave_connection.full_address)
+        self.slave_buttons[slave_connection.full_address] = Button(text=slave_connection.full_address,
+                                                                   size_hint=(1, 0.2),
+                                                                   on_press=lambda a: slave_connection.show_next())
+        self.slave_presentations[slave_connection.full_address] = SlavePresentation(slave_connection)
+        self.ids.slave_names.add_widget(self.slave_buttons[slave_connection.full_address])
+        self.ids.slave_presentations.add_widget(self.slave_presentations[slave_connection.full_address])
+
+    def remove_slave_from_overview(self, address):
+        """
+        Removes the slave's information from the slave_buttons and slave_presentations list, and removes the widgets
+        associated with it.
+        :param address: The key which is used for deleting
+        :return: Nothing
+        """
+        if address in self.slave_buttons.keys() or address in self.slave_presentations.keys():
+            self.ids.slave_names.remove_widget(self.slave_buttons[address])
+            self.ids.slave_presentations.remove_widget(self.slave_presentations[address])
+            del self.slave_buttons[address]
+            del self.slave_presentations[address]
+
+    def update_presentation_state(self):
+        for slave_presentation in self.slave_presentations.values():
+            slave_presentation.update_status()
+
+
+class SlavePresentation(StackLayout):
+    """
+    SlavePresentation represents slave's presentation in the master view. It contains information about the visuals it
+    holds, as well as the current state of the presentation
     """
     presentation_data = None
 
-    def __init__(self, data):
+    def __init__(self, slave_connection):
         super(SlavePresentation, self).__init__()
-        self.slave = data
-        self.ids["btn_address"].text = data.full_address
-        self.presentation_data = data.presentation
+        self.slave = slave_connection
+        self.presentation_data = slave_connection.presentation
         self.visuals = []
-        self.current_active = data.currently_showing
+        self.current_active = slave_connection.currently_showing
         self.create_visual_widgets()
 
     def create_visual_widgets(self):
@@ -315,10 +382,10 @@ class SlavePresentation(BoxLayout):
                 filename += "..."
             visual = SlaveVisualProperty(filename)
             self.visuals.append(visual)
-            self.ids.visuals.add_widget(visual)
-        self.show_next()
+            self.add_widget(visual)
+        self.visualize_next()
 
-    def show_next(self):
+    def visualize_next(self):
         """
         Highlights the next visual, indicating it is the currently active visual
         """
@@ -333,10 +400,13 @@ class SlavePresentation(BoxLayout):
         """
         if not self.slave.connected:
             self.ids["btn_address"].background_color = [0.94, 0.025, 0.15, 1]
-        self.show_next()
+        self.visualize_next()
 
     def get_address(self):
         return self.ids["btn_address"].text
+
+    def get_presentation_size(self):
+        return len(self.presentation_data)
 
 
 class SlaveVisualProperty(Button):
@@ -378,6 +448,7 @@ class RemuSM(ScreenManager):
         self.master_screen = None
         self.slave_screen = None
         self.presentation_screen = None
+        self.info_screen = None
 
     def add_master_layout(self):
         """
@@ -399,6 +470,12 @@ class RemuSM(ScreenManager):
             self.add_widget(self.slave_screen)
             self.add_widget(self.presentation_screen)
         self.current = 'slave_gui_layout'
+
+    def add_info_layout(self):
+        if self.info_screen is None:
+            self.info_screen = InfoLayout(name='info_gui_layout')
+            self.add_widget(self.info_screen)
+        self.current = 'info_gui_layout'
 
     def change_screen_to(self, name):
         """
