@@ -1,3 +1,5 @@
+import os
+
 class PathConstants:
     """
     PathConstants enum encapsulates the paths that are referenced and offers a consistent interface with the paths
@@ -6,4 +8,4 @@ class PathConstants:
     """
     TEST_MEDIA_FOLDER = "test_media"
     MEDIA_FOLDER = "media"
-
+    ABSOLUTE_MEDIA_FOLDER = os.path.join(os.getcwd(), MEDIA_FOLDER)

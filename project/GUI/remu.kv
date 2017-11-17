@@ -342,6 +342,22 @@ RemuSM:
                 on_release: root.create_new_file()
                 on_release: root.dismiss()
 
+#
+# Alerts the user for an exception during runtime
+#
+<ExceptionAlertPopUp>:
+    title: root.error_title
+    BoxLayout:
+        orientation: "vertical"
+        Label:
+            text: root.error_msg
+            text_size: self.size
+            halign: "center"
+            valign: "middle"
+        Button:
+            text: "Ok"
+            on_release: root.dismiss()
+
 #MasterBackPopUp : A popup that asks if master is sure they want to go back to the switch layout.
 #If he presses yes, connection is broken and switching layout comes up, if he presses no, connection is not lost and we return to master layout
 

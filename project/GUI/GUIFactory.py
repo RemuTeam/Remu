@@ -5,7 +5,8 @@ from kivy.uix.scrollview import ScrollView
 from kivy.uix.button import Button
 from kivy.uix.stacklayout import StackLayout
 from kivy.properties import StringProperty, BoundedNumericProperty
-from kivy.properties import ListProperty
+from kivy.properties import ListProperty, NumericProperty
+from kivy.event import EventDispatcher
 from Domain.SupportedFileTypes import AllSupportedFormats
 from Domain.Command import Notification
 from Domain.ContentType import ContentType
@@ -47,7 +48,7 @@ class InfoLayout(Screen):
         t = f.read()
     text = t
 
-class MasterGUILayout(Screen):
+class MasterGUILayout(Screen, EventDispatcher):
     """
     Produces the Master-mode's GUI-layout that allows the
     user to communicate with Slave-devices.
@@ -57,10 +58,62 @@ class MasterGUILayout(Screen):
 
     label_text = StringProperty('')
 
+    """
+    The import counter is used to keep track on imported files on a
+    single importation event.
+    
+    Values and their effects:
+    -1      Handled as "the counter is reset and no imports are incomplete".
+     0      The import is complete, the list of imported files is up to date.
+            The list of files should be processed and the counter reset.
+    1...n   The amount of files still to be imported.
+    """
+    import_counter = NumericProperty()
+
     def __init__(self, **kwargs):
         super(MasterGUILayout, self).__init__(**kwargs)
         self.presentation = None
         self.hide_button(self.ids.show_next)
+        self.bind(import_counter=self.import_counter_update)
+        self.reset_import_counter()
+        self.import_list = []
+
+    def notify_file_import(self):
+        """
+        Notifies the layout for a single file import
+        :return: None
+        """
+        self.import_counter -= 1
+
+    def reset_import_counter(self):
+        """
+        Resets the import counter.
+        :return: None
+        """
+        self.import_counter = -1
+
+    def import_started(self, value):
+        """
+        Updates the import counter's value.
+        :param value: an integer, the new value
+        :return: None
+        """
+        self.import_counter = value
+
+    def import_counter_update(self, instance, value):
+        """
+        A callback function to call when the import counter's value changes.
+        :return: None
+        """
+        if value == 0:
+            print("import ready!", self.import_list)
+            ### Insert logic for actually opening the files here!
+            del self.import_list[:]
+            self.reset_import_counter()
+        elif value == -1:
+            print("counter reset")
+        else:
+            print("now:", value)
 
     def on_pre_enter(self):
         self.master = App.get_running_app().get_master(self)
@@ -108,7 +161,7 @@ class MasterGUILayout(Screen):
         Opens a Filechooser to load files
         :return: None
         """
-        ImportFilesPopUp().open()
+        ImportFilesPopUp(self, self.import_list).open()
 
     def generate_presentation(self, slave_connection):
         """
@@ -372,19 +425,21 @@ class SlaveOverview(ScrollView):
             slave_presentation.update_status()
 
 
-class ImportFilesPopUp(Popup):
+class ImportFilesPopUp(Popup, EventDispatcher):
     """
     A file selection and opening popup
     """
-    media_path_absolute = StringProperty(os.path.join(os.getcwd(), PathConstants.MEDIA_FOLDER))
+    media_path_absolute = StringProperty(PathConstants.ABSOLUTE_MEDIA_FOLDER)
     supportedFormats = ListProperty([])
 
-    def __init__(self):
+    def __init__(self, listener, imported_files):
         """
         Well well well... a constructor method. Whaddaya know...
         """
         super(ImportFilesPopUp, self).__init__()
         self.supportedFormats = AllSupportedFormats
+        self.imported_files = imported_files
+        self.listener = listener
 
     def import_files_for_presentation(self, path, selection):
         """
@@ -394,9 +449,10 @@ class ImportFilesPopUp(Popup):
         :param presentation: the presentation to open the files to
         :return: None
         """
-        presentation_files = self.get_files_from_media_folder(path, selection)
+        self.listener.import_started(len(selection))
+        self.import_files_from_media_folder(path, selection, self.listener)
 
-    def get_files_from_media_folder(self, path, selected_files):
+    def import_files_from_media_folder(self, path, selected_files, listener):
         """
         Get the selected files from media folder.
         If the file doesn't exists in the media folder,
@@ -404,19 +460,15 @@ class ImportFilesPopUp(Popup):
 
         :param path: the path of the files to import from
         :param selected_files: the files selected from some path
+        :param callback: the function to call when importation is ready
         :return: a list of files copied to media folder
         """
-        files_in_media_folder = []
-
         for filee in selected_files:
             separated_paths = filee.split(os.sep)
             file_to_write = os.path.join(PathConstants.MEDIA_FOLDER, separated_paths[len(separated_paths) - 1])
-            copied_filename = self.copy_file(path, filee, file_to_write)
-            files_in_media_folder.append(copied_filename)
+            self.copy_file(path, filee, file_to_write, self.imported_files, listener)
 
-        return files_in_media_folder
-
-    def copy_file(self, path, source, destination):
+    def copy_file(self, path, source, destination, filename_list, listener):
         """
         Copies the source file as the destination file
         and returns the file with complete path.
@@ -426,15 +478,20 @@ class ImportFilesPopUp(Popup):
         :param path: the path of the files to import from
         :param source: a string, the source file with path
         :param destination: a string, the derstination file with path
+        :param filename_list: the list to append the created filename
         :return: the destination file
         """
         if path != self.media_path_absolute and os.path.isfile(destination):
-            FileSavingDialogPopUp(source, destination).open()
+            FileSavingDialogPopUp(source, destination, filename_list, listener).open()
         elif path != self.media_path_absolute:
             copyfile(source, destination)
             print("file", source, "copied as", destination)
+            filename_list.append(destination)
+            listener.notify_file_import()
+        else:
+            filename_list.append(destination)
+            listener.notify_file_import()
 
-        return destination
 
 class FileSavingDialogPopUp(Popup):
     """
@@ -447,19 +504,30 @@ class FileSavingDialogPopUp(Popup):
     new_filename = StringProperty('')
     original_destination_filename_only = StringProperty('')
 
-    def __init__(self, source, destination):
+    """
+    This list contains all characters that are reserved when naming a file
+    either in Unix or Windows
+    """
+    RESERVED_FILENAME_CHARS = ["/", "\\", "?", "%", "*", ":", "|", '"', "<", ">"]
+
+    def __init__(self, source, destination, filename_list, listener):
         """
         The source and destination files are passed as arguments
         :param source: a string, the source file with path
         :param destination: a string, the destination file with path
+        :param filename_list: the list to append the created filename
         """
         super(FileSavingDialogPopUp, self).__init__()
         self.source = source
         self.destination_name = destination
         self.destination = destination
+        self.media_files = [file for file in os.listdir(PathConstants.ABSOLUTE_MEDIA_FOLDER) if
+                            os.path.isfile(os.path.join(PathConstants.ABSOLUTE_MEDIA_FOLDER, file))]
         self.new_filename = self.__prefilled_new_file_name(destination)
         self.original_destination_filename_only = self.__parse_filename_only(destination)
         self.ids.save_as.bind(text=self.on_text)
+        self.filename_list = filename_list
+        self.listener = listener
 
     def __parse_filename_only(self, filepath):
         """
@@ -471,57 +539,117 @@ class FileSavingDialogPopUp(Popup):
         paths_and_file_list = filepath.split(os.sep)
         return paths_and_file_list[len(paths_and_file_list) - 1]
 
-    def on_text(self, instance, value):
+    def on_text(self, instance, filename):
+        """
+        This function is called every time the bound widget's text-property changes
+        :param instance: the instance of the Widget
+        :param filename: the value in the text property
+        :return:
+        """
         copy_file_btn = self.ids.copy_file_button
-        if not value or value == self.original_destination_filename_only:
+        if not filename or filename in self.media_files \
+                or self.__contains_reserved_chars(filename):
             copy_file_btn.disabled = not False
         else:
             copy_file_btn.disabled = not True
 
+    def __contains_reserved_chars(self, filename):
+        """
+        Checks if the given filename contains any reserved characters
+        :param filename: a string, the file's name
+        :return: a boolean, True if reserved characters were encountered, False otherwise
+        """
+        for reserved_char in self.RESERVED_FILENAME_CHARS:
+            if reserved_char in filename:
+                return True
+
+        return False
+
     def __prefilled_new_file_name(self, destination):
         """
         A private method to create a prefilled filename based on
-        the original destination filename
-        :param destination:
-        :return:
+        the original destination filename. The filename will differ
+        from all the file names currently in the app's media folder
+        :param destination: a string, the destination as "path1/path2/filename.ext"
+        :return: a string, prefilled filename
         """
         separated_path_list = destination.split(os.sep)
         filename_and_extension = separated_path_list[len(separated_path_list) - 1].split('.')
         filename_copy = ''
         if len(filename_and_extension) > 1:
-            index = 0
-            if filename_and_extension[0]:
-                filename_copy += filename_and_extension[0]
-                filename_copy += self.COPY_EXTENSION
-                index = 1
-            else:
-                filename_copy += '.'
-                filename_copy += filename_and_extension[1]
-                filename_copy += self.COPY_EXTENSION
-                index = 2
-            for i in range(index, len(filename_and_extension)):
-                filename_copy += '.' + filename_and_extension[i]
+            filename_copy = self.__create_filename_with_extensions(filename_and_extension)
         else:
             filename_copy += filename_and_extension[0] + self.COPY_EXTENSION
         return filename_copy
 
+    def __create_filename_with_extensions(self, filename_and_extensions):
+        """
+        A private helper methos. Creates a file name based on the filename
+        and its extensions
+        :param filename_and_extensions: a list, first element is the filename, the rest are its extensions
+        :return: a string, a filename with extensions
+        """
+        extensions = filename_and_extensions[1:len(filename_and_extensions)]
+        filename_with_extensions = filename_and_extensions[0]
+        while self.__current_filename_with_extensions(filename_with_extensions, extensions) in self.media_files:
+            filename_with_extensions += self.COPY_EXTENSION
+        for i in range(0, len(extensions)):
+            filename_with_extensions += '.' + extensions[i]
+        return filename_with_extensions
+
+    def __current_filename_with_extensions(self, filename, extensions):
+        """
+        A private helper method. Returns the filename and its extensions.
+        :param filename: a string, the file's name
+        :param extensions: a list, the extensions
+        :return: a string, a filename with extensions
+        """
+        filename_with_extensions = filename
+        for i in range(0, len(extensions)):
+            filename_with_extensions += '.' + extensions[i]
+        return filename_with_extensions
+
     def replace_file(self):
-        self.write_file_as(self.destination_name)
+        """
+        Replaces the original destination file.
+        :return: None
+        """
+        self.copy_file_as(self.destination_name)
 
     def create_new_file(self):
+        """
+        Creates a new file.
+        :return: None
+        """
         separated_path_list = self.destination_name.split(os.sep)
         separated_path_list[len(separated_path_list) - 1] = self.ids.save_as.text
         file_to_save = separated_path_list[0]
         for i in range(1, len(separated_path_list)):
             file_to_save += os.sep + separated_path_list[i]
-        self.write_file_as(file_to_save)
+        self.copy_file_as(file_to_save)
 
-    def write_file_as(self, filename):
+    def copy_file_as(self, filename):
+        """
+        Copies the source file to to another location.
+        :param filename: the file to write
+        :return: None
+        """
         try:
             copy(self.source, filename)
+            self.filename_list.append(filename)
+            self.listener.notify_file_import()
         except Exception as ex:
-            pass
+            ExceptionAlertPopUp("Error writing file", ex).open()
 
+
+class ExceptionAlertPopUp(Popup):
+    error_msg = StringProperty('')
+    error_title = StringProperty('')
+
+    def __init__(self, title, exception):
+        super(ExceptionAlertPopUp, self).__init__()
+        self.error_title = title
+        self.error_msg = exception.__class__.__name__ + ": " + str(exception)
 
 
 class SlavePresentation(StackLayout):
