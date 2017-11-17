@@ -28,6 +28,41 @@ RemuSM:
                 size_hint:0.3,0.3
                 on_release: app.root.add_info_layout()
 
+<DraggablePresentationElement>:
+    drag_rectangle: self.x, self.y, self.width, self.height
+    drag_timeout: 10000000
+    drag_distance: 0
+    text_size: self.size
+    halign: 'center'
+    valign: 'middle'
+    size_hint: 0.10, 1
+
+<RobustPresentationEditView>:
+    size_hint: 1, 0.15
+    id: presentation_view
+    StackLayout:
+        id: presentation_elements
+        size_hint: 0.95, 0.5
+        spacing: 2
+    Button:
+        text: "Create Presentation"
+        halign:'right'
+        size_hint: 0.2, 0.5
+        on_press: presentation_view.create_presentation()
+
+<PresentationCreationLayout>:
+    id: presentation_creation_layout
+    orientation: 'vertical'
+    StackLayout:
+        id: views
+        size_hint: 1, 0.9
+    Button:
+        id: newpres
+        text: "Create a new presentation"
+        size_hint: 1, 0.1
+        on_press: presentation_creation_layout.create_a_new_presentation_to_edit()
+
+
 #
 # MasterGUILayout contains a options bar, a bottom bar and a main view. Upper bar contains connection control, lower bar
 # displays connection status and main view contains the master view.
@@ -55,13 +90,18 @@ RemuSM:
             Button:
                 text: "Back"
                 on_press: root.show_master_back_popup()
+            Button:
+                text: "Open files"
+                on_press: root.show_open_file_popup()
             TextInput:
                 id: txt_input
                 text: ""
                 hint_text: "0.0.0.0:8000"
             Button:
-                text: "Add Slave"
-                on_press: root.add_slave_connection(txt_input.text)
+                text: "New Presentation"
+                on_press: root.new_presentation()
+            #    text: "Add Slave"
+            #    on_press: root.add_slave_connection(txt_input.text)
         SlaveOverview:
             id: slave_overview
         BoxLayout:
@@ -164,7 +204,10 @@ RemuSM:
 # SlaveVisualProperty is the visual representation of slave's visual property. It inherits Button, so that
 # it can be pressed to show more information about the property.
 #
-<SlaveVisualProperty@Button>
+<SlaveVisualProperty>
+    drag_rectangle: self.x, self.y, self.width, self.height
+    drag_timeout: 10000000
+    drag_distance: 0
     size_hint: 0.2, 1
     text: root.visual_name
     text_size: self.size
@@ -225,6 +268,79 @@ RemuSM:
                 text: "No"
                 on_press: root.dismiss()
                 size_hint: 0.3,0.3
+
+#
+# ImportFilesPopUp is a popup for file importing interaction
+#
+<ImportFilesPopUp>:
+    title: "Select files to import"
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        BoxLayout:
+            size_hint: 1, 0.1
+            orientation: "horizontal"
+            Label:
+                size_hint: 0.25, 1
+                text: "Current directory:"
+            Label:
+                text: filechooser.path
+                text_size: self.size
+                halign: "left"
+                valign: "middle"
+        FileChooserIconView:
+            id: filechooser
+            multiselect: True   # allows selection of multiple files
+            path: root.media_path_absolute     # the default path to open
+            filters: root.supportedFormats  # filters the files to show
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release: root.dismiss()
+            Button:
+                text: "Open"
+                on_release: root.import_files_for_presentation(filechooser.path, filechooser.selection)
+                on_release: root.dismiss()
+
+#
+# FileSavingDialogPopUp asks for input when file already exists
+# in the media folder.
+#
+<FileSavingDialogPopUp>:
+    title: "The file already exists"
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        Label:
+            text: "The file " + root.original_destination_filename_only + " already exists in the media folder. What do you want to do?"
+        BoxLayout:
+            orientation: "horizontal"
+            Label:
+                text: "Save copy as:"
+            TextInput:
+                id: save_as
+                multiline: False
+                height: self.minimum_height
+                text: root.new_filename     # the prefilled filename
+        BoxLayout:
+            orientation: "horizontal"
+            Button:
+                text: "Import from media"
+                on_release: root.dismiss()
+            Button:
+                text: "Replace file"
+                on_release: root.replace_file()
+                on_release: root.dismiss()
+            Button:
+                id: copy_file_button
+                text: "Copy file"
+                on_release: root.create_new_file()
+                on_release: root.dismiss()
 
 #MasterBackPopUp : A popup that asks if master is sure they want to go back to the switch layout.
 #If he presses yes, connection is broken and switching layout comes up, if he presses no, connection is not lost and we return to master layout

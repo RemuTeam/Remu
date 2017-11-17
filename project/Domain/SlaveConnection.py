@@ -52,12 +52,13 @@ class SlaveConnection:
         """
         Private function for sending commands
         """
-        msg = Message()
-        print(params)
-        msg.set_field(MessageKeys.type_key, "command")
-        msg.set_field(MessageKeys.command_key, command)
-        msg.set_field(MessageKeys.params_key, params)
-        self.connection.send_message(msg)
+        if self.connection:
+            msg = Message()
+            print(params)
+            msg.set_field(MessageKeys.type_key, "command")
+            msg.set_field(MessageKeys.command_key, command)
+            msg.set_field(MessageKeys.params_key, params)
+            self.connection.send_message(msg)
 
     def request_presentation(self):
         """
@@ -76,7 +77,7 @@ class SlaveConnection:
         Ask slave to reset the presentation and closes the connection to it.
         """
         self.__send_command(Command.DROP_CONNECTION.value)
-        self.connection.end_connection()
+        self.connection.end_connection() if self.connection else None
         self.master.notify(Notification.CONNECTION_TERMINATED, self)
 
     def set_presentation(self, presentation):

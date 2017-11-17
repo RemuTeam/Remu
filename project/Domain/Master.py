@@ -47,7 +47,7 @@ class Master:
         address: an ip-string formatted as "ipa.ddr.es.s:port"
         """
         slave_to_connect = SlaveConnection(self)
-        slave_to_connect.connect_to_IP(slave_address)
+        slave_to_connect.connect_to_IP(slave_address) if not slave_address.startswith("slave") else None
         self.slave_connections[slave_to_connect.full_address] = slave_to_connect
 
         #POISTA JOSKUS JOOKO
