@@ -312,7 +312,7 @@ class ImportFilesPopUp(Popup):
     """
     A file selection and opening popup
     """
-    default_path = StringProperty(os.path.join(os.getcwd(), PathConstants.MEDIA_FOLDER))
+    media_path_absolute = StringProperty(os.path.join(os.getcwd(), PathConstants.MEDIA_FOLDER))
     supportedFormats = ListProperty([])
 
     def __init__(self):
@@ -364,10 +364,9 @@ class ImportFilesPopUp(Popup):
         :param destination: a string, the derstination file with path
         :return: the destination file
         """
-        media_folder_full_path = os.path.join(os.getcwd(), PathConstants.MEDIA_FOLDER)
-        if path != media_folder_full_path and os.path.isfile(destination):
+        if path != self.media_path_absolute and os.path.isfile(destination):
             FileSavingDialogPopUp(source, destination).open()
-        elif path != media_folder_full_path:
+        elif path != self.media_path_absolute:
             copyfile(source, destination)
             print("file", source, "copied as", destination)
 
@@ -378,36 +377,68 @@ class FileSavingDialogPopUp(Popup):
     A popup functionality to confirm actions
     when copying a file that already exists.
     """
+    COPY_EXTENSION = "_copy"    # the string to use when prefilling
+                                # the name for copied file
     destination = StringProperty('')
     new_filename = StringProperty('')
+    original_destination_filename_only = StringProperty('')
 
     def __init__(self, source, destination):
+        """
+        The source and destination files are passed as arguments
+        :param source: a string, the source file with path
+        :param destination: a string, the destination file with path
+        """
         super(FileSavingDialogPopUp, self).__init__()
         self.source = source
         self.destination_name = destination
         self.destination = destination
-        self.new_filename = self.prefilled_new_file_name(destination)
+        self.new_filename = self.__prefilled_new_file_name(destination)
+        self.original_destination_filename_only = self.__parse_filename_only(destination)
+        self.ids.save_as.bind(text=self.on_text)
 
-    def prefilled_new_file_name(self, destination):
+    def __parse_filename_only(self, filepath):
+        """
+        A private helper method to return the file name from a
+        "path1/path2/path3/filename.ext" string.
+        :param filepath: a string, the pathpathpathfile-thingy
+        :return: a string the file name only
+        """
+        paths_and_file_list = filepath.split(os.sep)
+        return paths_and_file_list[len(paths_and_file_list) - 1]
+
+    def on_text(self, instance, value):
+        copy_file_btn = self.ids.copy_file_button
+        if not value or value == self.original_destination_filename_only:
+            copy_file_btn.disabled = not False
+        else:
+            copy_file_btn.disabled = not True
+
+    def __prefilled_new_file_name(self, destination):
+        """
+        A private method to create a prefilled filename based on
+        the original destination filename
+        :param destination:
+        :return:
+        """
         separated_path_list = destination.split(os.sep)
         filename_and_extension = separated_path_list[len(separated_path_list) - 1].split('.')
         filename_copy = ''
-        copy_extension = '_copy'
         if len(filename_and_extension) > 1:
             index = 0
             if filename_and_extension[0]:
                 filename_copy += filename_and_extension[0]
-                filename_copy += copy_extension
+                filename_copy += self.COPY_EXTENSION
                 index = 1
             else:
                 filename_copy += '.'
                 filename_copy += filename_and_extension[1]
-                filename_copy += copy_extension
+                filename_copy += self.COPY_EXTENSION
                 index = 2
             for i in range(index, len(filename_and_extension)):
                 filename_copy += '.' + filename_and_extension[i]
         else:
-            filename_copy += filename_and_extension[0] + copy_extension
+            filename_copy += filename_and_extension[0] + self.COPY_EXTENSION
         return filename_copy
 
     def replace_file(self):
@@ -415,14 +446,18 @@ class FileSavingDialogPopUp(Popup):
 
     def create_new_file(self):
         separated_path_list = self.destination_name.split(os.sep)
-        separated_path_list[len(separated_path_list) - 1] = self.new_filename
+        separated_path_list[len(separated_path_list) - 1] = self.ids.save_as.text
         file_to_save = separated_path_list[0]
         for i in range(1, len(separated_path_list)):
             file_to_save += os.sep + separated_path_list[i]
         self.write_file_as(file_to_save)
 
     def write_file_as(self, filename):
-        copy(self.source, filename)
+        try:
+            copy(self.source, filename)
+        except Exception as ex:
+            pass
+
 
 
 class SlavePresentation(BoxLayout):

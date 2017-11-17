@@ -234,6 +234,9 @@ RemuSM:
                 on_press: root.dismiss()
                 size_hint: 0.3,0.3
 
+#
+# ImportFilesPopUp is a popup for file importing interaction
+#
 <ImportFilesPopUp>:
     title: "Select files to import"
     BoxLayout:
@@ -253,9 +256,9 @@ RemuSM:
                 valign: "middle"
         FileChooserIconView:
             id: filechooser
-            multiselect: True
-            path: root.default_path
-            filters: root.supportedFormats
+            multiselect: True   # allows selection of multiple files
+            path: root.media_path_absolute     # the default path to open
+            filters: root.supportedFormats  # filters the files to show
 
         BoxLayout:
             size_hint_y: None
@@ -268,6 +271,10 @@ RemuSM:
                 on_release: root.import_files_for_presentation(filechooser.path, filechooser.selection)
                 on_release: root.dismiss()
 
+#
+# FileSavingDialogPopUp asks for input when file already exists
+# in the media folder.
+#
 <FileSavingDialogPopUp>:
     title: "The file already exists"
     BoxLayout:
@@ -275,23 +282,27 @@ RemuSM:
         pos: root.pos
         orientation: "vertical"
         Label:
-            text: "The file " + root.destination + " already exists. What do you want to do?"
+            text: "The file " + root.original_destination_filename_only + " already exists in the media folder. What do you want to do?"
         BoxLayout:
             orientation: "horizontal"
             Label:
                 text: "Save copy as:"
             TextInput:
-                text: root.new_filename
+                id: save_as
+                multiline: False
+                height: self.minimum_height
+                text: root.new_filename     # the prefilled filename
         BoxLayout:
             orientation: "horizontal"
             Button:
-                text: "Cancel"
+                text: "Import from media"
                 on_release: root.dismiss()
             Button:
                 text: "Replace file"
                 on_release: root.replace_file()
                 on_release: root.dismiss()
             Button:
+                id: copy_file_button
                 text: "Copy file"
                 on_release: root.create_new_file()
                 on_release: root.dismiss()
