@@ -278,34 +278,63 @@ RemuSM:
     BoxLayout:
         size: root.size
         pos: root.pos
-        orientation: "vertical"
+        orientation: "horizontal"
         BoxLayout:
-            size_hint: 1, 0.1
-            orientation: "horizontal"
-            Label:
-                size_hint: 0.25, 1
-                text: "Current directory:"
-            Label:
-                text: filechooser.path
-                text_size: self.size
-                halign: "left"
-                valign: "middle"
-        FileChooserIconView:
-            id: filechooser
-            multiselect: True   # allows selection of multiple files
-            path: root.media_path_absolute     # the default path to open
-            filters: root.supportedFormats  # filters the files to show
+            size_hint: 0.7, 1
+            orientation: "vertical"
+            BoxLayout:
+                size_hint: 1, 0.1
+                orientation: "horizontal"
+                Label:
+                    size_hint: 0.25, 1
+                    text: "Current directory:"
+                Label:
+                    text: filechooser.path
+                    text_size: self.size
+                    halign: "left"
+                    valign: "middle"
+            FileChooserIconView:
+                id: filechooser
+                multiselect: True   # allows selection of multiple files
+                path: root.media_path_absolute     # the default path to open
+                filters: root.supportedFormats  # filters the files to show
 
-        BoxLayout:
-            size_hint_y: None
-            height: 30
-            Button:
-                text: "Cancel"
-                on_release: root.dismiss()
-            Button:
-                text: "Open"
-                on_release: root.import_files_for_presentation(filechooser.path, filechooser.selection)
-                on_release: root.dismiss()
+            BoxLayout:
+                size_hint_y: None
+                height: 30
+                Button:
+                    text: "Cancel"
+                    on_release: root.dismiss()
+                Button:
+                    text: "Open"
+                    on_release: root.import_files_for_presentation(filechooser.path, filechooser.selection)
+                    on_release: root.dismiss()
+        StackLayout:
+            orientation: "tb-lr"
+            size_hint: 0.3, 1
+            Label:
+                size_hint: 1, 0.1
+                text: "Import files to:"
+            ScrollView:
+                size_hint: 1, 0.9
+                StackLayout:
+                    id: presentation_list
+                    orientation: 'tb-lr'
+                    size_hint_y: None
+                    size_hint_x: 1
+                    height: root.height
+                    width: root.width
+
+<CheckBoxBonanza@BoxLayout>:
+    CheckBox:
+        id: checker
+        size_hint: 0.2, 1
+        label: root.presentation_name
+    Label:
+        id: p_name
+        size_hint: 0.8, 1
+        text: root.presentation_name
+
 
 #
 # FileSavingDialogPopUp asks for input when file already exists
@@ -358,6 +387,8 @@ RemuSM:
         Button:
             text: "Ok"
             on_release: root.dismiss()
+
+
 
 #MasterBackPopUp : A popup that asks if master is sure they want to go back to the switch layout.
 #If he presses yes, connection is broken and switching layout comes up, if he presses no, connection is not lost and we return to master layout

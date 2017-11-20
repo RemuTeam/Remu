@@ -4,6 +4,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.button import Button
 from kivy.uix.stacklayout import StackLayout
+from kivy.uix.gridlayout import GridLayout
 from kivy.properties import StringProperty, BoundedNumericProperty
 from kivy.properties import ListProperty, NumericProperty
 from kivy.event import EventDispatcher
@@ -15,6 +16,7 @@ from Domain.PathConstants import PathConstants
 from Domain.PresentationElement import PresentationElement
 from kivy.app import App
 from kivy.core.window import Window
+from kivy.uix.widget import Widget
 from shutil import copyfile
 from shutil import copy
 import os
@@ -77,6 +79,7 @@ class MasterGUILayout(Screen, EventDispatcher):
         self.bind(import_counter=self.import_counter_update)
         self.reset_import_counter()
         self.import_list = []
+        self.import_to_presentations = []
 
     def notify_file_import(self):
         """
@@ -107,6 +110,7 @@ class MasterGUILayout(Screen, EventDispatcher):
         """
         if value == 0:
             print("import ready!", self.import_list)
+            print("import to:", self.import_to_presentations)
             ### Insert logic for actually opening the files here!
             del self.import_list[:]
             self.reset_import_counter()
@@ -161,7 +165,7 @@ class MasterGUILayout(Screen, EventDispatcher):
         Opens a Filechooser to load files
         :return: None
         """
-        ImportFilesPopUp(self, self.import_list).open()
+        ImportFilesPopUp(self, self.import_list, ["pepe", "jokke", "sebu", "ehjee!!"], self.import_to_presentations).open()
 
     def generate_presentation(self, slave_connection):
         """
@@ -437,6 +441,14 @@ class SlaveOverview(BoxLayout):
             current = min(current, slave_presentation.update_status())
         self.ids.helvetti.scroll_x = current/self.max
 
+class CheckBoxBonanza(BoxLayout):
+    presentation_name = StringProperty('unph')
+
+    def __init__(self, presentation_name, size_hint_y, callback):
+        super(CheckBoxBonanza, self).__init__()
+        self.presentation_name = presentation_name
+        self.size_hint_y = size_hint_y
+        self.ids.checker.bind(active=callback)
 
 
 class ImportFilesPopUp(Popup, EventDispatcher):
@@ -446,7 +458,7 @@ class ImportFilesPopUp(Popup, EventDispatcher):
     media_path_absolute = StringProperty(PathConstants.ABSOLUTE_MEDIA_FOLDER)
     supportedFormats = ListProperty([])
 
-    def __init__(self, listener, imported_files):
+    def __init__(self, listener, imported_files, presentations, selected_presentations):
         """
         Well well well... a constructor method. Whaddaya know...
         """
@@ -454,6 +466,20 @@ class ImportFilesPopUp(Popup, EventDispatcher):
         self.supportedFormats = AllSupportedFormats
         self.imported_files = imported_files
         self.listener = listener
+        self.populate_presentation_list(presentations)
+        self.selected_presentations = selected_presentations
+
+    def populate_presentation_list(self, presentations):
+        presentation_list = self.ids.presentation_list
+        for p in presentations:
+            presentation_list.add_widget(CheckBoxBonanza(p, 0.05, self.on_checkbox_active))
+
+    def on_checkbox_active(self, checkbox, value):
+        if value:
+            self.selected_presentations.append(checkbox.label)
+        else:
+            self.selected_presentations.remove(checkbox.label)
+
 
     def import_files_for_presentation(self, path, selection):
         """
@@ -867,9 +893,6 @@ class PresentationCreationLayout(Screen):
         view.create_dynamically_editable_presentation_view_that_works_like_kivy()
         self.ids.views.add_widget(view)
         self.edit_views.append(view)
-
-
-
 
 
 class RemuSM(ScreenManager):
