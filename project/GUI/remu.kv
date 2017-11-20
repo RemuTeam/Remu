@@ -96,10 +96,10 @@ RemuSM:
             TextInput:
                 id: txt_input
                 text: ""
-                hint_text: "0.0.0.0:8000"
+                hint_text: "Presentation Name"
             Button:
                 text: "New Presentation"
-                on_press: root.new_presentation()
+                on_press: root.new_presentation(txt_input.text)
             #    text: "Add Slave"
             #    on_press: root.add_slave_connection(txt_input.text)
         SlaveOverview:
@@ -172,7 +172,7 @@ RemuSM:
             size_hint: 0.2, 1
             orientation: 'lr-tb'
         ScrollView:
-            id: helvetti
+            id: scrollview
             do_scroll_y: False
             size_hint: 0.8, 1
             StackLayout:
