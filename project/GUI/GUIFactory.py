@@ -62,6 +62,7 @@ class MasterGUILayout(Screen, EventDispatcher):
 
     label_text = StringProperty('')
     presenting_disabled = BooleanProperty(True)
+    information_text = StringProperty('Hello')
 
     """
     The import counter is used to keep track on imported files on a

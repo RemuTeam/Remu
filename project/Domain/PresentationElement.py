@@ -34,7 +34,7 @@ class PresentationElement():
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
             return False
-        if self.element_type != other.type:
+        if self.element_type != other.element_type:
             return False
         if self.source_file is not other.source_file:
             return False
