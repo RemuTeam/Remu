@@ -9,8 +9,8 @@ class PresentationElement():
     content refers to the path of the source file.
     """
 
-    def __init__(self, type, source):
-        self.type = type
+    def __init__(self, element_type, source):
+        self.element_type = element_type
         self.source_file = source
         self.content = None
         self.prepare_content()
@@ -22,7 +22,7 @@ class PresentationElement():
 
         :return: Nothing
         """
-        if self.type == ContentType.Text:
+        if self.element_type == ContentType.Text:
             with open(self.source_file) as file:
                 self.content = file.read()
         else:
@@ -34,7 +34,7 @@ class PresentationElement():
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
             return False
-        if self.type != other.type:
+        if self.element_type != other.type:
             return False
         if self.source_file is not other.source_file:
             return False

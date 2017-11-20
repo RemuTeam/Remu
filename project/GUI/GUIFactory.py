@@ -190,7 +190,12 @@ class MasterGUILayout(Screen, EventDispatcher):
         """
         self.set_address_to_gui(str(data))
 
-    def notify(self, notification, data):
+    def enable_start_presentation_button(self, data):
+
+        self.ids.start_pres.disabled = False
+
+
+    def notify(self, notification, data=None):
         """
         Handles the received notification from master
 
@@ -207,7 +212,9 @@ class MasterGUILayout(Screen, EventDispatcher):
                       Notification.PRESENTATION_STATUS_CHANGE: update_presentation_status,
                       Notification.CONNECTION_FAILED: update_connection_to_gui,
                       Notification.CONNECTION_ESTABLISHED: update_connection_to_gui,
-                      Notification.CONNECTION_TERMINATED: remove_slave_presentation}
+                      Notification.CONNECTION_TERMINATED: remove_slave_presentation,
+                      Notification.PRESENTING_POSSIBLE: enable_start_presentation_button
+                      }
 
 
 class SlaveGUILayout(Screen):
@@ -303,13 +310,13 @@ class PresentationLayout(Screen):
         """
         self.hide_widgets()
 
-        if element.type == ContentType.Text:
+        if element.element_type == ContentType.Text:
             self.text_element = element.get_content()
             self.show_widget(self.ids.text_field)
-        elif element.type == ContentType.Image:
+        elif element.element_type == ContentType.Image:
             self.image_source = element.get_content()
             self.show_widget(self.ids.picture)
-        elif element.type == ContentType.Video:
+        elif element.element_type == ContentType.Video:
             self.video_source = element.get_content()
             self.show_widget(self.ids.video)
             self.ids.video.state = 'play'

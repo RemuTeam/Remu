@@ -15,6 +15,7 @@ class Master:
         :param layout: the layout to be notified on changes
         """
         self.slave_connections = {}
+        self.presentations = {}
         self.layout = layout
         self.FTPServer = None
         self.UDPListener = None
@@ -49,13 +50,17 @@ class Master:
         slave_to_connect = SlaveConnection(self)
         slave_to_connect.connect_to_IP(slave_address) if not slave_address.startswith("slave") else None
         self.slave_connections[slave_to_connect.full_address] = slave_to_connect
-
+        print("Hellurei tänne päästiiiiiin!")
         #POISTA JOSKUS JOOKO
-        presentations = [["a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg", "a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg", "a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg", "a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg"],
-                         ["b.jpg", "a.jpg", "g.mp4", "test_text2.txt"]]
-        presentation = presentations[(len(self.slave_connections)-1) % 2]
+        self.presentations = [["a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg", "a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg", "a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg", "a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg"]]
+        presentation = self.presentations[(len(self.slave_connections)-1) % 2]
         slave_to_connect.presentation = presentation
+
         self.layout.notify(Notification.PRESENTATION_UPDATE, slave_to_connect)
+        print("slaves length is:" + str(len(self.slave_connections)) + "presentations length is:" + str(len(self.presentations)))
+
+        if len(self.slave_connections) == len(self.presentations):
+            self.layout.notify(Notification.PRESENTING_POSSIBLE)
 
     def add_slave_connection(self, slave_connection):
         """
@@ -64,6 +69,7 @@ class Master:
         slave_connection: SlaveConnection object
         """
         self.slave_connections[slave_connection.full_address] = slave_connection
+
 
     def request_next(self):
         """
@@ -135,8 +141,7 @@ class Master:
         self.layout.notify(notification, data)
 
     def send_presentations_to_slaves(self):
-        presentations = [["a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg", "a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg", "a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg", "a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg"],
-                         ["b.jpg", "a.jpg", "g.mp4", "test_text2.txt"]]
+        presentations = [["a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg", "a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg", "a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg", "a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg"]]
         i = 0
         for slavec in self.slave_connections.values():
             presentation = presentations[i%2]
