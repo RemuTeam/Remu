@@ -117,7 +117,6 @@ class MasterUDPListener:
         """
         print("Starting listening on beacons")
         self.protocol = EchoClientDatagramProtocol(False, self)
-
         self.transport = reactor.listenUDP(DEFAULT_PORT_NUMBER, self.protocol)
         self.transport.setBroadcastAllowed(True)
 
