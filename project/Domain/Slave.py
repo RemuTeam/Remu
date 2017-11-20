@@ -134,7 +134,7 @@ class Slave:
         port = params[MessageKeys.ftp_port_key]
         subpath = params[MessageKeys.ftp_subpath_key]
         self.presentation.set_files(params[MessageKeys.presentation_content_key])
-
+        self.layout.init_presentation()
         self.retrieve_files_over_ftp(host, port, subpath)
         return self.create_response(msg.get_command())
 

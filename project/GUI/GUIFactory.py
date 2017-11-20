@@ -40,6 +40,8 @@ class SwitchLayout(Screen):
     """
     text = StringProperty('')
 
+
+
     def add_address(self, address):
         self.text = address
 
@@ -246,6 +248,7 @@ class SlaveGUILayout(Screen):
     def on_pre_enter(self, *args):
         if self.slave is None:
             self.slave = App.get_running_app().get_slave(self)
+            self.slave.set_layout(self)
 
     def init_presentation(self):
         App.get_running_app().init_presentation()
@@ -258,6 +261,7 @@ class SlaveGUILayout(Screen):
         """
         window = self.get_root_window()
         window.show_cursor = False
+        App.get_running_app().root.change_screen_to("presentation_layout")
 
     def show_slave_back_popup(self):
         """

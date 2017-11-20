@@ -2,6 +2,7 @@ from Domain.SlaveConnection import SlaveConnection
 from Domain.Command import Notification
 from Networking.RemuUDP import MasterUDPListener
 from Networking.RemuFTP import RemuFTPServer
+from kivy.app import App
 
 class Master:
     """
@@ -37,6 +38,9 @@ class Master:
 
         :return: None
         """
+        config = App.get_running_app().config
+        udp_port = config.getint('udp port')
+        print(udp_port)
         self.UDPListener = MasterUDPListener(self)
         self.UDPListener.listen_for_beacons()
 
