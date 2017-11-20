@@ -67,7 +67,7 @@ class RemuProtocolFactory(protocol.ClientFactory):
 
 class RemuTCP:
 
-    def __init__(self, parent=None, master=False, address=None, port=8000):
+    def __init__(self, parent=None, master=False, address=None, port=8001):
         """
         In constructor checks if the computer is a master, if yes it starts to commect to slave,
         if no it is thus a slave and starts listening.

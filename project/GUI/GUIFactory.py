@@ -4,7 +4,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.button import Button
 from kivy.uix.stacklayout import StackLayout
-from kivy.properties import StringProperty, BoundedNumericProperty
+from kivy.properties import StringProperty, BoundedNumericProperty, BooleanProperty
 from kivy.properties import ListProperty, NumericProperty
 from kivy.event import EventDispatcher
 from Domain.SupportedFileTypes import AllSupportedFormats
@@ -57,6 +57,7 @@ class MasterGUILayout(Screen, EventDispatcher):
     """
 
     label_text = StringProperty('')
+    presenting_disabled = BooleanProperty(True)
 
     """
     The import counter is used to keep track on imported files on a
@@ -191,9 +192,12 @@ class MasterGUILayout(Screen, EventDispatcher):
         self.set_address_to_gui(str(data))
 
     def enable_start_presentation_button(self, data):
-
-        self.ids.start_pres.disabled = False
-
+        """
+        Enables the start_pres button, enabling starting of the presentation.
+        :param data:
+        :return:
+        """
+        self.presenting_disabled = False
 
     def notify(self, notification, data=None):
         """

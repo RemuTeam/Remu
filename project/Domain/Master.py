@@ -53,7 +53,7 @@ class Master:
         print("Hellurei tänne päästiiiiiin!")
         #POISTA JOSKUS JOOKO
         self.presentations = [["a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg", "a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg", "a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg", "a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg"]]
-        presentation = self.presentations[(len(self.slave_connections)-1) % 2]
+        presentation = self.presentations[(len(self.slave_connections)) % 2]
         slave_to_connect.presentation = presentation
 
         self.layout.notify(Notification.PRESENTATION_UPDATE, slave_to_connect)
