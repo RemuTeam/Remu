@@ -64,4 +64,5 @@ htmlcov/
 
 # End of https://www.gitignore.io/api/pycharm+all
 
-/project/remu.ini
+project/remu.ini
+
