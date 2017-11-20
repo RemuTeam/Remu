@@ -109,4 +109,5 @@ class RemuApp(App):
             self.servicemode.close_all_connections()
 
     def init_presentation(self):
-        self.servicemode.set_presentation(Presentation())
+        #self.servicemode.set_presentation(Presentation())
+        pass
