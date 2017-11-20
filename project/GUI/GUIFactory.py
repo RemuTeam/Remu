@@ -404,7 +404,7 @@ class SlaveOverview(BoxLayout):
     def new_presentation_to_overview(self, name):
         self.slave_buttons[name] = Button(text=name,
                                                    size_hint=(1, 0.2),
-                                                   on_press=lambda a: print("kamehamehaaaaa"))
+                                                   on_press=lambda a: self.slave_presentations[name].get_presentation_from_widgets())
         self.slave_presentations[name] = SlavePresentation([])
         self.ids.slave_names.add_widget(self.slave_buttons[name])
         self.ids.slave_presentations.add_widget(self.slave_presentations[name])
@@ -412,7 +412,7 @@ class SlaveOverview(BoxLayout):
     def add_files_to_a_presentation(self, import_list):
         for slpr in self.slave_presentations.values():
             slpr.update_presentation_content(import_list)
-        self.max = 5
+        self.max += len(import_list)
         self.update_presentation_widths()
 
     def update_slave_to_overview(self, slave_connection):
@@ -717,6 +717,13 @@ class SlavePresentation(StackLayout):
     def update_presentation_content(self, import_list):
         self.presentation_data = import_list
         self.create_visual_widgets()
+
+    def get_presentation_from_widgets(self):
+        self.visuals.sort()
+        presentation_content = []
+        for i in range(len(self.children)):
+            presentation_content.append(self.children[i].visual_name.split("/")[-1])
+        return presentation_content[::-1]
 
     def visualize_next(self):
         """

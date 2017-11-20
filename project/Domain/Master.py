@@ -53,11 +53,13 @@ class Master:
         slave_to_connect = SlaveConnection(self)
         slave_to_connect.connect_to_IP(slave_address) if not slave_address.startswith("slave") else None
         self.slave_connections[slave_to_connect.full_address] = slave_to_connect
+        presentation = self.layout.ids.slave_overview.slave_presentations["juuh"].get_presentation_from_widgets()
+        self.layout.ids.slave_overview.slave_buttons["juuh"].on_press = lambda a: self.request_next()
 
         #POISTA JOSKUS JOOKO
         presentations = [["a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg", "a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg", "a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg", "a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg"],
                          ["b.jpg", "a.jpg", "g.mp4", "test_text2.txt"]]
-        presentation = presentations[(len(self.slave_connections)-1) % 2]
+        #presentation = presentations[(len(self.slave_connections)-1) % 2]
         slave_to_connect.presentation = presentation
         self.layout.notify(Notification.PRESENTATION_UPDATE, slave_to_connect)
 
@@ -143,7 +145,8 @@ class Master:
                          ["b.jpg", "a.jpg", "g.mp4", "test_text2.txt"]]
         i = 0
         for slavec in self.slave_connections.values():
-            presentation = presentations[i%2]
+            presentation = self.layout.ids.slave_overview.slave_presentations["juuh"].get_presentation_from_widgets()
+            #presentation = presentations[i%2]
             i += 1
             slavec.retrieve_presentation_files(8005, '.', presentation)
 
