@@ -29,12 +29,38 @@ class RemuApp(App):
         self.servicemode = None
         self.localip = IP.get_local_ip_address()
 
+    def build_config(self, config):
+        """
+        Sets default values for remu.ini confguration file
+        and writes the file if it doesn't exist
+
+        :param config:
+        :return:
+        """
+        config.setdefaults('REMU', {
+            'name': 'default',
+            'start as slave': 'false',
+            'tcp port': '8000',
+            'udp port': '8555',
+            'ftp port': '8005',
+            'broadcast address': '<broadcast>'
+        })
+
     def build(self):
         """
         The building method uses the GUI/remu.kv file that produces the look of the requested layouts
         and GUIFactory that adds the functionalities to those layouts.
         """
+        self.config = self.load_config()['REMU']
         return BuildKV
+
+    def on_start(self):
+        """
+        Starts the application in slave mode if the option is set in config file
+        """
+        if self.config.getboolean('start as slave'):
+            self.root.add_slave_layout()
+
 
     def set_servicemode(self, servicemode, isMaster):
         """
@@ -83,7 +109,8 @@ class RemuApp(App):
             self.set_servicemode(new_master, True)
         else:
             new_slave = Slave(layout)
-            new_slave.set_master_connection(RemuTCP(new_slave))
+            tcp_port = self.config.getint('tcp port')
+            new_slave.set_master_connection(RemuTCP(new_slave, port=tcp_port))
             self.set_servicemode(new_slave, False)
 
     def end_presentation(self):

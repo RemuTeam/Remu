@@ -1,4 +1,5 @@
 import sys
+import kivy
 
 from Domain.Message import Message
 
@@ -18,8 +19,8 @@ class DummyVersionInfo(object):
         sys.version_info = realVersionInfo
         return 2
 
-
-sys.version_info = DummyVersionInfo()
+if kivy.__version__ != '1.10.1.dev0':
+    sys.version_info = DummyVersionInfo()
 
 
 try:
