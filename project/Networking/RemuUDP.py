@@ -45,14 +45,6 @@ class EchoClientDatagramProtocol(DatagramProtocol):
             self.transport.write("connect to me".encode(), ('<broadcast>', udp_port))
         print("message sent")
 
-
-        """
-        for i in range(1, 255):
-            address = base + '.' + str(i)
-            self.transport.write("connect to me".encode(), (address, DEFAULT_PORT_NUMBER))
-            print('sent', address)
-        """
-
     def startProtocol(self):
         """
         Starts the protocol for UDP connections
