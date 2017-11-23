@@ -116,17 +116,11 @@ class MasterGUILayout(Screen, EventDispatcher):
         :return: None
         """
         if value == 0:
-            print("import ready!", self.import_list)
-            print("import to:", self.import_to_presentations)
-            ### Insert logic for actually opening the files here!
-            self.ids.slave_overview.add_files_to_a_presentation(self.import_list)
+            for presentation_name in self.import_to_presentations:
+                self.ids.slave_overview.add_files_to_a_presentation(presentation_name, self.import_list)
             del self.import_list[:]
             del self.import_to_presentations[:]
             self.reset_import_counter()
-        elif value == -1:
-            print("counter reset")
-        else:
-            print("now:", value)
 
     def on_pre_enter(self):
         self.master = App.get_running_app().get_master(self)
@@ -417,13 +411,10 @@ class SlaveOverview(BoxLayout):
         self.ids.slave_names.add_widget(self.slave_buttons[name])
         self.ids.slave_presentations.add_widget(self.slave_presentations[name])
 
-    def add_files_to_a_presentation(self, import_list):
-        for slpr in self.slave_presentations.values():
-            slpr.update_presentation_content(import_list)
-            self.ids.slave_presentations.width = len(slpr.visuals) * self.width / 6 if \
-                len(slpr.visuals) > self.ids.slave_presentations.width / 150 else self.width
-
-        self.max += len(import_list)
+    def add_files_to_a_presentation(self, presentation_name, import_list):
+        self.slave_presentations[presentation_name].update_presentation_content(import_list)
+        self.max = max(self.max, len(self.slave_presentations[presentation_name].visuals))
+        self.ids.slave_presentations.width = self.max * self.width / 6
         self.update_presentation_widths()
 
     def update_slave_to_overview(self, slave_connection):
