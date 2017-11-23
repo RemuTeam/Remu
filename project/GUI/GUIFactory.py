@@ -62,7 +62,7 @@ class MasterGUILayout(Screen, EventDispatcher):
 
     label_text = StringProperty('')
     presenting_disabled = BooleanProperty(True)
-    information_text = StringProperty('Hello')
+    debug_text = StringProperty('Use this text space for debug')
 
     """
     The import counter is used to keep track on imported files on a
@@ -80,6 +80,7 @@ class MasterGUILayout(Screen, EventDispatcher):
         super(MasterGUILayout, self).__init__(**kwargs)
         self.presentation = None
         self.hide_button(self.ids.show_next)
+        self.hide_button(self.ids.stop_pres)
         self.bind(import_counter=self.import_counter_update)
         self.reset_import_counter()
         self.import_list = []
@@ -136,15 +137,24 @@ class MasterGUILayout(Screen, EventDispatcher):
 
     def new_presentation(self, name):
         self.ids.slave_overview.new_presentation_to_overview(name)
-        #self.presentation_counter += 1
 
     def send_message_to_slave(self):
         self.master.request_next()
 
     def start_presentation(self):
-        self.hide_button(self.ids.start_pres)
-        self.show_button(self.ids.show_next)
+        self.change_visibility_of_multiple_elements([self.ids.start_pres, self.ids.back_button], True)
+        self.change_visibility_of_multiple_elements([self.ids.show_next, self.ids.stop_pres], False)
         self.master.send_presentations_to_slaves()
+
+    def stop_presentation(self):
+        print("DON'T STOP! PRESENTING! HOLD ON TO THAT FEELING!")
+
+    def change_visibility_of_multiple_elements(self, list, hide):
+        for element in list:
+            if hide:
+                self.hide_button(element)
+            else:
+                self.show_button(element)
 
     def hide_button(self, widget):
         widget.opacity = 0

@@ -89,8 +89,13 @@ RemuSM:
                 text: "show next"
                 on_press: root.send_message_to_slave()
             Button:
+                id: back_button
                 text: "Back"
                 on_press: root.show_master_back_popup()
+            Button:
+                id: stop_pres
+                text: "Stop presentation"
+                on_press: root.stop_presentation()
             Button:
                 text: "Open files"
                 on_press: root.show_open_file_popup()
@@ -112,7 +117,7 @@ RemuSM:
             Label:
                 id: information_text
                 halign: 'left'
-                text: root.information_text
+                text: root.debug_text
             Label:
                 text: root.label_text
 
