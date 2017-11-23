@@ -119,17 +119,11 @@ class MasterGUILayout(Screen, EventDispatcher):
         :return: None
         """
         if value == 0:
-            print("import ready!", self.import_list)
-            print("import to:", self.import_to_presentations)
-            ### Insert logic for actually opening the files here!
-            self.ids.slave_overview.add_files_to_a_presentation(self.import_list)
+            for presentation_name in self.import_to_presentations:
+                self.ids.slave_overview.add_files_to_a_presentation(presentation_name, self.import_list)
             del self.import_list[:]
             del self.import_to_presentations[:]
             self.reset_import_counter()
-        elif value == -1:
-            print("counter reset")
-        else:
-            print("now:", value)
 
     def on_pre_enter(self):
         self.master = App.get_running_app().get_master(self)
@@ -145,6 +139,7 @@ class MasterGUILayout(Screen, EventDispatcher):
 
     def new_presentation(self, name):
         self.ids.slave_overview.new_presentation_to_overview(name)
+        self.ids.txt_input.text = ""
 
     def send_message_to_slave(self):
         self.master.request_next()
@@ -186,7 +181,11 @@ class MasterGUILayout(Screen, EventDispatcher):
         Opens a Filechooser to load files
         :return: None
         """
-        ImportFilesPopUp(self, self.import_list, ["pepe", "jokke", "sebu", "ehjee!!"], self.import_to_presentations).open()
+        presentation_names = []
+        for key, value in self.ids.slave_overview.slave_presentations.items():
+            presentation_names.append(key)
+
+        ImportFilesPopUp(self, self.import_list, presentation_names, self.import_to_presentations).open()
 
     def generate_presentation(self, slave_connection):
         """
@@ -439,9 +438,8 @@ class SlaveOverview(BoxLayout):
         self.ids.slave_names.add_widget(self.slave_buttons[name])
         self.ids.slave_presentations.add_widget(self.slave_presentations[name])
 
-    def add_files_to_a_presentation(self, import_list):
-        for slpr in self.slave_presentations.values():
-            slpr.update_presentation_content(import_list)
+    def add_files_to_a_presentation(self, presentation_name, import_list):
+        self.slave_presentations[presentation_name].update_presentation_content(import_list)
         self.max = 5
         self.update_presentation_widths()
 
