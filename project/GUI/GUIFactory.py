@@ -128,6 +128,9 @@ class MasterGUILayout(Screen, EventDispatcher):
     def on_pre_enter(self):
         self.master = App.get_running_app().get_master(self)
 
+    def check_text(self, text):
+        self.ids.new_presentation_button.disabled = not text
+
     def set_address_to_gui(self, address):
         """
         Sets the address for GUI purposes, but does not control the actual connection

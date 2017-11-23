@@ -102,8 +102,10 @@ RemuSM:
             TextInput:
                 id: txt_input
                 text: ""
+                on_text: root.check_text(self.text)
                 hint_text: "Presentation Name"
             Button:
+                id: new_presentation_button
                 text: "New Presentation"
                 disabled: True
                 on_press: root.new_presentation(txt_input.text)
