@@ -412,6 +412,9 @@ class SlaveOverview(BoxLayout):
     def add_files_to_a_presentation(self, import_list):
         for slpr in self.slave_presentations.values():
             slpr.update_presentation_content(import_list)
+            self.ids.slave_presentations.width = len(slpr.visuals) * self.width / 6 if \
+                len(slpr.visuals) > self.ids.slave_presentations.width / 150 else self.width
+
         self.max += len(import_list)
         self.update_presentation_widths()
 
@@ -429,7 +432,7 @@ class SlaveOverview(BoxLayout):
                                                                    size_hint=(1, 0.2),
                                                                    on_press=lambda a: slave_connection.show_next())
         self.slave_presentations[slave_connection.full_address] = SlavePresentation(slave_connection.presentation)
-        self.ids.slave_presentations.width = len(slave_connection.presentation)*self.width/5 if len(slave_connection.presentation) > self.ids.slave_presentations.width/150 else self.width
+        self.ids.slave_presentations.width = len(slave_connection.presentation)*self.width/6 if len(slave_connection.presentation) > self.ids.slave_presentations.width/150 else self.width
         self.ids.slave_names.add_widget(self.slave_buttons[slave_connection.full_address])
         self.ids.slave_presentations.add_widget(self.slave_presentations[slave_connection.full_address])
         self.update_presentation_widths()
