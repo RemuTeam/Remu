@@ -13,13 +13,13 @@ class TestPresentationElement(unittest.TestCase):
         self.pic_element = PresentationElement(ContentType.Image, self.pic_source_file)
 
     def test_type_source_and_content_match_for_text_element(self):
-        self.assertEqual(self.text_element.type, ContentType.Text)
+        self.assertEqual(self.text_element.element_type, ContentType.Text)
         self.assertEqual(self.text_element.source_file, self.text_source_file)
         with open(self.text_source_file) as file:
             self.assertEqual(self.text_element.get_content(), file.read())
 
     def test_type_source_and_content_match_for_image_element(self):
-        self.assertEqual(self.pic_element.type, ContentType.Image)
+        self.assertEqual(self.pic_element.element_type, ContentType.Image)
         self.assertEqual(self.pic_element.source_file, self.pic_source_file)
         self.assertEqual(self.pic_element.get_content(), self.pic_element.source_file)
 

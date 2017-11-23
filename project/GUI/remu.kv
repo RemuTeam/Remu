@@ -81,6 +81,7 @@ RemuSM:
             size_hint: 1, 0.1
             Button:
                 id: start_pres
+                disabled: root.presenting_disabled
                 text: "Start presentation"
                 on_press: root.start_presentation()
             Button:
@@ -88,17 +89,25 @@ RemuSM:
                 text: "show next"
                 on_press: root.send_message_to_slave()
             Button:
+                id: back_button
                 text: "Back"
                 on_press: root.show_master_back_popup()
+            Button:
+                id: stop_pres
+                text: "Stop presentation"
+                on_press: root.stop_presentation()
             Button:
                 text: "Open files"
                 on_press: root.show_open_file_popup()
             TextInput:
                 id: txt_input
                 text: ""
+                on_text: root.check_text(self.text)
                 hint_text: "Presentation Name"
             Button:
+                id: new_presentation_button
                 text: "New Presentation"
+                disabled: True
                 on_press: root.new_presentation(txt_input.text)
             #    text: "Add Slave"
             #    on_press: root.add_slave_connection(txt_input.text)
@@ -108,6 +117,10 @@ RemuSM:
             id: bottom_panel
             orientation: 'horizontal'
             size_hint: 1, 0.1
+            Label:
+                id: information_text
+                halign: 'left'
+                text: root.debug_text
             Label:
                 text: root.label_text
 
