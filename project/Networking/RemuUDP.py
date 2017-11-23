@@ -6,9 +6,6 @@ import Networking.IP as IP
 
 from socket import SOL_SOCKET, SO_BROADCAST
 
-DEFAULT_PORT_NUMBER = 8555
-
-
 class EchoClientDatagramProtocol(DatagramProtocol):
     """
     Protocol that defines the UDP protocol used in the beaconing and datagram traffic.
@@ -29,20 +26,24 @@ class EchoClientDatagramProtocol(DatagramProtocol):
         """
         Sends the beaconing signal as a broadcast.
         """
-        self.transport.write("connect to me".encode(), ('<broadcast>', DEFAULT_PORT_NUMBER))
-        print("message sent")
-        address = App.get_running_app().localip
 
-        stop = address.rfind('.')
-        base = address[:stop]
-        bcast = base + ".255"
-        self.transport.write("connect to me".encode(), (bcast, DEFAULT_PORT_NUMBER))
-        """
-        for i in range(1, 255):
-            address = base + '.' + str(i)
-            self.transport.write("connect to me".encode(), (address, DEFAULT_PORT_NUMBER))
-            print('sent', address)
-        """
+        app = App.get_running_app()
+        address = app.localip
+
+        udp_port = app.config.getint('udp port')
+        bcast = app.config.get('broadcast address')
+        print('broadcast address =', bcast)
+
+        if bcast != '<broadcast>':
+            self.transport.write("connect to me".encode(), (bcast, udp_port))
+
+        else:
+            stop = address.rfind('.')
+            base = address[:stop]
+            bcast = base + ".255"
+            self.transport.write("connect to me".encode(), (bcast, udp_port))
+            self.transport.write("connect to me".encode(), ('<broadcast>', udp_port))
+        print("message sent")
 
     def startProtocol(self):
         """
@@ -117,8 +118,8 @@ class MasterUDPListener:
         """
         print("Starting listening on beacons")
         self.protocol = EchoClientDatagramProtocol(False, self)
-
-        self.transport = reactor.listenUDP(DEFAULT_PORT_NUMBER, self.protocol)
+        udp_port = App.get_running_app().config.getint('udp port')
+        self.transport = reactor.listenUDP(udp_port, self.protocol)
         self.transport.setBroadcastAllowed(True)
 
     def stop_listening_to_beacons(self):

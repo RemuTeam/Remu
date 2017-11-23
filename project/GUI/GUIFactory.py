@@ -5,7 +5,7 @@ from kivy.uix.scrollview import ScrollView
 from kivy.uix.button import Button
 from kivy.uix.stacklayout import StackLayout
 from kivy.uix.gridlayout import GridLayout
-from kivy.properties import StringProperty, BoundedNumericProperty
+from kivy.properties import StringProperty, BoundedNumericProperty, BooleanProperty
 from kivy.properties import ListProperty, NumericProperty
 from kivy.event import EventDispatcher
 from Domain.SupportedFileTypes import AllSupportedFormats
@@ -43,6 +43,8 @@ class SwitchLayout(Screen):
     """
     text = StringProperty('')
 
+
+
     def add_address(self, address):
         self.text = address
 
@@ -50,6 +52,8 @@ class InfoLayout(Screen):
     with open('infotext.txt') as f:
         t = f.read()
     text = t
+
+from Domain.SlaveConnection import SlaveConnection
 
 class MasterGUILayout(Screen, EventDispatcher):
     """
@@ -60,6 +64,8 @@ class MasterGUILayout(Screen, EventDispatcher):
     """
 
     label_text = StringProperty('')
+    presenting_disabled = BooleanProperty(True)
+    debug_text = StringProperty('Use this text space for debug')
 
     """
     The import counter is used to keep track on imported files on a
@@ -79,6 +85,7 @@ class MasterGUILayout(Screen, EventDispatcher):
         super(MasterGUILayout, self).__init__(**kwargs)
         self.presentation = None
         self.hide_button(self.ids.show_next)
+        self.hide_button(self.ids.stop_pres)
         self.bind(import_counter=self.import_counter_update)
         self.reset_import_counter()
         self.import_list = []
@@ -115,6 +122,7 @@ class MasterGUILayout(Screen, EventDispatcher):
             print("import ready!", self.import_list)
             print("import to:", self.import_to_presentations)
             ### Insert logic for actually opening the files here!
+            self.ids.slave_overview.add_files_to_a_presentation(self.import_list)
             del self.import_list[:]
             del self.import_to_presentations[:]
             self.reset_import_counter()
@@ -135,17 +143,26 @@ class MasterGUILayout(Screen, EventDispatcher):
     def add_slave_connection(self, address):
         self.master.add_slave(address)
 
-    def new_presentation(self):
-        self.master.add_slave("slave" + str(self.presentation_counter))
-        self.presentation_counter += 1
+    def new_presentation(self, name):
+        self.ids.slave_overview.new_presentation_to_overview(name)
 
     def send_message_to_slave(self):
         self.master.request_next()
 
     def start_presentation(self):
-        self.hide_button(self.ids.start_pres)
-        self.show_button(self.ids.show_next)
+        self.change_visibility_of_multiple_elements([self.ids.start_pres, self.ids.back_button], True)
+        self.change_visibility_of_multiple_elements([self.ids.show_next, self.ids.stop_pres], False)
         self.master.send_presentations_to_slaves()
+
+    def stop_presentation(self):
+        print("DON'T STOP! PRESENTING! HOLD ON TO THAT FEELING!")
+
+    def change_visibility_of_multiple_elements(self, list, hide):
+        for element in list:
+            if hide:
+                self.hide_button(element)
+            else:
+                self.show_button(element)
 
     def hide_button(self, widget):
         widget.opacity = 0
@@ -198,7 +215,15 @@ class MasterGUILayout(Screen, EventDispatcher):
         """
         self.set_address_to_gui(str(data))
 
-    def notify(self, notification, data):
+    def enable_start_presentation_button(self, data):
+        """
+        Enables the start_pres button, enabling starting of the presentation.
+        :param data:
+        :return:
+        """
+        self.presenting_disabled = False
+
+    def notify(self, notification, data=None):
         """
         Handles the received notification from master
 
@@ -215,7 +240,9 @@ class MasterGUILayout(Screen, EventDispatcher):
                       Notification.PRESENTATION_STATUS_CHANGE: update_presentation_status,
                       Notification.CONNECTION_FAILED: update_connection_to_gui,
                       Notification.CONNECTION_ESTABLISHED: update_connection_to_gui,
-                      Notification.CONNECTION_TERMINATED: remove_slave_presentation}
+                      Notification.CONNECTION_TERMINATED: remove_slave_presentation,
+                      Notification.PRESENTING_POSSIBLE: enable_start_presentation_button
+                      }
 
 
 class SlaveGUILayout(Screen):
@@ -240,6 +267,7 @@ class SlaveGUILayout(Screen):
     def on_pre_enter(self, *args):
         if self.slave is None:
             self.slave = App.get_running_app().get_slave(self)
+            self.slave.set_layout(self)
 
     def init_presentation(self):
         App.get_running_app().init_presentation()
@@ -252,6 +280,7 @@ class SlaveGUILayout(Screen):
         """
         window = self.get_root_window()
         window.show_cursor = False
+        App.get_running_app().root.change_screen_to("presentation_layout")
 
     def show_slave_back_popup(self):
         """
@@ -311,13 +340,13 @@ class PresentationLayout(Screen):
         """
         self.hide_widgets()
 
-        if element.type == ContentType.Text:
+        if element.element_type == ContentType.Text:
             self.text_element = element.get_content()
             self.show_widget(self.ids.text_field)
-        elif element.type == ContentType.Image:
+        elif element.element_type == ContentType.Image:
             self.image_source = element.get_content()
             self.show_widget(self.ids.picture)
-        elif element.type == ContentType.Video:
+        elif element.element_type == ContentType.Video:
             self.video_source = element.get_content()
             self.show_widget(self.ids.video)
             self.ids.video.state = 'play'
@@ -402,6 +431,20 @@ class SlaveOverview(BoxLayout):
         self.effect_cls = ScrollEffect
         self.max = 0
 
+    def new_presentation_to_overview(self, name):
+        self.slave_buttons[name] = Button(text=name,
+                                                   size_hint=(1, 0.2),
+                                                   on_press=lambda a: print("kamehamehaaaaa"))
+        self.slave_presentations[name] = SlavePresentation([])
+        self.ids.slave_names.add_widget(self.slave_buttons[name])
+        self.ids.slave_presentations.add_widget(self.slave_presentations[name])
+
+    def add_files_to_a_presentation(self, import_list):
+        for slpr in self.slave_presentations.values():
+            slpr.update_presentation_content(import_list)
+        self.max = 5
+        self.update_presentation_widths()
+
     def update_slave_to_overview(self, slave_connection):
         """
         Updates the SlaveOverview in the master's GUI. If a slave with an IP is already in the list, it is still deleted
@@ -415,7 +458,7 @@ class SlaveOverview(BoxLayout):
         self.slave_buttons[slave_connection.full_address] = Button(text=slave_connection.full_address,
                                                                    size_hint=(1, 0.2),
                                                                    on_press=lambda a: slave_connection.show_next())
-        self.slave_presentations[slave_connection.full_address] = SlavePresentation(slave_connection)
+        self.slave_presentations[slave_connection.full_address] = SlavePresentation(slave_connection.presentation)
         self.ids.slave_presentations.width = len(slave_connection.presentation)*self.width/5 if len(slave_connection.presentation) > self.ids.slave_presentations.width/150 else self.width
         self.ids.slave_names.add_widget(self.slave_buttons[slave_connection.full_address])
         self.ids.slave_presentations.add_widget(self.slave_presentations[slave_connection.full_address])
@@ -443,7 +486,7 @@ class SlaveOverview(BoxLayout):
         current = 9999
         for slave_presentation in self.slave_presentations.values():
             current = min(current, slave_presentation.update_status())
-        self.ids.helvetti.scroll_x = current/self.max
+        self.ids.scrollview.scroll_x = current/self.max
 
 class CheckBoxBonanza(BoxLayout):
     """
@@ -736,12 +779,11 @@ class SlavePresentation(StackLayout):
     holds, as well as the current state of the presentation
     """
 
-    def __init__(self, slave_connection):
+    def __init__(self, presentation):
         super(SlavePresentation, self).__init__()
-        self.slave = slave_connection
-        self.presentation_data = slave_connection.presentation
+        self.presentation_data = presentation
         self.visuals = []
-        self.current_active = slave_connection.currently_showing
+        self.current_active = -1
         self.create_visual_widgets()
 
     def create_visual_widgets(self):
@@ -749,6 +791,7 @@ class SlavePresentation(StackLayout):
         Creates the visual widgets for the slave's visuals
         """
         for i in range(0, len(self.presentation_data)):
+            print("we're looping now, I'm yelling timbeer")
             filename = self.presentation_data[i][:100] #[0][:100]
             if len(filename) == 100:
                 filename += "..."
@@ -757,22 +800,32 @@ class SlavePresentation(StackLayout):
             self.add_widget(visual)
         self.visualize_next()
 
+    def update_presentation_content(self, import_list):
+        self.presentation_data = import_list
+        self.create_visual_widgets()
+
     def visualize_next(self):
         """
         Highlights the next visual, indicating it is the currently active visual
         """
-        self.visuals[self.current_active].set_inactive()
-        self.current_active = self.slave.currently_showing
+        if self.current_active == -1:
+            self.current_active += 1
+            return -1
+        self.visuals[self.current_active-1].set_inactive()
+        if self.current_active == len(self.visuals):
+            self.current_active = -1
+        #self.current_active = self.slave.currently_showing
         if self.current_active is not -1:
             self.visuals[self.current_active].set_active()
-        return self.slave.currently_showing
+            self.current_active += 1
+        return self.current_active
 
     def update_status(self):
         """
         Checks if the tracked SlaveConnection has updated; updates the widget if needed
         """
-        if not self.slave.connected:
-            self.ids["btn_address"].background_color = [0.94, 0.025, 0.15, 1]
+        #if not self.slave.connected:
+        #    self.ids["btn_address"].background_color = [0.94, 0.025, 0.15, 1]
         return self.visualize_next()
 
     def get_address(self):
