@@ -3,7 +3,8 @@ from GUI.GUIFactory import MasterGUILayout
 
 
 class MasterLayoutTests(unittest.TestCase):
-    pass
+    def setUp(self):
+        self.gui = MasterGUILayout()
 
-if __name__ == '__main__':
-    unittest.main()
+    def test_file_import_counter(self):
+        self.assertEqual(self.gui.import_counter, -1)

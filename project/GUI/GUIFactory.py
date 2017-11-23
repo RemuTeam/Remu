@@ -15,6 +15,7 @@ from Domain.MessageKeys import MessageKeys
 from Domain.PathConstants import PathConstants
 from Domain.PresentationElement import PresentationElement
 from kivy.app import App
+from kivy.uix.label import Label
 from kivy.core.window import Window
 from kivy.uix.widget import Widget
 from shutil import copyfile
@@ -71,6 +72,8 @@ class MasterGUILayout(Screen, EventDispatcher):
     1...n   The amount of files still to be imported.
     """
     import_counter = NumericProperty()
+    import_list = ListProperty([])
+    import_to_presentations = ListProperty([])
 
     def __init__(self, **kwargs):
         super(MasterGUILayout, self).__init__(**kwargs)
@@ -113,6 +116,7 @@ class MasterGUILayout(Screen, EventDispatcher):
             print("import to:", self.import_to_presentations)
             ### Insert logic for actually opening the files here!
             del self.import_list[:]
+            del self.import_to_presentations[:]
             self.reset_import_counter()
         elif value == -1:
             print("counter reset")
@@ -442,9 +446,20 @@ class SlaveOverview(BoxLayout):
         self.ids.helvetti.scroll_x = current/self.max
 
 class CheckBoxBonanza(BoxLayout):
-    presentation_name = StringProperty('unph')
+    """
+    A kivy widget class to hold a Checkbox and a Label
+    """
+    presentation_name = StringProperty('')
 
     def __init__(self, presentation_name, size_hint_y, callback):
+        """
+        Constructor function
+
+        :param presentation_name: a string, the presentation's name
+        :param size_hint_y: a floating-point number x, where 0 < x <= 1,
+                defines the proportion the element occupies of the layout's height
+        :param callback: the callback function to call when a checkbox is checked
+        """
         super(CheckBoxBonanza, self).__init__()
         self.presentation_name = presentation_name
         self.size_hint_y = size_hint_y
@@ -457,10 +472,16 @@ class ImportFilesPopUp(Popup, EventDispatcher):
     """
     media_path_absolute = StringProperty(PathConstants.ABSOLUTE_MEDIA_FOLDER)
     supportedFormats = ListProperty([])
+    local_presentation_selection = ListProperty([])
 
     def __init__(self, listener, imported_files, presentations, selected_presentations):
         """
-        Well well well... a constructor method. Whaddaya know...
+        Constructor
+
+        :param listener: the component to inform about file imports
+        :param imported_files: a kivy ListProperty to store files that are imported
+        :param presentations: a list of Presentation names
+        :param
         """
         super(ImportFilesPopUp, self).__init__()
         self.supportedFormats = AllSupportedFormats
@@ -468,6 +489,21 @@ class ImportFilesPopUp(Popup, EventDispatcher):
         self.listener = listener
         self.populate_presentation_list(presentations)
         self.selected_presentations = selected_presentations
+        self.ids.filechooser.bind(selection=self.check_selections)
+        self.selected_presentations = selected_presentations
+        self.bind(local_presentation_selection=self.check_selections)
+
+    def on_dismiss(self):
+        self.ids.filechooser.unbind(selection=self.check_selections)
+        self.unbind(local_presentation_selection=self.check_selections)
+
+    def check_selections(self, instance, value):
+        selection = self.ids.filechooser.selection
+        import_button = self.ids.import_button
+        if len(selection) == 0 or len(self.selected_presentations) == 0:
+            import_button.disabled = True
+        else:
+            import_button.disabled = False
 
     def populate_presentation_list(self, presentations):
         presentation_list = self.ids.presentation_list
@@ -477,8 +513,10 @@ class ImportFilesPopUp(Popup, EventDispatcher):
     def on_checkbox_active(self, checkbox, value):
         if value:
             self.selected_presentations.append(checkbox.label)
+            self.local_presentation_selection.append(checkbox.label)
         else:
             self.selected_presentations.remove(checkbox.label)
+            self.local_presentation_selection.remove(checkbox.label)
 
 
     def import_files_for_presentation(self, path, selection):

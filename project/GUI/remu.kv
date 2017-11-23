@@ -306,7 +306,9 @@ RemuSM:
                     text: "Cancel"
                     on_release: root.dismiss()
                 Button:
-                    text: "Open"
+                    id: import_button
+                    disabled: True
+                    text: "Import"
                     on_release: root.import_files_for_presentation(filechooser.path, filechooser.selection)
                     on_release: root.dismiss()
         StackLayout:
@@ -334,7 +336,6 @@ RemuSM:
         id: p_name
         size_hint: 0.8, 1
         text: root.presentation_name
-
 
 #
 # FileSavingDialogPopUp asks for input when file already exists
