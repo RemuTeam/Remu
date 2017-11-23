@@ -12,6 +12,7 @@ from Domain.SupportedFileTypes import AllSupportedFormats
 from Domain.Command import Notification
 from Domain.ContentType import ContentType
 from Domain.MessageKeys import MessageKeys
+from Domain.TestReturnValue import TestReturnValue
 from Domain.PathConstants import PathConstants
 from Domain.PresentationElement import PresentationElement
 from kivy.app import App
@@ -43,6 +44,11 @@ class SwitchLayout(Screen):
     """
     text = StringProperty('')
 
+    def goto_master_mode(self):
+        try:
+            App.get_running_app().root.add_master_layout()
+        except Exception as ex:
+            ExceptionAlertPopUp("Error going to master mode:", ex).open()
 
 
     def add_address(self, address):
@@ -84,8 +90,7 @@ class MasterGUILayout(Screen, EventDispatcher):
     def __init__(self, **kwargs):
         super(MasterGUILayout, self).__init__(**kwargs)
         self.presentation = None
-        self.hide_button(self.ids.show_next)
-        self.hide_button(self.ids.stop_pres)
+        self.change_visibility_of_multiple_elements([self.ids.show_next, self.ids.stop_pres], True)
         self.bind(import_counter=self.import_counter_update)
         self.reset_import_counter()
         self.import_list = []
@@ -188,7 +193,8 @@ class MasterGUILayout(Screen, EventDispatcher):
         for key, value in self.ids.slave_overview.slave_presentations.items():
             presentation_names.append(key)
 
-        ImportFilesPopUp(self, self.import_list, presentation_names, self.import_to_presentations).open()
+        ImportFilesPopUp(self, self.import_list, presentation_names, self.import_to_presentations,
+                         PathConstants.ABSOLUTE_MEDIA_FOLDER).open()
 
     def generate_presentation(self, slave_connection):
         """
@@ -514,11 +520,12 @@ class ImportFilesPopUp(Popup, EventDispatcher):
     """
     A file selection and opening popup
     """
-    media_path_absolute = StringProperty(PathConstants.ABSOLUTE_MEDIA_FOLDER)
+    media_path = StringProperty('')
     supportedFormats = ListProperty([])
     local_presentation_selection = ListProperty([])
 
-    def __init__(self, listener, imported_files, presentations, selected_presentations):
+    def __init__(self, listener, imported_files, presentations,
+                 selected_presentations, media_path, test_mode=False):
         """
         Constructor
 
@@ -534,8 +541,9 @@ class ImportFilesPopUp(Popup, EventDispatcher):
         self.populate_presentation_list(presentations)
         self.selected_presentations = selected_presentations
         self.ids.filechooser.bind(selection=self.check_selections)
-        self.selected_presentations = selected_presentations
         self.bind(local_presentation_selection=self.check_selections)
+        self.media_path = media_path
+        self.test_mode = test_mode
 
     def on_dismiss(self):
         self.ids.filechooser.unbind(selection=self.check_selections)
@@ -572,7 +580,8 @@ class ImportFilesPopUp(Popup, EventDispatcher):
         :return: None
         """
         self.listener.import_started(len(selection))
-        self.import_files_from_media_folder(path, selection, self.listener)
+        if not self.test_mode:
+            self.import_files_from_media_folder(path, selection, self.listener)
 
     def import_files_from_media_folder(self, path, selected_files, listener):
         """
@@ -587,7 +596,7 @@ class ImportFilesPopUp(Popup, EventDispatcher):
         """
         for filee in selected_files:
             separated_paths = filee.split(os.sep)
-            file_to_write = os.path.join(PathConstants.MEDIA_FOLDER, separated_paths[len(separated_paths) - 1])
+            file_to_write = os.path.join(self.media_path, separated_paths[len(separated_paths) - 1])
             self.copy_file(path, filee, file_to_write, self.imported_files, listener)
 
     def copy_file(self, path, source, destination, filename_list, listener):
@@ -603,11 +612,12 @@ class ImportFilesPopUp(Popup, EventDispatcher):
         :param filename_list: the list to append the created filename
         :return: the destination file
         """
-        if path != self.media_path_absolute and os.path.isfile(destination):
-            FileSavingDialogPopUp(source, destination, filename_list, listener).open()
-        elif path != self.media_path_absolute:
+        if path != self.media_path and os.path.isfile(destination):
+            if self.test_mode:
+                return TestReturnValue.FileSavingDialogPopUp
+            FileSavingDialogPopUp(source, destination, filename_list, listener, self.media_path).open()
+        elif path != self.media_path:
             copyfile(source, destination)
-            print("file", source, "copied as", destination)
             filename_list.append(destination)
             listener.notify_file_import()
         else:
@@ -632,7 +642,7 @@ class FileSavingDialogPopUp(Popup):
     """
     RESERVED_FILENAME_CHARS = ["/", "\\", "?", "%", "*", ":", "|", '"', "<", ">"]
 
-    def __init__(self, source, destination, filename_list, listener):
+    def __init__(self, source, destination, filename_list, listener, media_path):
         """
         The source and destination files are passed as arguments
         :param source: a string, the source file with path
@@ -643,8 +653,9 @@ class FileSavingDialogPopUp(Popup):
         self.source = source
         self.destination_name = destination
         self.destination = destination
-        self.media_files = [file for file in os.listdir(PathConstants.ABSOLUTE_MEDIA_FOLDER) if
-                            os.path.isfile(os.path.join(PathConstants.ABSOLUTE_MEDIA_FOLDER, file))]
+        self.media_path = media_path
+        self.media_files = [file for file in os.listdir(self.media_path) if
+                            os.path.isfile(os.path.join(self.media_path, file))]
         self.new_filename = self.__prefilled_new_file_name(destination)
         self.original_destination_filename_only = self.__parse_filename_only(destination)
         self.ids.save_as.bind(text=self.on_text)
@@ -1010,6 +1021,7 @@ class RemuSM(ScreenManager):
         """
         Creates a new master layout, and sets it to be the current screen
         """
+
         if self.master_screen is None:
             self.master_screen = MasterGUILayout(name='master_gui_layout')
             self.add_widget(self.master_screen)
@@ -1050,6 +1062,7 @@ class RemuSM(ScreenManager):
         Removes the master layout from screenmanager's screens
         """
         self.remove_widget(self.master_screen)
+        self.master_screen=None
         self.change_screen_to("switch_layout")
 
     def rm_slave_layout(self):

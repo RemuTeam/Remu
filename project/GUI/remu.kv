@@ -18,7 +18,7 @@ RemuSM:
             Button:
                 text: "Master"
                 size_hint: 0.3,0.3
-                on_release: app.root.add_master_layout()
+                on_release: root.goto_master_mode()
             Button:
                 text: "Slave"
                 size_hint: 0.3,0.3
@@ -309,7 +309,7 @@ RemuSM:
             FileChooserIconView:
                 id: filechooser
                 multiselect: True   # allows selection of multiple files
-                path: root.media_path_absolute     # the default path to open
+                path: root.media_path     # the default path to open
                 filters: root.supportedFormats  # filters the files to show
 
             BoxLayout:
