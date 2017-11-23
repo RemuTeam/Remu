@@ -1,6 +1,6 @@
 import sys
 import kivy
-
+from kivy.app import App
 from Domain.Message import Message
 
 
@@ -126,6 +126,9 @@ class RemuTCP:
         Sends the message given as parameter if the connection is valid and on
         """
         if msg and self.connection:
+            name = self.__get_name()
+            msg.set_field("name", name)
+
             self.connection.write(msg.to_json().encode('utf-8'))
 
     def handle_message(self, json_msg):
@@ -136,6 +139,7 @@ class RemuTCP:
         msg.set_field("sender", self.connection.getPeer().host)
         response = self.parent.handle_message(msg)
         if response:
+            response.set_field("name", self.__get_name())
             response.set_field("address", msg.get_field("sender"))
             print("response to json:", response.fields)
             return response.to_json()
@@ -146,3 +150,10 @@ class RemuTCP:
             self.stop_listening()
         if self.connection:
             self.connection.loseConnection()
+
+    def __get_name(self):
+        app = App.get_running_app()
+        name = "test"
+        if app is not None:
+            name = app.config.get("name")
+        return name
