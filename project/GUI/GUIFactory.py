@@ -150,16 +150,35 @@ class MasterGUILayout(Screen, EventDispatcher):
         self.label_text = address
 
     def add_slave_connection(self, address):
+        """
+        Adds a new slave
+        :param address:
+        :return:
+        """
         self.master.add_slave(address)
 
     def new_presentation(self, name):
+        """
+        Creates a new presentation into the master's gui
+        :param name: Name of the presentation to be created
+        :return: Nothing
+        """
         self.ids.slave_overview.new_presentation_to_overview(name)
         self.ids.txt_input.text = ""
 
     def send_message_to_slave(self):
+        """
+        Requests the next visual element from all slaves
+        :return: Nothing
+        """
         self.master.request_next()
 
     def start_presentation(self):
+        """
+        Changes the master's editor mode to the presentation mode. It hides the editor mode buttons and shows the
+        presentation mode buttons, and sends the presentations the user has made to the slaves
+        :return: Nothing
+        """
         self.change_visibility_of_multiple_elements([self.ids.start_pres, self.ids.back_button], True)
         self.change_visibility_of_multiple_elements([self.ids.show_next, self.ids.stop_pres], False)
         self.master.send_presentations_to_slaves()
@@ -214,6 +233,17 @@ class MasterGUILayout(Screen, EventDispatcher):
         """
         MasterBackPopUp().open()
 
+    def show_remove_presentations_popup(self):
+        """
+        Opens the popup that allows master to remove presentations
+        """
+
+        presentation_names = []
+        for key, value in self.ids.slave_overview.slave_presentations.items():
+            presentation_names.append(key)
+
+        RemovePresentationsPopUp(presentation_names,self).open()
+
     def show_open_file_popup(self):
         """
         Opens a Filechooser to load files
@@ -258,6 +288,20 @@ class MasterGUILayout(Screen, EventDispatcher):
         :return:
         """
         self.presenting_disabled = is_disabled
+
+    def notify_remove_presentations(self,selected_presentations):
+        """
+        Remove_presentation popup calls this method to infrom master what presentations were selected to be removed
+        :param selected_presentations:
+        :return:
+        """
+        print(selected_presentations)
+        for name in selected_presentations:
+            self.ids.slave_overview.remove_presentation(name)
+
+
+
+
 
     def notify(self, notification, data=None):
         """
@@ -473,6 +517,11 @@ class SlaveOverview(BoxLayout):
         self.max = 0
 
     def new_presentation_to_overview(self, name):
+        """
+        Creates a new empty presentation to the SlaveOverview, sets the key with name parameter.
+        :param name:
+        :return:
+        """
         self.slave_buttons[name] = Button(text=name,
                                                    size_hint=(1, 0.2),
                                                    on_press=lambda a: self.slave_presentations[name].get_presentation_from_widgets())
@@ -481,6 +530,12 @@ class SlaveOverview(BoxLayout):
         self.ids.slave_presentations.add_widget(self.slave_presentations[name])
 
     def add_files_to_a_presentation(self, presentation_name, import_list):
+        """
+        Adds files to a single presentation based on the filenames given in the import list
+        :param presentation_name: presentation to be added to
+        :param import_list: filenames to be added to presentation
+        :return:
+        """
         self.slave_presentations[presentation_name].update_presentation_content(import_list)
         self.max = max(self.max, len(self.slave_presentations[presentation_name].visuals))
         self.ids.slave_presentations.width = self.max * self.width / 6
@@ -500,12 +555,19 @@ class SlaveOverview(BoxLayout):
                                                                    size_hint=(1, 0.2),
                                                                    on_press=lambda a: slave_connection.show_next())
         self.slave_presentations[slave_connection.full_address] = SlavePresentation(slave_connection.presentation)
-        self.ids.slave_presentations.width = len(slave_connection.presentation)*self.width/6 if len(slave_connection.presentation) > self.ids.slave_presentations.width/150 else self.width
+        self.ids.slave_presentations.width = len(slave_connection.presentation)*self.width/6
+        """if len(slave_connection.presentation) > self.ids.slave_presentations.width/150 else self.width --- was in the statement above, not sure if necessary :^)"""
         self.ids.slave_names.add_widget(self.slave_buttons[slave_connection.full_address])
         self.ids.slave_presentations.add_widget(self.slave_presentations[slave_connection.full_address])
         self.update_presentation_widths()
 
+
+
     def update_presentation_widths(self):
+        """
+        Scales the SlaveVisualProperties in proportion to the longest presentation.
+        :return:
+        """
         for sp in self.slave_presentations.values():
             for budons in sp.children:
                 budons.size_hint_x = 1/self.max
@@ -524,14 +586,29 @@ class SlaveOverview(BoxLayout):
             del self.slave_presentations[address]
 
     def update_presentation_state(self):
+        """
+        Automatically progresses the scrollview forward based on where the presentation is at
+        :return:
+        """
         current = 9999
         for slave_presentation in self.slave_presentations.values():
             current = min(current, slave_presentation.update_status())
-        self.ids.scrollview.scroll_x = current/self.max
+        self.ids.scrollview.scroll_x = current/self.max if current >= 0 else 0
 
     def reset_all_presentations(self):
         for presentation in self.slave_presentations.values():
             presentation.reset()
+
+    def remove_presentation(self,name):
+        """
+        masterlayout calls this method for all presentations that are to be removed from master_layout
+        :param name:
+        :return:
+        """
+        self.ids.slave_presentations.remove_widget(self.slave_presentations[name])
+        self.ids.slave_names.remove_widget(self.slave_buttons[name])
+        del self.slave_buttons[name]
+        del self.slave_presentations[name]
 
 
 class CheckBoxBonanza(BoxLayout):
@@ -553,6 +630,47 @@ class CheckBoxBonanza(BoxLayout):
         self.presentation_name = presentation_name
         self.size_hint_y = size_hint_y
         self.ids.checker.bind(active=callback)
+
+class RemovePresentationsPopUp(Popup, EventDispatcher):
+    """
+    A kivy popup that allows the user to remove made presentations in master mode
+    """
+
+    def __init__(self, presentations, listener):
+
+        super(RemovePresentationsPopUp,self).__init__()
+        self.populate_presentation_list(presentations)
+        self.selected_presentations=[]
+        self.listener=listener
+
+    def populate_presentation_list(self, presentations):
+        """
+        adds the checkboslist and corresponding presentation list to RemovePresentationPopUp
+        :param presentations:
+        :return:
+        """
+        presentation_list = self.ids.presentation_list
+        for p in presentations:
+            presentation_list.add_widget(CheckBoxBonanza(p, 0.05, self.on_checkbox_active))
+
+    def on_checkbox_active(self, checkbox, value):
+        """
+        checks if the presentation's box has been checked or not
+        :param checkbox:
+        :param value:
+        :return:
+        """
+        if value:
+            self.selected_presentations.append(checkbox.label)
+        else:
+            self.selected_presentations.remove(checkbox.label)
+
+    def inform_listener(self):
+        """
+        informs master_layout of the selected presentations that are to be removed
+        :return:
+        """
+        self.listener.notify_remove_presentations(self.selected_presentations)
 
 
 class ImportFilesPopUp(Popup, EventDispatcher):
@@ -848,9 +966,14 @@ class SlavePresentation(StackLayout):
             visual = SlaveVisualProperty(filename)
             self.visuals.append(visual)
             self.add_widget(visual)
-        #self.visualize_next()
+        self.visualize_next()
 
     def update_presentation_content(self, import_list):
+        """
+        Adds SlaveVisualProperties to the SlavePresentation object
+        :param import_list: list of presentation elements' filenames to be added to the presentation
+        :return:
+        """
         self.presentation_data = import_list
         self.create_visual_widgets()
 
@@ -866,14 +989,15 @@ class SlavePresentation(StackLayout):
         """
         Highlights the next visual, indicating it is the currently active visual
         """
-        self.current_active += 1
         if self.current_active == -1:
             self.current_active += 1
-        self.visuals[self.current_active-1].set_inactive()
+            return -1
+        self.visuals[self.current_active - 1].set_inactive()
         if self.current_active == len(self.visuals):
             self.current_active = -1
         if -1 < self.current_active < len(self.visuals):
             self.visuals[self.current_active].set_active()
+            self.current_active += 1
         return self.current_active
 
     def reset(self):
@@ -924,121 +1048,61 @@ class SlaveVisualProperty(DragBehavior, Button):
         self.background_color = [0.5, 0.5, 0.5, 1]
 
     def on_y(self, *largs):
+        """
+        Keeps the object on the same y coordinate as its parent.
+        :param largs:
+        :return:
+        """
         self.y = self.parent.y
 
     def on_touch_down(self, touch):
+        """
+        Called when you start dragging the object around. Updates that the object is, in fact, being dragged which is
+        used in the method on_x to determine whether updating is necessary.
+        :param touch:
+        :return:
+        """
         super(SlaveVisualProperty, self).on_touch_down(touch)
         self.old_x = self.x
         self.being_moved = True
 
     def __lt__(self, other):
+        """
+        Compares the object's x coordinate with another object's and for some reason returns if the object's x is greater than rather than less than;
+        it just works this way
+        :param other: Another SlaveVisualProperty object
+        :return: boolean whether the object is greater than other.
+        """
         return self.x > other.x
 
     def on_touch_up(self, touch):
+        """
+        Cleans up the list of visuals after you release a dragged presentation element.
+        :param touch:
+        :return:
+        """
         super(SlaveVisualProperty, self).on_touch_up(touch)
         self.being_moved = False
         self.parent.children.sort()
 
-    def do_i_have_to(self):
+    def is_update_required(self):
+        """
+        Determines if the button has been moved far enough that it would require rearrangement.
+        Caller on_x
+        :return: boolean of whether the rearrangement is in order
+        """
         if self.going_forward:
             return self.x-self.old_x > self.width + 5 or abs(self.x-self.old_x) > self.width + 20
         return self.old_x-self.x < self.width + 5 or abs(self.x-self.old_x) > self.width + 20
 
     def on_x(self, *largs):
-        if self.do_i_have_to() and self.being_moved:
+        if self.is_update_required() and self.being_moved:
             self.going_forward = self.x - self.old_x > 0
             self.old_x = self.x
             self.parent.children.sort()
             temp = self.x
             self.x = self.old_x
             self.old_x = temp
-
-
-from Domain.Presentation import Presentation
-
-class DraggablePresentationElement(DragBehavior, Button):
-
-    ELEMENT_WIDTH = 40
-    ELEMENT_HEIGHT = 0
-
-    def __init__(self, pres, parent):
-        super(DraggablePresentationElement, self).__init__()
-        self.text = pres
-        self.pseudoparent = parent
-        self.updating = False
-        self.old_x = self.x
-
-    def on_y(self, *largs):
-        self.y = self.parent.y
-
-    def on_x(self, *largs):
-        pass
-        """
-        if not self.updating and abs(self.x-self.old_x) > self.ELEMENT_WIDTH:
-            self.old_x = self.x
-            self.pseudoparent.update_us(self)
-            self.x = self.old_x
-        """
-
-    def on_touch_up(self, touch):
-        super(DraggablePresentationElement, self).on_touch_up(touch)
-        self.pseudoparent.update_us(self)
-
-    def __lt__(self, other):
-        return self.x > other.x
-
-
-class RobustPresentationEditView(BoxLayout):
-
-    def __init__(self, **kwargs):
-        super(RobustPresentationEditView, self).__init__(**kwargs)
-        self.content = []
-
-    def create_dynamically_editable_presentation_view_that_works_like_kivy(self):
-        pres = Presentation()
-        pres.load()
-        for prescontent in pres.get_presentation_content():
-            temp = DraggablePresentationElement(prescontent, self)
-            self.ids.presentation_elements.add_widget(temp)
-            self.content.append(temp)
-
-    def update_us(self, element=None):
-        self.content.sort()
-        self.ids.presentation_elements.children.sort()
-        """
-        for i in range(len(self.content)):
-            self.content[i].old_x = self.content[i].x
-            if element and element.text == self.content[i].text:
-                continue
-            self.content[i].updating = True
-            #self.content[i].y = DraggablePresentationElement.ELEMENT_HEIGHT
-            self.content[i].x = i*DraggablePresentationElement.ELEMENT_WIDTH+40
-            self.content[i].updating = False
-        """
-
-    def create_presentation(self):
-        presentation = Presentation()
-        for i in range(len(self.content)):
-            presentation.presentation_filenames.append(self.content[i].text)
-        return presentation
-
-
-
-class PresentationCreationLayout(Screen):
-
-
-    def on_pre_enter(self, *args):
-        self.edit_views = []
-        view = RobustPresentationEditView()
-        view.create_dynamically_editable_presentation_view_that_works_like_kivy()
-        self.ids.views.add_widget(view)
-        self.edit_views.append(view)
-
-    def create_a_new_presentation_to_edit(self):
-        view = RobustPresentationEditView()
-        view.create_dynamically_editable_presentation_view_that_works_like_kivy()
-        self.ids.views.add_widget(view)
-        self.edit_views.append(view)
 
 
 class RemuSM(ScreenManager):
@@ -1058,7 +1122,6 @@ class RemuSM(ScreenManager):
         self.slave_screen = None
         self.presentation_screen = None
         self.info_screen = None
-        self.presentation_creation_screen = None
 
     def add_master_layout(self):
         """
@@ -1087,12 +1150,6 @@ class RemuSM(ScreenManager):
             self.info_screen = InfoLayout(name='info_gui_layout')
             self.add_widget(self.info_screen)
         self.current = 'info_gui_layout'
-
-    def add_presentation_creation_layout(self):
-        if self.presentation_creation_screen is None:
-            self.presentation_creation_screen = PresentationCreationLayout(name='presentation_creation_layout')
-            self.add_widget(self.presentation_creation_screen)
-        self.current = 'presentation_creation_layout'
 
     def change_screen_to(self, name):
         """

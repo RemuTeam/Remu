@@ -111,6 +111,11 @@ RemuSM:
                 on_press: root.new_presentation(txt_input.text)
             #    text: "Add Slave"
             #    on_press: root.add_slave_connection(txt_input.text)
+            Button:
+                id: remove_presentations_button
+                text: "Remove presentations"
+                on_release: root.show_remove_presentations_popup()
+
         SlaveOverview:
             id: slave_overview
         BoxLayout:
@@ -282,6 +287,32 @@ RemuSM:
                 text: "No"
                 on_press: root.dismiss()
                 size_hint: 0.3,0.3
+
+#
+#RemovePresentationsPopUp  is a popup that master can open to select presentations for removal
+#
+<RemovePresentationsPopUp>:
+    title: "Select presentations you want removed"
+    BoxLayout:
+        orientation:'vertical'
+        BoxLayout:
+            orientation:'vertical'
+            id: presentation_list
+        BoxLayout:
+            orientation:'horizontal'
+            Button:
+                text: "Confirm"
+                size_hint: 0.1,0.2
+                on_release:root.inform_listener()
+                on_release:root.dismiss()
+            Button:
+                text: "Cancel and go back"
+                size_hint: 0.1,0.2
+                on_press: root.dismiss()
+
+
+
+
 
 #
 # ImportFilesPopUp is a popup for file importing interaction

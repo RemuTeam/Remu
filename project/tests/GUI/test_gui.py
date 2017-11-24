@@ -24,6 +24,7 @@ def test_master_gui_components(simulator):
     simulator.assert_text(get_from_layout("Master", "Button", 1), "Start presentation")
     simulator.assert_text(get_from_layout("Master", "Button", 2), "show next")
     simulator.assert_text(get_from_layout("Master", "Button", 3), "Back")
+    simulator.assert_disabled(get_from_layout("Master", "Button", 1))
 
 @pytest.mark.parametrize("params", [{}])
 @simulate
