@@ -109,13 +109,16 @@ class TestFileSavingDialogPopUp(unittest.TestCase):
     def setUp(self):
         self.temp_dir = os.path.join(os.getcwd(), "test_media_temp")
         self.filename_1 = "b.jpg"
-        self.alleged_new_filename_1 = "b_copy.jpg"
         self.filename_2 = "a.jpg"
-        self.alleged_new_filename_2 = "a_copy_copy.jpg"
+        self.filename_3 = "c"
         self.source = os.path.join(self.temp_dir, self.filename_1)
         self.destination = os.path.join(PathConstants.ABSOLUTE_TEST_MEDIA_FOLDER, self.filename_1)
         self.popup = FileSavingDialogPopUp(self.source, self.destination, [], MasterGUIImpl(),
                                            PathConstants.ABSOLUTE_TEST_MEDIA_FOLDER)
+        ext = self.popup.COPY_EXTENSION
+        self.alleged_new_filename_1 = "b" + ext + ".jpg"
+        self.alleged_new_filename_2 = "a" + ext + ext + ".jpg"
+        self.alleged_new_filename_3 = "c" + ext
 
     def test_copy_filename_is_correct(self):
         self.assertEqual(self.popup.new_filename, self.alleged_new_filename_1)
@@ -127,11 +130,18 @@ class TestFileSavingDialogPopUp(unittest.TestCase):
                                       PathConstants.ABSOLUTE_TEST_MEDIA_FOLDER)
         self.assertEqual(pupop.new_filename, self.alleged_new_filename_2)
 
+    def test_copy_filename_is_correct_3(self):
+        suorce = os.path.join(self.temp_dir, self.filename_3)
+        distenation = os.path.join(PathConstants.ABSOLUTE_TEST_MEDIA_FOLDER, self.filename_3)
+        pupop = FileSavingDialogPopUp(suorce, distenation, [], MasterGUIImpl(),
+                                      PathConstants.ABSOLUTE_TEST_MEDIA_FOLDER)
+        self.assertEqual(pupop.new_filename, self.alleged_new_filename_3)
+
     def test_copy_button_is_enabled_at_first(self):
         self.assertFalse(self.popup.ids.copy_file_button.disabled)
 
     def test_copy_button_disables_if_filename_exists(self):
-        self.popup.on_text(None, "b.jpg")
+        self.popup.on_text(None, self.filename_1)
         self.assertTrue(self.popup.ids.copy_file_button.disabled)
 
     def test_copy_button_disables_if_filename_empty(self):
