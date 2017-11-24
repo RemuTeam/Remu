@@ -108,9 +108,11 @@ class TestImportFilesPopup(unittest.TestCase):
 class TestFileSavingDialogPopUp(unittest.TestCase):
     def setUp(self):
         self.temp_dir = os.path.join(os.getcwd(), "test_media_temp")
+        self.copy_files = ["b.jpg", "test_text2.txt"]
         self.filename_1 = "b.jpg"
         self.filename_2 = "a.jpg"
         self.filename_3 = "c"
+        self.new_filename = "newfile.jpg"
         self.source = os.path.join(self.temp_dir, self.filename_1)
         self.destination = os.path.join(PathConstants.ABSOLUTE_TEST_MEDIA_FOLDER, self.filename_1)
         self.popup = FileSavingDialogPopUp(self.source, self.destination, [], MasterGUIImpl(),
@@ -119,6 +121,21 @@ class TestFileSavingDialogPopUp(unittest.TestCase):
         self.alleged_new_filename_1 = "b" + ext + ".jpg"
         self.alleged_new_filename_2 = "a" + ext + ext + ".jpg"
         self.alleged_new_filename_3 = "c" + ext
+
+    def tearDown(self):
+        self.delete_temp_dir()
+
+    def create_temp_dir(self):
+        self.delete_temp_dir()
+        os.mkdir(self.temp_dir)
+        for filename in self.copy_files:
+            source = os.path.join(PathConstants.ABSOLUTE_TEST_MEDIA_FOLDER, filename)
+            destination = os.path.join(self.temp_dir, filename)
+            copy(source, destination)
+
+    def delete_temp_dir(self):
+        if (os.path.isdir(self.temp_dir)):
+            rmtree(self.temp_dir, True)
 
     def test_copy_filename_is_correct(self):
         self.assertEqual(self.popup.new_filename, self.alleged_new_filename_1)
@@ -153,6 +170,23 @@ class TestFileSavingDialogPopUp(unittest.TestCase):
         self.assertTrue(self.popup.ids.copy_file_button.disabled)
         self.popup.on_text(None, self.alleged_new_filename_1)
         self.assertFalse(self.popup.ids.copy_file_button.disabled)
+
+    def test_replacing_works(self):
+        self.create_temp_dir()
+        pre_timestamp = os.path.getmtime(self.destination)
+        self.popup.replace_file()
+        post_timestamp = os.path.getmtime(self.destination)
+        self.assertTrue(pre_timestamp < post_timestamp)
+
+    def test_create_new_file(self):
+        self.create_temp_dir()
+        self.popup.ids.save_as.text = self.new_filename
+        self.popup.create_new_file()
+        new_file_path = os.path.join(PathConstants.ABSOLUTE_TEST_MEDIA_FOLDER, self.new_filename)
+        new_file_created = os.path.isfile(new_file_path)
+        self.assertTrue(new_file_created)
+        if new_file_created:
+            os.remove(new_file_path)
 
 class MasterGUIImpl():
     def __init__(self):
