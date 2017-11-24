@@ -69,7 +69,7 @@ class EchoClientDatagramProtocol(DatagramProtocol):
         Is called when a datagram is received. If master receives a UDP datagram, it tries to connect to the sender.
         """
         if not self.is_slave:
-            self.udplistener.master.add_slave(host[0]) #shutup
+            self.udplistener.master.add_slave(host[0], datagram.decode('utf-8').split(":")[0]) #shutup
         print('Datagram received: %s' % datagram.decode('utf-8'))
         print(host)
 

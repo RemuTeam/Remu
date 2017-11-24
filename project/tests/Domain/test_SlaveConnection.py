@@ -15,7 +15,7 @@ class SlaveConnectionTest(unittest.TestCase):
 
     def setUp(self):
         self.connection_mock = Mock(RemuTCP)
-        self.sc = SlaveConnection(None, self.connection_mock)
+        self.sc = SlaveConnection(None, None, self.connection_mock)
 
     def test_init_with_connection(self):
         self.assertEqual(self.connection_mock, self.sc.connection)

@@ -808,6 +808,7 @@ class SlavePresentation(StackLayout):
 
     def get_presentation_from_widgets(self):
         self.visuals.sort()
+        self.visuals = self.visuals[::-1]
         presentation_content = []
         for i in range(len(self.children)):
             presentation_content.append(self.children[i].visual_name.split("/")[-1])

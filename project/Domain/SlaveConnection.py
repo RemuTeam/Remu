@@ -12,7 +12,7 @@ class SlaveConnection:
     A class to handle one master-slave connection
     """
 
-    def __init__(self, master, connection=None):
+    def __init__(self, master, slave_name=None, connection=None):
         """
         Constructor.
 
@@ -22,6 +22,7 @@ class SlaveConnection:
         self.set_connection(connection)
         self.presentation = None
         self.full_address = "localhost:8000"
+        self.slave_name = slave_name
         self.connected = self.connection is not None
         self.currently_showing = -1
 
