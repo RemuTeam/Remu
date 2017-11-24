@@ -656,6 +656,7 @@ class FileSavingDialogPopUp(Popup):
         self.media_path = media_path
         self.media_files = [file for file in os.listdir(self.media_path) if
                             os.path.isfile(os.path.join(self.media_path, file))]
+        print(self.media_files)
         self.new_filename = self.__prefilled_new_file_name(destination)
         self.original_destination_filename_only = self.__parse_filename_only(destination)
         self.ids.save_as.bind(text=self.on_text)

@@ -108,14 +108,41 @@ class TestImportFilesPopup(unittest.TestCase):
 class TestFileSavingDialogPopUp(unittest.TestCase):
     def setUp(self):
         self.temp_dir = os.path.join(os.getcwd(), "test_media_temp")
-        self.filename = "b.jpg"
-        self.source = os.path.join(self.temp_dir, self.filename)
-        self.destination = os.path.join(PathConstants.ABSOLUTE_TEST_MEDIA_FOLDER, self.filename)
+        self.filename_1 = "b.jpg"
+        self.alleged_new_filename_1 = "b_copy.jpg"
+        self.filename_2 = "a.jpg"
+        self.alleged_new_filename_2 = "a_copy_copy.jpg"
+        self.source = os.path.join(self.temp_dir, self.filename_1)
+        self.destination = os.path.join(PathConstants.ABSOLUTE_TEST_MEDIA_FOLDER, self.filename_1)
         self.popup = FileSavingDialogPopUp(self.source, self.destination, [], MasterGUIImpl(),
                                            PathConstants.ABSOLUTE_TEST_MEDIA_FOLDER)
 
-    def test_shit(self):
-        self.assertFalse(not True)
+    def test_copy_filename_is_correct(self):
+        self.assertEqual(self.popup.new_filename, self.alleged_new_filename_1)
+
+    def test_copy_filename_is_correct_2(self):
+        suorce = os.path.join(self.temp_dir, self.filename_2)
+        distenation = os.path.join(PathConstants.ABSOLUTE_TEST_MEDIA_FOLDER, self.filename_2)
+        pupop = FileSavingDialogPopUp(suorce, distenation, [], MasterGUIImpl(),
+                                      PathConstants.ABSOLUTE_TEST_MEDIA_FOLDER)
+        self.assertEqual(pupop.new_filename, self.alleged_new_filename_2)
+
+    def test_copy_button_is_enabled_at_first(self):
+        self.assertFalse(self.popup.ids.copy_file_button.disabled)
+
+    def test_copy_button_disables_if_filename_exists(self):
+        self.popup.on_text(None, "b.jpg")
+        self.assertTrue(self.popup.ids.copy_file_button.disabled)
+
+    def test_copy_button_disables_if_filename_empty(self):
+        self.popup.on_text(None, "")
+        self.assertTrue(self.popup.ids.copy_file_button.disabled)
+
+    def test_copy_button_disables_if_save_as_contains_illegal_char(self):
+        self.popup.on_text(None, self.alleged_new_filename_1 + "%")
+        self.assertTrue(self.popup.ids.copy_file_button.disabled)
+        self.popup.on_text(None, self.alleged_new_filename_1)
+        self.assertFalse(self.popup.ids.copy_file_button.disabled)
 
 class MasterGUIImpl():
     def __init__(self):
