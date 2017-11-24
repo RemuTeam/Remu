@@ -133,6 +133,6 @@ class RemuApp(App):
         if self.servicemode:
             self.servicemode.close_all_connections()
 
-    def init_presentation(self):
+    #def init_presentation(self):
         #self.servicemode.set_presentation(Presentation())
-        pass
+    #    pass

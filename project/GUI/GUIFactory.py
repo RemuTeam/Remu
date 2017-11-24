@@ -161,22 +161,45 @@ class MasterGUILayout(Screen, EventDispatcher):
         self.master.send_presentations_to_slaves()
 
     def stop_presentation(self):
-        print("DON'T STOP! PRESENTING! HOLD ON TO THAT FEELING!")
+        """
+        Changes the editor mode into presentation mode. This method should lock the presentation
+        :return:
+        """
+        self.change_visibility_of_multiple_elements([self.ids.show_next, self.ids.stop_pres], True)
+        self.change_visibility_of_multiple_elements([self.ids.start_pres, self.ids.back_button], False)
+        self.master.end_presentation()
+        self.ids.slave_overview.reset_all_presentations()
 
     def change_visibility_of_multiple_elements(self, list, hide):
+        """
+        Uses the hide_widget and show widget to change visibility of multiple elements with a single method call
+        :param list: Widgets that are hidden or shown
+        :param hide: Boolean, true if you want to hide the widget
+        :return: Nothing
+        """
         for element in list:
             if hide:
-                self.hide_button(element)
+                self.hide_widget(element)
             else:
-                self.show_button(element)
+                self.show_widget(element)
 
-    def hide_button(self, widget):
+    def hide_widget(self, widget):
+        """
+        Hides the widget. Duhh.
+        :param widget: Widget to be hidden
+        :return: Nothing
+        """
         widget.opacity = 0
         widget.size_hint_y = 0
         widget.size_hint_x = 0
         widget.width = '0dp'
 
-    def show_button(self, widget):
+    def show_widget(self, widget):
+        """
+        See the method above
+        :param widget: Widget to be shown
+        :return: Nothing
+        """
         widget.opacity = 1
         widget.size_hint_y = 1
         widget.size_hint_x = 1
@@ -224,13 +247,13 @@ class MasterGUILayout(Screen, EventDispatcher):
         """
         self.set_address_to_gui(str(data))
 
-    def enable_start_presentation_button(self, data):
+    def start_presentation_button_disabled(self, is_disabled):
         """
         Enables the start_pres button, enabling starting of the presentation.
         :param data:
         :return:
         """
-        self.presenting_disabled = False
+        self.presenting_disabled = is_disabled
 
     def notify(self, notification, data=None):
         """
@@ -250,7 +273,7 @@ class MasterGUILayout(Screen, EventDispatcher):
                       Notification.CONNECTION_FAILED: update_connection_to_gui,
                       Notification.CONNECTION_ESTABLISHED: update_connection_to_gui,
                       Notification.CONNECTION_TERMINATED: remove_slave_presentation,
-                      Notification.PRESENTING_POSSIBLE: enable_start_presentation_button
+                      Notification.PRESENTING_DISABLED: start_presentation_button_disabled
                       }
 
 
@@ -279,7 +302,6 @@ class SlaveGUILayout(Screen):
             self.slave.set_layout(self)
 
     def init_presentation(self):
-        App.get_running_app().init_presentation()
         self.prepare_for_presentation_mode()
 
     def prepare_for_presentation_mode(self):
@@ -327,6 +349,13 @@ class PresentationLayout(Screen):
         self.slave.set_layout(self)
         self.set_visible_widget(self.start_screen)
         self.slave.reset_presentation()
+
+    def init_presentation(self):
+        """
+        Do not delete! Called when starting presentation if the slave is already in presentation
+        :return: Nothing
+        """
+        pass
 
     def set_presentation_mode(self, presentation_type):
         """
@@ -407,7 +436,7 @@ class PresentationLayout(Screen):
         self.get_root_window().show_cursor = True
         self.slave.reset_presentation()
         self.parent.get_screen('slave_gui_layout').set_info_text("Presentation ended\nCurrently in slave mode")
-        App.get_running_app().root.current = "slave_gui_layout"
+        App.get_running_app().root.change_screen_to("slave_gui_layout")
 
 
 """
@@ -494,6 +523,11 @@ class SlaveOverview(BoxLayout):
         for slave_presentation in self.slave_presentations.values():
             current = min(current, slave_presentation.update_status())
         self.ids.scrollview.scroll_x = current/self.max
+
+    def reset_all_presentations(self):
+        for presentation in self.slave_presentations.values():
+            presentation.reset()
+
 
 class CheckBoxBonanza(BoxLayout):
     """
@@ -825,11 +859,15 @@ class SlavePresentation(StackLayout):
         self.visuals[self.current_active-1].set_inactive()
         if self.current_active == len(self.visuals):
             self.current_active = -1
-        #self.current_active = self.slave.currently_showing
-        if self.current_active is not -1:
+        if -1 < self.current_active < len(self.visuals):
             self.visuals[self.current_active].set_active()
             self.current_active += 1
         return self.current_active
+
+    def reset(self):
+        self.current_active = 0
+        for visual in self.visuals:
+            visual.set_inactive()
 
     def update_status(self):
         """
@@ -1067,6 +1105,9 @@ class RemuSM(ScreenManager):
         self.slave_screen=None
         self.presentation_screen=None
         self.change_screen_to("switch_layout")
+
+    def get_current_layout(self):
+        return self.current_screen
 
 
 class GUIFactory:

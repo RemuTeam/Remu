@@ -54,7 +54,7 @@ class Master:
         slave_to_connect = SlaveConnection(self)
         slave_to_connect.connect_to_IP(slave_address) if not slave_address.startswith("slave") else None
         self.slave_connections[slave_to_connect.full_address] = slave_to_connect
-        print("Hellurei tänne päästiiiiiin!")
+        print("new slave: " +  slave_address)
         #POISTA JOSKUS JOOKO
         self.presentations = [["a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg", "a.jpg", "b.jpg", "test_text.txt"]]
         presentation = self.presentations[(len(self.slave_connections))-1 % 2]
@@ -63,8 +63,10 @@ class Master:
         self.layout.notify(Notification.PRESENTATION_UPDATE, slave_to_connect)
         print("slaves length is:" + str(len(self.slave_connections)) + "presentations length is:" + str(len(self.presentations)))
 
-        if len(self.slave_connections) == len(self.presentations):
-            self.layout.notify(Notification.PRESENTING_POSSIBLE)
+        if len(self.slave_connections) >= len(self.presentations):
+            self.layout.notify(Notification.PRESENTING_DISABLED, False)
+        else:
+            self.layout.notify(Notification.PRESENTING_DISABLED, True)
 
     def add_slave_connection(self, slave_connection):
         """
@@ -145,10 +147,10 @@ class Master:
         self.layout.notify(notification, data)
 
     def send_presentations_to_slaves(self):
-        presentations = [["a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg", "a.jpg", "b.jpg", "test_text.txt"]]
+        self.presentations = [["a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg", "a.jpg", "b.jpg", "test_text.txt"]]
         i = 0
         for slavec in self.slave_connections.values():
-            presentation = presentations[i%2]
+            presentation = self.presentations[i%2]
             i += 1
             slavec.retrieve_presentation_files(8005, '.', presentation)
 

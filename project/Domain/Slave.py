@@ -5,6 +5,7 @@ from Domain.MessageKeys import MessageKeys
 from Domain.PathConstants import PathConstants
 from Networking.RemuUDP import Beacon
 from Networking.RemuFTP import RemuFTPClient
+from kivy.app import App
 import os
 
 
@@ -79,9 +80,13 @@ class Slave:
         """
         Handles the ending of the presentation.
         """
+        app = App.get_running_app()
+
         self.load_presentation()
         self.layout.reset_presentation()
-
+        if app.root is not None: #This is an ugly hack to make the tests work. Don't delete pls. Thank you.
+            self.layout = app.root.get_current_layout()
+        self.presentation_ended = True
         return self.create_response(Command.END_PRESENTATION.value)
 
     def handle_closing_connection(self, msg):
@@ -134,8 +139,10 @@ class Slave:
         port = params[MessageKeys.ftp_port_key]
         subpath = params[MessageKeys.ftp_subpath_key]
         self.presentation.set_files(params[MessageKeys.presentation_content_key])
+        self.presentation.reset()
         self.layout.init_presentation()
         self.retrieve_files_over_ftp(host, port, subpath)
+        self.presentation_ended = False
         return self.create_response(msg.get_command())
 
     def handle_received_presentation(self, msg):

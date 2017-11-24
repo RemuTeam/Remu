@@ -128,7 +128,8 @@ class SlaveConnection:
         Resets the presentation on master's side, called when slave is told to
         reset its presentation
         """
-        self.presentation.reset()
+        self.currently_showing = -1
+
 
     def handle_invalid_command_response(self, data=None):
         """
