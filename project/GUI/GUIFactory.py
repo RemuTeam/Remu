@@ -45,6 +45,10 @@ class SwitchLayout(Screen):
     text = StringProperty('')
 
     def goto_master_mode(self):
+        """
+        Setups the app to be used in the master mode
+        :return: ExceptionAlertPopup if adding master not possible
+        """
         app = App.get_running_app()
         try:
             app.root.add_master_layout()

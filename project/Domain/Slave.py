@@ -42,6 +42,10 @@ class Slave:
         self.presentation.reset()
 
     def notify_file_transfer_completed(self):
+        """
+        Is used when the file transfer is ready to load the presentation
+        :return: Nothing
+        """
         self.presentation.load()
 
     def set_presentation(self, presentation):
@@ -146,9 +150,11 @@ class Slave:
         return self.create_response(msg.get_command())
 
     def handle_received_presentation(self, msg):
-        print("Presentation received")
-        if MessageKeys.presentation_content_key in msg.fields:
-            print("asd")
+        """Deprecated"""
+        pass
+        #print("Presentation received")
+        #if MessageKeys.presentation_content_key in msg.fields:
+        #    print("asd")
 
     # Messagehandler
     """
