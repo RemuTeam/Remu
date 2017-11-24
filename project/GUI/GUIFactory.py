@@ -45,9 +45,12 @@ class SwitchLayout(Screen):
     text = StringProperty('')
 
     def goto_master_mode(self):
+        app = App.get_running_app()
         try:
-            App.get_running_app().root.add_master_layout()
+            app.root.add_master_layout()
         except Exception as ex:
+            app.reset_servicemode()
+            app.root.rm_master_layout()
             ExceptionAlertPopUp("Error going to master mode:", ex).open()
 
 
@@ -200,7 +203,6 @@ class MasterGUILayout(Screen, EventDispatcher):
         """
         Generate the presentation information on the layout on connection to a slave.
         """
-        print("Creating a new slave presentation widget")
         self.ids.slave_overview.update_slave_to_overview(slave_connection)
 
     def remove_slave_presentation(self, data):
@@ -214,7 +216,6 @@ class MasterGUILayout(Screen, EventDispatcher):
         """
         Update the presentation status on the layout
         """
-        print("update_presentation_status called")
         self.ids.slave_overview.update_presentation_state()
 
     def update_connection_to_gui(self, data):
@@ -335,7 +336,6 @@ class PresentationLayout(Screen):
         """
         self.set_visible_widget(presentation_type)
         self.presentation_type = presentation_type
-        print(self.presentation_type)
 
     def set_visible_widget(self, element):
         """
@@ -656,7 +656,6 @@ class FileSavingDialogPopUp(Popup):
         self.media_path = media_path
         self.media_files = [file for file in os.listdir(self.media_path) if
                             os.path.isfile(os.path.join(self.media_path, file))]
-        print(self.media_files)
         self.new_filename = self.__prefilled_new_file_name(destination)
         self.original_destination_filename_only = self.__parse_filename_only(destination)
         self.ids.save_as.bind(text=self.on_text)
@@ -804,7 +803,6 @@ class SlavePresentation(StackLayout):
         Creates the visual widgets for the slave's visuals
         """
         for i in range(0, len(self.presentation_data)):
-            print("we're looping now, I'm yelling timbeer")
             filename = self.presentation_data[i][:100] #[0][:100]
             if len(filename) == 100:
                 filename += "..."
@@ -897,14 +895,11 @@ class SlaveVisualProperty(DragBehavior, Button):
         return self.old_x-self.x < self.width + 5 or abs(self.x-self.old_x) > self.width + 20
 
     def on_x(self, *largs):
-        print (abs(self.x - self.old_x), self.width)
         if self.do_i_have_to() and self.being_moved:
             self.going_forward = self.x - self.old_x > 0
-            print("I should update myself!", self.x - self.old_x, self.width)
             self.old_x = self.x
             self.parent.children.sort()
             temp = self.x
-            print("new position", temp)
             self.x = self.old_x
             self.old_x = temp
 
@@ -953,7 +948,6 @@ class RobustPresentationEditView(BoxLayout):
         pres = Presentation()
         pres.load()
         for prescontent in pres.get_presentation_content():
-            print(prescontent)
             temp = DraggablePresentationElement(prescontent, self)
             self.ids.presentation_elements.add_widget(temp)
             self.content.append(temp)
@@ -971,13 +965,11 @@ class RobustPresentationEditView(BoxLayout):
             self.content[i].x = i*DraggablePresentationElement.ELEMENT_WIDTH+40
             self.content[i].updating = False
         """
-        print("updated!")
 
     def create_presentation(self):
         presentation = Presentation()
         for i in range(len(self.content)):
             presentation.presentation_filenames.append(self.content[i].text)
-        print(presentation.get_presentation_content())
         return presentation
 
 

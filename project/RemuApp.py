@@ -124,9 +124,7 @@ class RemuApp(App):
     def reset_servicemode(self):
         self.end_presentation()
         self.close_connections()
-        print("I've done reset 'em all, self.servicemode was " + str(self.servicemode))
         self.servicemode = None
-        print("and is now " + str(self.servicemode))
 
     def close_connections(self):
         """

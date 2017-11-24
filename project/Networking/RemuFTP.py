@@ -31,7 +31,6 @@ class RemuFTPServer:
                    [AllowAnonymousAccess(), FilePasswordDB("pass.dat")])
         f = FTPFactory(p)
         self.__server = reactor.listenTCP(self.__port, f)
-        print("started ftp server in path", self.get_path(), "listening for port", self.get_port())
 
     def stop(self):
         """
@@ -40,7 +39,6 @@ class RemuFTPServer:
         """
         if self.__server is not None:
             self.__server.stopListening()
-            print("ftp server stopped")
 
     def set_path(self, path):
         """
@@ -153,12 +151,9 @@ class FileBufferingProtocol(Protocol):
         Appends the buffer's content to the file
         and flushes the buffer.
         """
-        print("attempting to write file")
         with open(self.__file, "ab+") as file:
-            print("writing file")
             buffer_content = self.flush_buffer()
             file.write(buffer_content)
-            print("file is written")
 
     def set_buffersize_limit(self, new_buffersize_limit):
         """
