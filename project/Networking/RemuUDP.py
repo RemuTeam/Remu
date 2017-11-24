@@ -30,19 +30,22 @@ class EchoClientDatagramProtocol(DatagramProtocol):
         app = App.get_running_app()
         address = app.localip
 
+        name = app.config.get("name")
         udp_port = app.config.getint('udp port')
         bcast = app.config.get('broadcast address')
         print('broadcast address =', bcast)
 
+        msg = (name + ": connect to me").encode()
+
         if bcast != '<broadcast>':
-            self.transport.write("connect to me".encode(), (bcast, udp_port))
+            self.transport.write(msg, (bcast, udp_port))
 
         else:
             stop = address.rfind('.')
             base = address[:stop]
             bcast = base + ".255"
-            self.transport.write("connect to me".encode(), (bcast, udp_port))
-            self.transport.write("connect to me".encode(), ('<broadcast>', udp_port))
+            self.transport.write(msg, (bcast, udp_port))
+            self.transport.write(msg, ('<broadcast>', udp_port))
         print("message sent")
 
     def startProtocol(self):
@@ -66,7 +69,7 @@ class EchoClientDatagramProtocol(DatagramProtocol):
         Is called when a datagram is received. If master receives a UDP datagram, it tries to connect to the sender.
         """
         if not self.is_slave:
-            self.udplistener.master.add_slave(host[0])
+            self.udplistener.master.add_slave(host[0], datagram.decode('utf-8').split(":")[0]) #shutup
         print('Datagram received: %s' % datagram.decode('utf-8'))
         print(host)
 

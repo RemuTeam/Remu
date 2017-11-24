@@ -16,7 +16,7 @@ class Master:
         :param layout: the layout to be notified on changes
         """
         self.slave_connections = {}
-        self.presentations = {}
+        self.presentations = []
         self.layout = layout
         self.FTPServer = None
         self.UDPListener = None
@@ -44,17 +44,22 @@ class Master:
         self.UDPListener = MasterUDPListener(self)
         self.UDPListener.listen_for_beacons()
 
-    def add_slave(self, slave_address):
+    def add_slave(self, slave_address, slave_name=None):
         """
         Adds a slave connection by creating a new RemuTCP object
         and adding it to the dictionary self.slave_connections
 
         address: an ip-string formatted as "ipa.ddr.es.s:port"
         """
-        slave_to_connect = SlaveConnection(self)
+        slave_to_connect = SlaveConnection(self, slave_name)
         slave_to_connect.connect_to_IP(slave_address) if not slave_address.startswith("slave") else None
         self.slave_connections[slave_to_connect.full_address] = slave_to_connect
-        print("new slave: " + slave_address)
+
+        #POISTA JOSKUS JOOKO sos sos self.presentationiin menee useasti samat presentationit kun useita slaveja lisätään
+        for slave_presentation in self.layout.ids.slave_overview.slave_presentations.values():
+            self.presentations.append(slave_presentation.get_presentation_from_widgets())
+        presentation = self.presentations[0]
+        slave_to_connect.presentation = presentation
 
         self.layout.notify(Notification.PRESENTATION_UPDATE, slave_to_connect)
         print("slaves length is:" + str(len(self.slave_connections)) + "presentations length is:" + str(len(self.presentations)))
@@ -104,6 +109,9 @@ class Master:
         notification:   a Notification enum
         data:           an object
         """
+        if notification == Notification.CONNECTION_ESTABLISHED:
+            #self.layout.ids.slave_overview.slave_buttons['juuh'].on_release = self.slave_connections[data].show_next
+            pass
         return self.messagehandler[notification](self, notification, data)
 
     def update_presentation_status_to_layout(self, notification, data):
@@ -143,10 +151,9 @@ class Master:
         self.layout.notify(notification, data)
 
     def send_presentations_to_slaves(self):
-        #self.presentations = [["a.jpg", "b.jpg", "test_text.txt", "c.jpg", "e.jpg", "a.jpg", "b.jpg", "test_text.txt"]]
         i = 0
         for slavec in self.slave_connections.values():
-            presentation = self.presentations[i%2]
+            presentation = self.presentations[i]
             i += 1
             slavec.retrieve_presentation_files(8005, '.', presentation)
 
@@ -195,4 +202,5 @@ class Master:
                       Notification.PRESENTATION_ENDED: end_presentation,
                       Notification.CONNECTION_FAILED: update_connection,
                       Notification.CONNECTION_ESTABLISHED: update_connection,
-                      Notification.CONNECTION_TERMINATED: remove_slave}
+                      Notification.CONNECTION_TERMINATED: remove_slave
+                      }

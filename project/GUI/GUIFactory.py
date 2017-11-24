@@ -475,14 +475,15 @@ class SlaveOverview(BoxLayout):
     def new_presentation_to_overview(self, name):
         self.slave_buttons[name] = Button(text=name,
                                                    size_hint=(1, 0.2),
-                                                   on_press=lambda a: print("kamehamehaaaaa"))
+                                                   on_press=lambda a: self.slave_presentations[name].get_presentation_from_widgets())
         self.slave_presentations[name] = SlavePresentation([])
         self.ids.slave_names.add_widget(self.slave_buttons[name])
         self.ids.slave_presentations.add_widget(self.slave_presentations[name])
 
     def add_files_to_a_presentation(self, presentation_name, import_list):
         self.slave_presentations[presentation_name].update_presentation_content(import_list)
-        self.max = 5
+        self.max = max(self.max, len(self.slave_presentations[presentation_name].visuals))
+        self.ids.slave_presentations.width = self.max * self.width / 6
         self.update_presentation_widths()
 
     def update_slave_to_overview(self, slave_connection):
@@ -499,7 +500,7 @@ class SlaveOverview(BoxLayout):
                                                                    size_hint=(1, 0.2),
                                                                    on_press=lambda a: slave_connection.show_next())
         self.slave_presentations[slave_connection.full_address] = SlavePresentation(slave_connection.presentation)
-        self.ids.slave_presentations.width = len(slave_connection.presentation)*self.width/5 if len(slave_connection.presentation) > self.ids.slave_presentations.width/150 else self.width
+        self.ids.slave_presentations.width = len(slave_connection.presentation)*self.width/6 if len(slave_connection.presentation) > self.ids.slave_presentations.width/150 else self.width
         self.ids.slave_names.add_widget(self.slave_buttons[slave_connection.full_address])
         self.ids.slave_presentations.add_widget(self.slave_presentations[slave_connection.full_address])
         self.update_presentation_widths()
@@ -847,25 +848,32 @@ class SlavePresentation(StackLayout):
             visual = SlaveVisualProperty(filename)
             self.visuals.append(visual)
             self.add_widget(visual)
-        self.visualize_next()
+        #self.visualize_next()
 
     def update_presentation_content(self, import_list):
         self.presentation_data = import_list
         self.create_visual_widgets()
 
+    def get_presentation_from_widgets(self):
+        self.visuals.sort()
+        self.visuals = self.visuals[::-1]
+        presentation_content = []
+        for i in range(len(self.children)):
+            presentation_content.append(self.children[i].visual_name.split("/")[-1])
+        return presentation_content[::-1]
+
     def visualize_next(self):
         """
         Highlights the next visual, indicating it is the currently active visual
         """
+        self.current_active += 1
         if self.current_active == -1:
             self.current_active += 1
-            return -1
         self.visuals[self.current_active-1].set_inactive()
         if self.current_active == len(self.visuals):
             self.current_active = -1
         if -1 < self.current_active < len(self.visuals):
             self.visuals[self.current_active].set_active()
-            self.current_active += 1
         return self.current_active
 
     def reset(self):
