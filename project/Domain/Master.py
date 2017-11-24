@@ -52,7 +52,7 @@ class Master:
         address: an ip-string formatted as "ipa.ddr.es.s:port"
         """
         slave_to_connect = SlaveConnection(self, slave_name)
-        slave_to_connect.connect_to_IP(slave_address) if not slave_address.startswith("slave") else None
+        slave_to_connect.connect_to_IP(slave_address)
         self.slave_connections[slave_to_connect.full_address] = slave_to_connect
 
         #POISTA JOSKUS JOOKO sos sos self.presentationiin menee useasti samat presentationit kun useita slaveja lisätään
