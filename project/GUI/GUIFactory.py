@@ -214,6 +214,17 @@ class MasterGUILayout(Screen, EventDispatcher):
         """
         MasterBackPopUp().open()
 
+    def show_remove_presentations_popup(self):
+        """
+        Opens the popup that allows master to remove presentations
+        """
+
+        presentation_names = []
+        for key, value in self.ids.slave_overview.slave_presentations.items():
+            presentation_names.append(key)
+
+        RemovePresentationsPopUp(presentation_names,self).open()
+
     def show_open_file_popup(self):
         """
         Opens a Filechooser to load files
@@ -258,6 +269,20 @@ class MasterGUILayout(Screen, EventDispatcher):
         :return:
         """
         self.presenting_disabled = is_disabled
+
+    def notify_remove_presentations(self,selected_presentations):
+        """
+        Remove_presentation popup calls this method to infrom master what presentations were selected to be removed
+        :param selected_presentations:
+        :return:
+        """
+        print(selected_presentations)
+        for name in selected_presentations:
+            self.ids.slave_overview.remove_presentation(name)
+
+
+
+
 
     def notify(self, notification, data=None):
         """
@@ -505,6 +530,8 @@ class SlaveOverview(BoxLayout):
         self.ids.slave_presentations.add_widget(self.slave_presentations[slave_connection.full_address])
         self.update_presentation_widths()
 
+
+
     def update_presentation_widths(self):
         for sp in self.slave_presentations.values():
             for budons in sp.children:
@@ -533,6 +560,17 @@ class SlaveOverview(BoxLayout):
         for presentation in self.slave_presentations.values():
             presentation.reset()
 
+    def remove_presentation(self,name):
+        """
+        masterlayout calls this method for all presentations that are to be removed from master_layout
+        :param name:
+        :return:
+        """
+        self.ids.slave_presentations.remove_widget(self.slave_presentations[name])
+        self.ids.slave_names.remove_widget(self.slave_buttons[name])
+        del self.slave_buttons[name]
+        del self.slave_presentations[name]
+
 
 class CheckBoxBonanza(BoxLayout):
     """
@@ -553,6 +591,47 @@ class CheckBoxBonanza(BoxLayout):
         self.presentation_name = presentation_name
         self.size_hint_y = size_hint_y
         self.ids.checker.bind(active=callback)
+
+class RemovePresentationsPopUp(Popup, EventDispatcher):
+    """
+    A kivy popup that allows the user to remove made presentations in master mode
+    """
+
+    def __init__(self, presentations, listener):
+
+        super(RemovePresentationsPopUp,self).__init__()
+        self.populate_presentation_list(presentations)
+        self.selected_presentations=[]
+        self.listener=listener
+
+    def populate_presentation_list(self, presentations):
+        """
+        adds the checkboslist and corresponding presentation list to RemovePresentationPopUp
+        :param presentations:
+        :return:
+        """
+        presentation_list = self.ids.presentation_list
+        for p in presentations:
+            presentation_list.add_widget(CheckBoxBonanza(p, 0.05, self.on_checkbox_active))
+
+    def on_checkbox_active(self, checkbox, value):
+        """
+        checks if the presentation's box has been checked or not
+        :param checkbox:
+        :param value:
+        :return:
+        """
+        if value:
+            self.selected_presentations.append(checkbox.label)
+        else:
+            self.selected_presentations.remove(checkbox.label)
+
+    def inform_listener(self):
+        """
+        informs master_layout of the selected presentations that are to be removed
+        :return:
+        """
+        self.listener.notify_remove_presentations(self.selected_presentations)
 
 
 class ImportFilesPopUp(Popup, EventDispatcher):
