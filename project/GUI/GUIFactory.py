@@ -150,16 +150,35 @@ class MasterGUILayout(Screen, EventDispatcher):
         self.label_text = address
 
     def add_slave_connection(self, address):
+        """
+        Adds a new slave
+        :param address:
+        :return:
+        """
         self.master.add_slave(address)
 
     def new_presentation(self, name):
+        """
+        Creates a new presentation into the master's gui
+        :param name: Name of the presentation to be created
+        :return: Nothing
+        """
         self.ids.slave_overview.new_presentation_to_overview(name)
         self.ids.txt_input.text = ""
 
     def send_message_to_slave(self):
+        """
+        Requests the next visual element from all slaves
+        :return: Nothing
+        """
         self.master.request_next()
 
     def start_presentation(self):
+        """
+        Changes the master's editor mode to the presentation mode. It hides the editor mode buttons and shows the
+        presentation mode buttons, and sends the presentations the user has made to the slaves
+        :return: Nothing
+        """
         self.change_visibility_of_multiple_elements([self.ids.start_pres, self.ids.back_button], True)
         self.change_visibility_of_multiple_elements([self.ids.show_next, self.ids.stop_pres], False)
         self.master.send_presentations_to_slaves()
