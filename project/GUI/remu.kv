@@ -82,7 +82,7 @@ RemuSM:
             Button:
                 id: start_pres
                 disabled: root.presenting_disabled
-                text: "Start presentation"
+                text: "Start\npresentation"
                 on_press: root.start_presentation()
             Button:
                 id: show_next
@@ -106,14 +106,14 @@ RemuSM:
                 hint_text: "Presentation Name"
             Button:
                 id: new_presentation_button
-                text: "New Presentation"
+                text: "New\nPresentation"
                 disabled: True
                 on_press: root.new_presentation(txt_input.text)
             #    text: "Add Slave"
             #    on_press: root.add_slave_connection(txt_input.text)
             Button:
                 id: remove_presentations_button
-                text: "Remove presentations"
+                text: "Remove\npresentations"
                 on_release: root.show_remove_presentations_popup()
 
         SlaveOverview:
@@ -311,7 +311,24 @@ RemuSM:
                 on_press: root.dismiss()
 
 
-
+<BindPresentationToSlavePopUp>:
+    title: "Select a slave for the presentation"
+    BoxLayout:
+        orientation:'vertical'
+        BoxLayout:
+            orientation:'vertical'
+            id: slave_connection_list
+        BoxLayout:
+            orientation:'horizontal'
+            Button:
+                text: "Confirm"
+                size_hint: 0.1, 0.2
+                on_release:root.confirm()
+                on_release:root.dismiss()
+            Button:
+                text: "Cancel and go back"
+                size_hint: 0.1, 0.2
+                on_press: root.dismiss()
 
 
 #

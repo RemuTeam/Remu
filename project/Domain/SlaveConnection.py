@@ -20,7 +20,7 @@ class SlaveConnection:
         """
         self.master = master
         self.set_connection(connection)
-        self.presentation = None
+        self.presentation = []
         self.full_address = "localhost:8000"
         self.slave_name = slave_name
         self.connected = self.connection is not None

@@ -53,21 +53,23 @@ class Master:
         """
         slave_to_connect = SlaveConnection(self, slave_name)
         slave_to_connect.connect_to_IP(slave_address)
-        self.slave_connections[slave_to_connect.full_address] = slave_to_connect
+        self.slave_connections[slave_name] = slave_to_connect
 
-        #POISTA JOSKUS JOOKO sos sos self.presentationiin menee useasti samat presentationit kun useita slaveja lisätään
-        for slave_presentation in self.layout.ids.slave_overview.slave_presentations.values():
-            self.presentations.append(slave_presentation.get_presentation_from_widgets())
-        presentation = self.presentations[0]
-        slave_to_connect.presentation = presentation
+        #self.layout.notify(Notification.PRESENTATION_UPDATE, slave_to_connect)
+        print("slaves length is: " + str(len(self.slave_connections)) + ", presentations length is: " + str(len(self.presentations)))
 
-        self.layout.notify(Notification.PRESENTATION_UPDATE, slave_to_connect)
-        print("slaves length is:" + str(len(self.slave_connections)) + "presentations length is:" + str(len(self.presentations)))
-
-        if len(self.slave_connections) >= len(self.presentations):
+        if len(self.slave_connections) >= len(self.presentations) or True:
             self.layout.notify(Notification.PRESENTING_DISABLED, False)
         else:
             self.layout.notify(Notification.PRESENTING_DISABLED, True)
+
+    def bind_slave_to_presentation(self, presentation, slaveconnection_to_bind):
+
+        self.slave_connections[slaveconnection_to_bind].presentation = presentation
+        #for slave_presentation in self.layout.ids.slave_overview.slave_presentations.values():
+        #    self.presentations.append(slave_presentation.get_presentation_from_widgets())
+        #presentation = self.presentations[0]
+        #slave_to_bind.presentation = presentation
 
     def add_slave_connection(self, slave_connection):
         """
@@ -153,9 +155,9 @@ class Master:
     def send_presentations_to_slaves(self):
         i = 0
         for slavec in self.slave_connections.values():
-            presentation = self.presentations[i]
+            #presentation = self.presentations[i]
             i += 1
-            slavec.retrieve_presentation_files(8005, '.', presentation)
+            slavec.retrieve_presentation_files(8005, '.', slavec.presentation)
 
     def end_presentation(self):
         """

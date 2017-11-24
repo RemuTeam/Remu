@@ -500,6 +500,49 @@ class MasterBackPopUp(Popup):
 class SlaveBackPopUp(Popup):
     pass
 
+
+class BindPresentationToSlavePopUp(Popup, EventDispatcher):
+    """
+    A kivy popup that allows the user to remove made presentations in master mode
+    """
+
+    def __init__(self, available_slaves, presentation, listener, button):
+        super(BindPresentationToSlavePopUp, self).__init__()
+        self.populate_presentation_list(available_slaves)
+        self.presentation = presentation
+        self.listener=listener
+        self.selected_slave = None
+        self.button = button
+
+    def populate_presentation_list(self, available_slaves):
+        """
+        adds the checkboslist and corresponding presentation list to RemovePresentationPopUp
+        :param available_slaves:
+        :return:
+        """
+        slave_list = self.ids.slave_connection_list
+        for p in available_slaves:
+            cbb = CheckBoxBonanza(p, 0.05, self.on_checkbox_active)
+            cbb.ids.checker.group = "check yo self before you wreck yo self"
+            slave_list.add_widget(cbb)
+
+    def on_checkbox_active(self, checkbox, value):
+        """
+        checks if the presentation's box has been checked or not
+        :param checkbox:
+        :param value:
+        :return:
+        """
+        if value:
+            self.selected_slave = checkbox.label
+
+    def confirm(self):
+        if self.selected_slave:
+            self.listener.bind_slave_to_presentation(self.presentation, self.selected_slave)
+            self.button.text = self.button.text.split("\n")[0] + "\n" + self.selected_slave
+
+
+
 from kivy.effects.scroll import ScrollEffect
 
 class SlaveOverview(BoxLayout):
@@ -522,10 +565,15 @@ class SlaveOverview(BoxLayout):
         :param name:
         :return:
         """
+        master = App.get_running_app().servicemode
+        new_presentation = SlavePresentation([])
+        #button = Button(text=name, size_hint=(1, 0.2))
+        #lf = lambda a: BindPresentationToSlavePopUp(master.slave_connections.keys(), new_presentation.get_presentation_from_widgets(), master, button).open()
+        #button.on_press = lf
         self.slave_buttons[name] = Button(text=name,
                                                    size_hint=(1, 0.2),
-                                                   on_press=lambda a: self.slave_presentations[name].get_presentation_from_widgets())
-        self.slave_presentations[name] = SlavePresentation([])
+                                                   on_press=lambda a: BindPresentationToSlavePopUp(master.slave_connections.keys(), new_presentation.get_presentation_from_widgets(), master, a).open())
+        self.slave_presentations[name] = new_presentation
         self.ids.slave_names.add_widget(self.slave_buttons[name])
         self.ids.slave_presentations.add_widget(self.slave_presentations[name])
 
@@ -974,6 +1022,7 @@ class SlavePresentation(StackLayout):
         :param import_list: list of presentation elements' filenames to be added to the presentation
         :return:
         """
+        self.current_active = -1
         self.presentation_data = import_list
         self.create_visual_widgets()
 
