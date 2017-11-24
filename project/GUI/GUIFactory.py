@@ -1072,6 +1072,8 @@ class RemuSM(ScreenManager):
         """
         self.remove_widget(self.slave_screen)
         self.remove_widget(self.presentation_screen)
+        self.slave_screen=None
+        self.presentation_screen=None
         self.change_screen_to("switch_layout")
 
 
