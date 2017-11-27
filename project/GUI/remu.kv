@@ -116,8 +116,8 @@ RemuSM:
                 text: "Remove\npresentations"
                 on_release: root.show_remove_presentations_popup()
 
-        SlaveOverview:
-            id: slave_overview
+        ProjectOverview:
+            id: project_overview
         BoxLayout:
             id: bottom_panel
             orientation: 'horizontal'
@@ -175,10 +175,10 @@ RemuSM:
             source: root.video_source
 
 #
-# SlaveOverview is within the master's GUI, and contains the information about the slaves. It is divided into two parts,
+# ProjectOverview is within the master's GUI, and contains the information about the slaves. It is divided into two parts,
 # slave_names and slave_presentations, which show the names and presentations of the slaves respectively
 #
-<SlaveOverview>
+<ProjectOverview>
     #do_scroll_x: False
     size_hint: 1, 0.8
     StackLayout:
