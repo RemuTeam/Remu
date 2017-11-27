@@ -24,3 +24,4 @@ class Notification(IntEnum):
     PRESENTATION_UPDATE = 1         # to inform about updated presentation
     PRESENTATION_STATUS_CHANGE = 2  # to inform about a presentation's status change
     PRESENTATION_ENDED = 3          # to inform about the presentations ending
+    PRESENTING_DISABLED = 4        # to inform that presenting is not allowed

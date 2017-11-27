@@ -12,7 +12,7 @@ class SlaveConnection:
     A class to handle one master-slave connection
     """
 
-    def __init__(self, master, connection=None):
+    def __init__(self, master, slave_name=None, connection=None):
         """
         Constructor.
 
@@ -20,8 +20,9 @@ class SlaveConnection:
         """
         self.master = master
         self.set_connection(connection)
-        self.presentation = None
+        self.presentation = []
         self.full_address = "localhost:8000"
+        self.slave_name = slave_name
         self.connected = self.connection is not None
         self.currently_showing = -1
 
@@ -52,12 +53,13 @@ class SlaveConnection:
         """
         Private function for sending commands
         """
-        msg = Message()
-        print(params)
-        msg.set_field(MessageKeys.type_key, "command")
-        msg.set_field(MessageKeys.command_key, command)
-        msg.set_field(MessageKeys.params_key, params)
-        self.connection.send_message(msg)
+        if self.connection:
+            msg = Message()
+            print(params)
+            msg.set_field(MessageKeys.type_key, "command")
+            msg.set_field(MessageKeys.command_key, command)
+            msg.set_field(MessageKeys.params_key, params)
+            self.connection.send_message(msg)
 
     def request_presentation(self):
         """
@@ -76,7 +78,7 @@ class SlaveConnection:
         Ask slave to reset the presentation and closes the connection to it.
         """
         self.__send_command(Command.DROP_CONNECTION.value)
-        self.connection.end_connection()
+        self.connection.end_connection() if self.connection else None
         self.master.notify(Notification.CONNECTION_TERMINATED, self)
 
     def set_presentation(self, presentation):
@@ -127,7 +129,8 @@ class SlaveConnection:
         Resets the presentation on master's side, called when slave is told to
         reset its presentation
         """
-        self.presentation.reset()
+        self.currently_showing = -1
+
 
     def handle_invalid_command_response(self, data=None):
         """

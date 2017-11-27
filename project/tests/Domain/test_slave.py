@@ -91,7 +91,7 @@ class SlaveTest(unittest.TestCase):
 
     def test_handling_ending_presentation(self):
         slave = Slave()
-        slave.presentation.set_files(["ime", "munaa"])
+        slave.presentation.set_files(["suck", "on", "this"])
         msg = Message()
         slave.layout = Mock(PresentationLayout)
         with patch.object(slave.layout, "reset_presentation") as mock:
