@@ -887,9 +887,9 @@ class FileSavingDialogPopUp(Popup):
         copy_file_btn = self.ids.copy_file_button
         if not filename or filename in self.media_files \
                 or self.__contains_reserved_chars(filename):
-            copy_file_btn.disabled = not False
+            copy_file_btn.disabled = True
         else:
-            copy_file_btn.disabled = not True
+            copy_file_btn.disabled = False
 
     def __contains_reserved_chars(self, filename):
         """
