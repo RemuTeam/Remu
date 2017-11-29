@@ -2,9 +2,9 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.app import App
 from kivy.effects.scroll import ScrollEffect
-from GUI.GUIFactory import SlavePresentation
+from GUI.MasterGUI.SlavePresentation import SlavePresentation
 from Domain.Presentation import Presentation
-from GUI.PopUps import BindPresentationToSlavePopUp
+from GUI.PopUps.BindPresentationToSlavePopUp import BindPresentationToSlavePopUp
 
 class ProjectOverview(BoxLayout):
     """

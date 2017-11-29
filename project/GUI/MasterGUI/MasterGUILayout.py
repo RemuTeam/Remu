@@ -6,9 +6,10 @@ from kivy.uix.screenmanager import Screen
 
 from Domain.Command import Notification
 from Domain.PathConstants import PathConstants
-from GUI.PopUps import *
-from GUI.GUIFactory import GUIFactory
 
+from GUI.PopUps.RemovePresentationsPopUp import RemovePresentationsPopUp
+from GUI.PopUps.PopUps import MasterBackPopUp
+from GUI.PopUps.ImportFilesPopUp import ImportFilesPopUp
 
 class MasterGUILayout(Screen, EventDispatcher):
     """
@@ -261,4 +262,3 @@ class MasterGUILayout(Screen, EventDispatcher):
                       Notification.CONNECTION_TERMINATED: remove_slave_presentation,
                       Notification.PRESENTING_DISABLED: start_presentation_button_disabled
                       }
-

@@ -16,7 +16,7 @@ class PresentationTest(unittest.TestCase):
 
     def test_init_works_as_inteded(self):
         self.assertEqual(self.presentation.get_presentation_content(), [])
-        self.assertIsNone(self.presentation.presentation_elements)
+        self.assertEqual(self.presentation.presentation_elements, [])
         self.assertEqual(-1, self.presentation.index)
         self.assertEqual(self.presentation.media_path, PathConstants.MEDIA_FOLDER)
 

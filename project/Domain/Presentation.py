@@ -20,10 +20,20 @@ class Presentation:
         """
         Construct the presentation
         """
-        self.presentation_elements = None
+        self.presentation_elements = []
         self.presentation_filenames = []
         self.index = -1
         self.media_path = PathConstants.MEDIA_FOLDER
+
+    def __len__(self):
+        """
+        This function is called when len(presentation) is called.
+        The length of a presentation is equal to the length of
+        its presentation_filenames list.
+        :return: a non-negative integer, the number of files
+                 in the presentation
+        """
+        return len(self.presentation_filenames)
 
     def set_source_folder(self, path):
         """

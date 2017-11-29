@@ -1,7 +1,6 @@
 import unittest
-from GUI.GUIFactory import ImportFilesPopUp
-from GUI.GUIFactory import FileSavingDialogPopUp
-from kivy.properties import ListProperty
+from GUI.PopUps.ImportFilesPopUp import ImportFilesPopUp
+from GUI.PopUps.FileSavingDialogPopUp import FileSavingDialogPopUp
 from Domain.PathConstants import PathConstants
 from Domain.TestReturnValue import TestReturnValue
 import os
