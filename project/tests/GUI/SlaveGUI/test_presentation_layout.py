@@ -1,6 +1,7 @@
 import unittest
 from GUI.SlaveGUI.PresentationLayout import PresentationLayout
 from Domain.PresentationElement import PresentationElement
+from Domain.Slave import Slave
 from Constants.ContentType import ContentType
 from kivy.app import App
 import os
@@ -10,6 +11,9 @@ from Constants.PathConstants import PathConstants
 class TestPresentationLayout(unittest.TestCase):
     def setUp(self):
         self.layout = PresentationLayout()
+        slave = Slave(self.layout)
+        App.get_running_app().servicemode = slave
+        App.get_running_app().isMaster = False
         self.image_source = "source.jpg"
         self.text_source = os.path.join(PathConstants.ABSOLUTE_TEST_MEDIA_FOLDER, "test_text.txt")
         self.video_source = "video_source.mp4"

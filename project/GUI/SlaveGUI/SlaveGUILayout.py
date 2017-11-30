@@ -23,6 +23,11 @@ class SlaveGUILayout(Screen):
         self.slave = None
 
     def on_pre_enter(self, *args):
+        """
+        This function is called when the transition to this
+        :param args:
+        :return:
+        """
         if self.slave is None:
             self.slave = App.get_running_app().get_slave(self)
             self.slave.set_layout(self)
