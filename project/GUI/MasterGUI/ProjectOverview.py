@@ -47,7 +47,7 @@ class ProjectOverview(BoxLayout):
         """
         self.slave_presentations[presentation_name].update_presentation_content(import_list)
         self.max = max(self.max, len(self.slave_presentations[presentation_name].visuals))
-        self.ids.slave_presentations.width = self.max * self.width / 6
+        self.ids.slave_presentations.width = self.width/6*self.max
         self.update_presentation_widths()
 
     def update_slave_to_overview(self, slave_connection):
