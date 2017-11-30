@@ -123,6 +123,7 @@ class MasterGUILayout(Screen, EventDispatcher):
         """
         self.change_visibility_of_multiple_elements([self.ids.start_pres, self.ids.back_button], True)
         self.change_visibility_of_multiple_elements([self.ids.show_next, self.ids.stop_pres], False)
+        self.ids.project_overview.disable_rearrangement_of_buttons()
         self.master.send_presentations_to_slaves()
 
     def stop_presentation(self):

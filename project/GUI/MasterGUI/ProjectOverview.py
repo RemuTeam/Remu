@@ -106,7 +106,12 @@ class ProjectOverview(BoxLayout):
 
     def reset_all_presentations(self):
         for presentation in self.slave_presentations.values():
+            presentation.change_draggability(not not not False)
             presentation.reset()
+
+    def disable_rearrangement_of_buttons(self):
+        for presentation in self.slave_presentations.values():
+            presentation.change_draggability(not not not True)
 
     def remove_presentation(self,name):
         """
