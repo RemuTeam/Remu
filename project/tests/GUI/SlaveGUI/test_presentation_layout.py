@@ -1,10 +1,11 @@
 import unittest
 from GUI.SlaveGUI.PresentationLayout import PresentationLayout
 from Domain.PresentationElement import PresentationElement
-from Domain.ContentType import ContentType
+from Constants.ContentType import ContentType
 from kivy.app import App
 import os
-from Domain.PathConstants import PathConstants
+from Constants.PathConstants import PathConstants
+
 
 class TestPresentationLayout(unittest.TestCase):
     def setUp(self):
@@ -32,19 +33,20 @@ class TestPresentationLayout(unittest.TestCase):
         self.assertEqual(self.layout.ids.video.opacity, 0)
         self.assertEqual(self.layout.ids.picture.opacity, 0)
 
-    def test_set_visible_widget_image(s):
-        s.layout.set_visible_widget(s.image_element)
-        s.assertEqual(s.layout.image_source, s.image_source)
-        s.assertEqual(s.layout.ids.picture.opacity, 1)
+    def test_set_visible_widget_image(self):
+        self.layout.set_visible_widget(self.image_element)
+        self.assertEqual(self.layout.image_source, self.image_source)
+        self.assertEqual(self.layout.ids.picture.opacity, 1)
 
-    def test_set_visible_widget_video(s):
-        s.assertNotEqual(s.layout.ids.video.state, 'play')
-        s.layout.set_visible_widget(s.video_element)
-        s.assertEqual(s.layout.video_source, s.video_source)
-        s.assertEqual(s.layout.ids.video.opacity, 1)
-        s.assertEqual(s.layout.ids.video.state, 'play')
+    def test_set_visible_widget_video(self):
+        self.assertNotEqual(self.layout.ids.video.state, 'play')
+        self.layout.set_visible_widget(self.video_element)
+        self.assertEqual(self.layout.video_source, self.video_source)
+        self.assertEqual(self.layout.ids.video.opacity, 1)
+        self.assertEqual(self.layout.ids.video.state, 'play')
 
-    def test_set_visible_widget_text(s):
-        s.layout.set_visible_widget(s.text_element)
-        s.assertEqual(s.layout.text_element, s.text_element.get_content())
-        s.assertEqual(s.layout.ids.text_field.opacity, 1)
+    def test_set_visible_widget_text(self):
+        self.layout.set_visible_widget(self.text_element)
+        self.assertEqual(self.layout.text_element, self.text_element.get_content())
+        self.assertEqual(self.layout.ids.text_field.opacity, 1)
+
