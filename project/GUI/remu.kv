@@ -87,7 +87,7 @@ RemuSM:
             Button:
                 id: show_next
                 text: "show next"
-                on_press: root.send_message_to_slave()
+                on_press: root.request_next_element_from_all_slaves()
             Button:
                 id: back_button
                 text: "Back"
@@ -108,7 +108,7 @@ RemuSM:
                 id: new_presentation_button
                 text: "New\npresentation"
                 disabled: True
-                on_press: root.new_presentation(txt_input.text)
+                on_press: root.create_new_presentation(txt_input.text)
             #    text: "Add Slave"
             #    on_press: root.add_slave_connection(txt_input.text)
             Button:

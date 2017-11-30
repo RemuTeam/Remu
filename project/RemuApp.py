@@ -27,7 +27,11 @@ class RemuApp(App):
         self.isMaster = False
         self.slaves = None
         self.servicemode = None
-        self.localip = IP.get_local_ip_address()
+        try:
+            self.localip = IP.get_local_ip_address()
+            self.connected = True
+        except Exception as ex:
+            self.connected = False
         print("R.I.P GUIFactory 2017-2017")
 
     def build_config(self, config):
