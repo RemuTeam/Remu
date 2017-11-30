@@ -83,6 +83,10 @@ class SlavePresentation(StackLayout):
     def get_presentation_size(self):
         return len(self.presentation_data)
 
+    def change_draggability(self, draggable):
+        for visual in self.visuals:
+            visual.do_things(draggable)
+
 
 class SlaveVisualProperty(DragBehavior, Button):
     """
@@ -99,6 +103,12 @@ class SlaveVisualProperty(DragBehavior, Button):
         self.old_x = self.x
         self.being_moved = False
         self.going_forward = True
+
+    def do_things(self, draggable):
+        if draggable:
+            self.drag_distance = 0
+        else:
+            self.drag_distance = 6666666666666666
 
     def on_press(self):
         print("Showing visual property information not yet implemented!")

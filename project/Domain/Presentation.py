@@ -12,7 +12,7 @@ class Presentation:
     is responsible for loading the content from the media folder, and acts as a mediator when the application asks for
     a presentation element to show in the GUI.
     """
-    IMAGE_FORMATS = ["jpg"]
+    IMAGE_FORMATS = ["jpg", "png"]
     VIDEO_FORMATS = ["mp4"]
     TEXT_FORMATS = ["txt"]
 
