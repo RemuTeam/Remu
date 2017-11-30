@@ -9,6 +9,7 @@ from Domain.Message import Message
 from Domain.Presentation import Presentation
 from Networking.RemuFTP import RemuFTPClient
 from Networking.RemuUDP import Beacon
+from kivy.logger import Logger
 
 
 class Slave:
@@ -70,7 +71,7 @@ class Slave:
             if current is not None:
                 self.layout.set_visible_widget(current)
             else:
-                print("haloo")
+                Logger.debug("Slave: Presentation ended")
                 self.presentation_ended = True
                 self.layout.reset_presentation()
 
@@ -140,7 +141,7 @@ class Slave:
         :param msg: a Message object
         :return: a response to the received message
         """
-        print("file retrieval")
+        Logger.info("Slave: Retrieving files")
         params = msg.get_field(MessageKeys.params_key)
         host = msg.get_field(MessageKeys.sender_key)
         port = params[MessageKeys.ftp_port_key]
@@ -169,16 +170,16 @@ class Slave:
                       Command.INVALID_COMMAND.value: handle_invalid_command,
                       Command.DROP_CONNECTION.value: handle_closing_connection,
                       Command.RETRIEVE_FILES.value: handle_file_retrieval,
-                      Command.SEND_PRESENTATION.value: handle_received_presentation
+                      #Command.SEND_PRESENTATION.value: handle_received_presentation
                       }
 
     def handle_message(self, msg):
         """
         Handles the responses to master's requests
         """
-        print("trying to parse")
+        Logger.debug("Slave: Trying to parse")
         if MessageKeys.command_key in msg.fields:
-            print(str(msg.get_command()))
+            Logger.info("Slave: Message command: %s", str(msg.get_command()))
             return self.messagehandler[msg.get_command()](self, msg)
         return self.handle_invalid_command(msg)
 

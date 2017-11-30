@@ -4,6 +4,7 @@ from Constants.Command import Notification
 from Domain.SlaveConnection import SlaveConnection
 from Networking.RemuFTP import RemuFTPServer
 from Networking.RemuUDP import MasterUDPListener
+from kivy.logger import Logger
 
 
 class Master:
@@ -42,7 +43,7 @@ class Master:
         """
         config = App.get_running_app().config
         udp_port = config.getint('udp port')
-        print(udp_port)
+        Logger.info("UDP port: %s", udp_port)
         self.UDPListener = MasterUDPListener(self)
         self.UDPListener.listen_for_beacons()
 
@@ -58,7 +59,8 @@ class Master:
         self.slave_connections[slave_name] = slave_to_connect
 
         #self.layout.notify(Notification.PRESENTATION_UPDATE, slave_to_connect)
-        print("slaves length is: " + str(len(self.slave_connections)) + ", presentations length is: " + str(len(self.presentations)))
+        Logger.debug("Master: Slave length: %s", str(len(self.slave_connections)))
+        Logger.debug("Master: Presentation length: %s", str(len(self.presentations)))
 
         if len(self.slave_connections) >= len(self.presentations) or True:
             self.layout.notify(Notification.PRESENTING_DISABLED, False)
@@ -136,11 +138,7 @@ class Master:
         """
         self.layout.notify(notification, full_address)
         if notification == Notification.CONNECTION_ESTABLISHED:
-            print("Connection established")
-            # print("now asking for the presentation")
-            # self.slave_connections[full_address].request_presentation()
-            #print("informing slave to retrieve media")
-            #self.slave_connections[full_address].retrieve_presentation_files(8005, '.')
+            Logger.info("Master: Connection established: %s", full_address)
 
 
         if notification == Notification.CONNECTION_FAILED:
