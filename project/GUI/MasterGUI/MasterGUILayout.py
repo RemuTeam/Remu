@@ -19,7 +19,6 @@ class MasterGUILayout(Screen, EventDispatcher):
     Inherits kivy.uix.screenmanager.Screen
     """
 
-    label_text = StringProperty('')
     presenting_disabled = BooleanProperty(True)
     debug_text = StringProperty('Use this text space for debug')
 

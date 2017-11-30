@@ -106,7 +106,7 @@ RemuSM:
                 hint_text: "Presentation Name"
             Button:
                 id: new_presentation_button
-                text: "New\nPresentation"
+                text: "New\npresentation"
                 disabled: True
                 on_press: root.new_presentation(txt_input.text)
             #    text: "Add Slave"
@@ -115,19 +115,24 @@ RemuSM:
                 id: remove_presentations_button
                 text: "Remove\npresentations"
                 on_release: root.show_remove_presentations_popup()
-
         ProjectOverview:
             id: project_overview
-        BoxLayout:
+        BottomPanel:
             id: bottom_panel
-            orientation: 'horizontal'
-            size_hint: 1, 0.1
-            Label:
-                id: information_text
-                halign: 'left'
-                text: root.debug_text
-            Label:
-                text: root.label_text
+
+<BottomPanel@BoxLayout>:
+    orientation: 'horizontal'
+    size_hint: 1, 0.1
+    Button:
+        id: save_project
+        disabled: True
+        text: "Save project"
+        on_press: print("Juuh")
+    Button:
+        id: open_project
+        text: "Open project"
+        on_press: print("Juuh")
+
 
 #
 # SlaveGUILayout contains the waiting view for slave mode. When the presentation starts, slave device changes to
