@@ -1,15 +1,15 @@
+from Constants.PathConstants import PathConstants
 from kivy.app import App
 from kivy.event import EventDispatcher
 from kivy.properties import ListProperty, NumericProperty
 from kivy.properties import StringProperty, BooleanProperty
 from kivy.uix.screenmanager import Screen
 
-from Domain.Command import Notification
-from Domain.PathConstants import PathConstants
-
-from GUI.PopUps.RemovePresentationsPopUp import RemovePresentationsPopUp
-from GUI.PopUps.PopUps import MasterBackPopUp
+from Constants.Command import Notification
 from GUI.PopUps.ImportFilesPopUp import ImportFilesPopUp
+from GUI.PopUps.PopUps import MasterBackPopUp
+from GUI.PopUps.RemovePresentationsPopUp import RemovePresentationsPopUp
+
 
 class MasterGUILayout(Screen, EventDispatcher):
     """

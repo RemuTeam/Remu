@@ -236,18 +236,19 @@ RemuSM:
 
 <InfoLayout>:
     id:info_gui_layout
-    BoxLayout:
-        orientation:'vertical'
-        Label:
-            padding_left: 5
-            text:root.text
-            valign: 'middle'
+    StackLayout:
+        orientation: 'tb-lr'
+        StackLayout:
+            size_hint: 1, 0.9
+            Label:
+                padding_left: 5
+                text: root.text
+                valign: 'middle'
         Button:
+            size_hint_y: 0.1
+            size_hint_x: 0.1
             text: "Back"
-            size_hint: 0.1,0.1
             on_press: app.root.change_screen_to("switch_layout")
-
-
 
 
 <MasterBackPopUp>:

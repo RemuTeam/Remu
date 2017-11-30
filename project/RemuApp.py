@@ -1,7 +1,7 @@
 import kivy
 import Networking.IP as IP
 from Networking.RemuTCP import RemuTCP
-from GUI.GUIFactory import GUIFactory #ÄLÄ POISTA
+from GUI.GUIFactory import RemuSM, SwitchLayout, InfoLayout #ÄLÄ POISTA
 from kivy.app import App
 from kivy.lang.builder import Builder
 from Domain.Slave import Slave
@@ -28,6 +28,7 @@ class RemuApp(App):
         self.slaves = None
         self.servicemode = None
         self.localip = IP.get_local_ip_address()
+        print("R.I.P GUIFactory 2017-2017")
 
     def build_config(self, config):
         """

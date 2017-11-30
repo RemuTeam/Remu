@@ -1,5 +1,7 @@
 import unittest
-from Domain.Command import *
+
+from Constants.Command import *
+
 
 class CommandTest(unittest.TestCase):
     def test_REQUEST_PRESENTATION_is_zero(self):

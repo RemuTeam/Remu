@@ -1,7 +1,8 @@
 import unittest
 
+from Constants.Command import Command
 from Domain.Message import Message
-from Domain.Command import Command
+
 
 class TestMessageMethods(unittest.TestCase):
 
