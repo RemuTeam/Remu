@@ -47,22 +47,17 @@ class SlavePresentation(StackLayout):
         presentation_content = []
         for i in range(len(self.children)):
             presentation_content.append(self.children[i].visual_name)
-        return presentation_content[::-1]
+        self.presentation_data.set_files(presentation_content[::-1])
+        return self.presentation_data
 
     def visualize_next(self):
         """
         Highlights the next visual, indicating it is the currently active visual
         """
-        if self.current_active == -1:
-            self.current_active += 1
-            return -1
-        self.visuals[self.current_active - 1].set_inactive()
-        if self.current_active == len(self.visuals):
-            self.current_active = -1
-        if -1 < self.current_active < len(self.visuals):
-            self.visuals[self.current_active].set_active()
-            self.current_active += 1
-        return self.current_active
+        for visual in self.visuals:
+            visual.set_inactive()
+        self.visuals[self.presentation_data.index].set_active() if self.presentation_data.index != -1 else None
+        return self.presentation_data.index
 
     def reset(self):
         self.current_active = 0
@@ -83,6 +78,10 @@ class SlavePresentation(StackLayout):
     def get_presentation_size(self):
         return len(self.presentation_data)
 
+    def change_draggability(self, draggable):
+        for visual in self.visuals:
+            visual.do_things(draggable)
+
 
 class SlaveVisualProperty(DragBehavior, Button):
     """
@@ -99,6 +98,12 @@ class SlaveVisualProperty(DragBehavior, Button):
         self.old_x = self.x
         self.being_moved = False
         self.going_forward = True
+
+    def do_things(self, draggable):
+        if draggable:
+            self.drag_distance = 0
+        else:
+            self.drag_distance = 6666666666666666
 
     def on_press(self):
         print("Showing visual property information not yet implemented!")
