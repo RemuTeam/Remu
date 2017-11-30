@@ -1,8 +1,9 @@
-from kivy.uix.screenmanager import Screen
-from kivy.properties import StringProperty
 from kivy.app import App
+from kivy.properties import StringProperty
+from kivy.uix.screenmanager import Screen
+
+from Constants.ContentType import ContentType
 from Domain.PresentationElement import PresentationElement
-from Domain.ContentType import ContentType
 
 
 class PresentationLayout(Screen):

@@ -1,4 +1,4 @@
-from Domain.ContentType import ContentType
+from Constants.ContentType import ContentType
 
 class PresentationElement():
     """

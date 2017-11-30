@@ -1,10 +1,11 @@
 import ipaddress
-from Networking.RemuTCP import RemuTCP
+
+from Constants.Command import *
+
+from Constants.MessageKeys import MessageKeys
 from Domain.Message import Message
-from Domain.Command import *
-from Domain.MessageKeys import MessageKeys
 from Domain.Presentation import Presentation
-from functools import partial
+from Networking.RemuTCP import RemuTCP
 
 
 class SlaveConnection:

@@ -1,10 +1,13 @@
-import unittest
-from GUI.PopUps.ImportFilesPopUp import ImportFilesPopUp
-from GUI.PopUps.FileSavingDialogPopUp import FileSavingDialogPopUp
-from Domain.PathConstants import PathConstants
-from Domain.TestReturnValue import TestReturnValue
 import os
+import unittest
 from shutil import copy, rmtree, move
+
+from Constants.TestReturnValue import TestReturnValue
+
+from Constants.PathConstants import PathConstants
+from GUI.PopUps.FileSavingDialogPopUp import FileSavingDialogPopUp
+from GUI.PopUps.ImportFilesPopUp import ImportFilesPopUp
+
 
 class TestImportFilesPopup(unittest.TestCase):
     def setUp(self):

@@ -1,15 +1,15 @@
 import unittest
+from unittest.mock import Mock
+
+from Constants.Command import Command
+from Constants.Command import Notification
+
+from Constants.MessageKeys import MessageKeys
+from Domain.Master import Master
+from Domain.Message import Message
 from Domain.SlaveConnection import SlaveConnection
 from Networking.RemuTCP import RemuTCP
-from unittest.mock import Mock
-from Domain.Slave import Slave
-from Domain.Message import Message
-from Domain.Master import Master
-from Domain.Command import Command
-from Domain.MessageKeys import MessageKeys
-from Domain.Command import Notification
-from Domain.PathConstants import PathConstants
-from Domain.Presentation import Presentation
+
 
 class SlaveConnectionTest(unittest.TestCase):
 

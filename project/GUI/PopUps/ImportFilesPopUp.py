@@ -1,15 +1,15 @@
+import os
+from shutil import copyfile
+
+from Constants.TestReturnValue import *
+from kivy.event import EventDispatcher
 from kivy.properties import StringProperty, ListProperty
 from kivy.uix.popup import Popup
-from kivy.event import EventDispatcher
 
+from Constants.SupportedFileTypes import AllSupportedFormats
 from GUI.CustomWidgets import CheckBoxBonanza
 from GUI.PopUps.FileSavingDialogPopUp import FileSavingDialogPopUp
 
-from Domain.SupportedFileTypes import AllSupportedFormats
-from Domain.TestReturnValue import *
-
-import os
-from shutil import copyfile
 
 class ImportFilesPopUp(Popup, EventDispatcher):
     """

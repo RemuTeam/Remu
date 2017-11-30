@@ -1,8 +1,11 @@
-import unittest
 import os
-from Domain.PathConstants import PathConstants
+import unittest
+
+from Constants.PathConstants import PathConstants
+
+from Constants.ContentType import ContentType
 from Domain.PresentationElement import PresentationElement
-from Domain.ContentType import ContentType
+
 
 class TestPresentationElement(unittest.TestCase):
     def setUp(self):
