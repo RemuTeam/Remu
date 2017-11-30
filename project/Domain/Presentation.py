@@ -67,7 +67,7 @@ class Presentation:
         print("Creating the presentation elements from folder " + self.media_path)
         for filename in self.presentation_filenames:
             extension = filename.split(".")[-1]
-            relative_filename = self.media_path + "/" + filename
+            relative_filename = os.path.join(self.media_path, filename)
             print(relative_filename)
 
             if extension in self.VIDEO_FORMATS:
