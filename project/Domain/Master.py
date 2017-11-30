@@ -160,7 +160,7 @@ class Master:
         for slavec in self.slave_connections.values():
             #presentation = self.presentations[i]
             i += 1
-            slavec.retrieve_presentation_files(8005, '.', slavec.presentation)
+            slavec.retrieve_presentation_files(8005, '.')
 
     def end_presentation(self):
         """

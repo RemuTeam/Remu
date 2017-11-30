@@ -79,6 +79,7 @@ class SlavePresentation(StackLayout):
         return len(self.presentation_data)
 
     def change_draggability(self, draggable):
+        self.get_presentation_from_widgets()
         for visual in self.visuals:
             visual.do_things(draggable)
 
