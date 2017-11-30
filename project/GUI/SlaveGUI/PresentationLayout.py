@@ -39,15 +39,6 @@ class PresentationLayout(Screen):
         """
         pass
 
-    def set_presentation_mode(self, presentation_type):
-        """
-        Sets the right media widget based on the presentation mode.
-
-        presentation_type:  a PresentationType object
-        """
-        self.set_visible_widget(presentation_type)
-        self.presentation_type = presentation_type
-
     def set_visible_widget(self, element):
         """
         Sets the visible widget according to the presentation's type
