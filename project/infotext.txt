@@ -16,8 +16,8 @@ Starting steps
 Making a presentation
 
 In master-mode, you can make a new presentation by typing the name into the text field and pressing "New Presentation".
-Then you can import files to presentations by going to "import files" and there selecting files and checking the box \n
-corresponding to the presentation you want the files imported to. You can also switch the positions of the files \n
+Then you can import files to presentations by going to "import files" and there selecting files and checking the box
+corresponding to the presentation you want the files imported to. You can also switch the positions of the files
 in the master view, by double clicking a file and dragging it to it's new position in the presentation line.
 
 Now it is time to connect the slave machines to your master computer and show your presentation! :smile:

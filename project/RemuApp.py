@@ -1,7 +1,7 @@
 import kivy
 import Networking.IP as IP
 from Networking.RemuTCP import RemuTCP
-from GUI.GUIFactory import RemuSM, SwitchLayout #InfoLayout #ÄLÄ POISTA
+from GUI.GUIFactory import RemuSM, SwitchLayout, InfoLayout #ÄLÄ POISTA
 from kivy.app import App
 from kivy.lang.builder import Builder
 from Domain.Slave import Slave
