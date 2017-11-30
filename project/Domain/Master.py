@@ -1,8 +1,10 @@
-from Domain.SlaveConnection import SlaveConnection
-from Domain.Command import Notification
-from Networking.RemuUDP import MasterUDPListener
-from Networking.RemuFTP import RemuFTPServer
 from kivy.app import App
+
+from Constants.Command import Notification
+from Domain.SlaveConnection import SlaveConnection
+from Networking.RemuFTP import RemuFTPServer
+from Networking.RemuUDP import MasterUDPListener
+
 
 class Master:
     """

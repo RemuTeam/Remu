@@ -1,9 +1,11 @@
 import os
+
+from Constants.MessageKeys import MessageKeys
+from Constants.PathConstants import PathConstants
 from PIL import Image
+
+from Constants.ContentType import ContentType
 from Domain.PresentationElement import PresentationElement
-from Domain.ContentType import ContentType
-from Domain.PathConstants import PathConstants
-from Domain.MessageKeys import MessageKeys
 
 
 class Presentation:

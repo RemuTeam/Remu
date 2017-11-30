@@ -1,8 +1,11 @@
-import unittest
 import os
+import unittest
+
+from Constants.PathConstants import PathConstants
+
+from Constants.MessageKeys import MessageKeys
 from Domain.Presentation import Presentation
-from Domain.PathConstants import PathConstants
-from Domain.MessageKeys import MessageKeys
+
 
 class PresentationTest(unittest.TestCase):
     def setUp(self):

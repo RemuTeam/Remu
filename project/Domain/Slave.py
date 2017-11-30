@@ -1,12 +1,14 @@
-from Domain.Presentation import Presentation
-from Domain.Message import Message
-from Domain.Command import Command
-from Domain.MessageKeys import MessageKeys
-from Domain.PathConstants import PathConstants
-from Networking.RemuUDP import Beacon
-from Networking.RemuFTP import RemuFTPClient
-from kivy.app import App
 import os
+
+from Constants.Command import Command
+from Constants.PathConstants import PathConstants
+from kivy.app import App
+
+from Constants.MessageKeys import MessageKeys
+from Domain.Message import Message
+from Domain.Presentation import Presentation
+from Networking.RemuFTP import RemuFTPClient
+from Networking.RemuUDP import Beacon
 
 
 class Slave:
@@ -68,6 +70,7 @@ class Slave:
             if current is not None:
                 self.layout.set_visible_widget(current)
             else:
+                print("haloo")
                 self.presentation_ended = True
                 self.layout.reset_presentation()
 

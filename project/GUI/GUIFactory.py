@@ -41,7 +41,6 @@ class SwitchLayout(Screen):
             app.root.rm_master_layout()
             ExceptionAlertPopUp("Error going to master mode:", ex).open()
 
-
     def add_address(self, address):
         self.text = address
 
@@ -125,21 +124,22 @@ class RemuSM(ScreenManager):
     def get_current_layout(self):
         return self.current_screen
 
-
+"""
 class GUIFactory:
-    """
+    """"""
     GUIFactory defines the functions for the layout components
     The current running app is set as the GUIFactory instance's
     parent in Main.py
-    """
+    """"""
     remuapp = None
 
     def __init__(self):
         pass
 
     def set_parent(self, remuapp):
-        """
+        """"""
         Sets the current running app as the GUIFactory instance's
         parent
-        """
+        """"""
         self.remuapp = remuapp
+"""

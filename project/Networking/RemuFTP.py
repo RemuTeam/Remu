@@ -1,9 +1,10 @@
-from twisted.protocols.ftp import FTPFactory, FTPRealm
-from twisted.cred.portal import Portal
-from twisted.cred.checkers import AllowAnonymousAccess, FilePasswordDB
-from twisted.internet import reactor
-from Domain.Command import Notification
 import os
+
+from twisted.cred.checkers import AllowAnonymousAccess, FilePasswordDB
+from twisted.cred.portal import Portal
+from twisted.internet import reactor
+from twisted.protocols.ftp import FTPFactory, FTPRealm
+
 
 class RemuFTPServer:
     """
