@@ -21,11 +21,11 @@ class SlavePresentation(StackLayout):
         Creates the visual widgets for the slave's visuals
         """
         for i in range(0, len(import_list)):
-
-            filename = import_list[i][:100] #[0][:100]
+            filename = import_list[i].split("/")[-1]
+            filename = filename[:100] #[0][:100]
             if len(filename) == 100:
                 filename += "..."
-            visual = SlaveVisualProperty(filename.split("/")[-1])
+            visual = SlaveVisualProperty(filename)
             self.visuals.append(visual)
             self.add_widget(visual)
         self.visualize_next()
