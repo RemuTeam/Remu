@@ -2,22 +2,18 @@ import os
 from shutil import copyfile
 
 from Constants.TestReturnValue import *
-from kivy.event import EventDispatcher
 from kivy.properties import StringProperty, ListProperty
-from kivy.uix.popup import Popup
+from kivy.event import EventDispatcher
 
 from Constants.SupportedFileTypes import AllSupportedFormats
-from GUI.CustomWidgets import CheckBoxBonanza
 from GUI.PopUps.FileSavingDialogPopUp import FileSavingDialogPopUp
+from GUI.PopUps.FileHandlerPopUp import FileHandlerPopUp
 
 
-class ImportFilesPopUp(Popup, EventDispatcher):
+class ImportFilesPopUp(FileHandlerPopUp, EventDispatcher):
     """
     A file selection and opening popup
     """
-    media_path = StringProperty('')
-    supportedFormats = ListProperty([])
-    local_presentation_selection = ListProperty([])
 
     def __init__(self, listener, imported_files, presentations,
                  selected_presentations, media_path, test_mode=False):
@@ -29,42 +25,18 @@ class ImportFilesPopUp(Popup, EventDispatcher):
         :param presentations: a list of Presentation names
         :param
         """
-        super(ImportFilesPopUp, self).__init__()
-        self.supportedFormats = AllSupportedFormats
-        self.imported_files = imported_files
-        self.listener = listener
-        self.populate_presentation_list(presentations)
-        self.selected_presentations = selected_presentations
-        self.ids.filechooser.bind(selection=self.check_selections)
-        self.bind(local_presentation_selection=self.check_selections)
+        super(ImportFilesPopUp, self).__init__(title="Import files",
+                                               imported_files=imported_files,
+                                               default_path=media_path,
+                                               callback=self.import_files_for_presentation,
+                                               callback_button_text="Import",
+                                               filters=AllSupportedFormats,
+                                               selected_presentations=selected_presentations,
+                                               multiselect=True,
+                                               presentation_names=presentations)
         self.media_path = media_path
+        self.listener = listener
         self.test_mode = test_mode
-
-    def on_dismiss(self):
-        self.ids.filechooser.unbind(selection=self.check_selections)
-        self.unbind(local_presentation_selection=self.check_selections)
-
-    def check_selections(self, instance, value):
-        selection = self.ids.filechooser.selection
-        import_button = self.ids.import_button
-        if len(selection) == 0 or len(self.selected_presentations) == 0:
-            import_button.disabled = True
-        else:
-            import_button.disabled = False
-
-    def populate_presentation_list(self, presentations):
-        presentation_list = self.ids.presentation_list
-        for p in presentations:
-            presentation_list.add_widget(CheckBoxBonanza(p, 0.05, self.on_checkbox_active))
-
-    def on_checkbox_active(self, checkbox, value):
-        if value:
-            self.selected_presentations.append(checkbox.label)
-            self.local_presentation_selection.append(checkbox.label)
-        else:
-            self.selected_presentations.remove(checkbox.label)
-            self.local_presentation_selection.remove(checkbox.label)
-
 
     def import_files_for_presentation(self, path, selection):
         """
