@@ -50,6 +50,10 @@ class SlavePresentation(StackLayout):
         self.presentation_data.set_files(presentation_content[::-1])
         return self.presentation_data
 
+    def sort(self):
+        self.children.sort()
+        self.get_presentation_from_widgets()
+
     def visualize_next(self):
         """
         Highlights the next visual, indicating it is the currently active visual
@@ -151,7 +155,7 @@ class SlaveVisualProperty(DragBehavior, Button):
         """
         super(SlaveVisualProperty, self).on_touch_up(touch)
         self.being_moved = False
-        self.parent.children.sort()
+        self.parent.sort()
 
     def is_update_required(self):
         """
