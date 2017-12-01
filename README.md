@@ -59,7 +59,7 @@ with the presentation by clicking the show next button.
 
 When the last file is shown the presentation will end. Congratulations, now you have used the RemuApp:)
 
-## Definition of done:
+## Definition of done
 
 1. Features are tested reasonably and pass the tests
 2. Tests are run in Travis and pass
