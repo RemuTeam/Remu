@@ -1,12 +1,14 @@
 import unittest
-from unittest.mock import Mock
 from unittest.mock import MagicMock
+from unittest.mock import Mock
 from unittest.mock import patch
+
+from Constants.Command import Notification
 from Domain.Master import Master
 from Domain.SlaveConnection import SlaveConnection
 from GUI.GUIFactory import MasterGUILayout
-from Domain.Command import Notification
 from Networking.RemuTCP import RemuTCP
+
 
 class MasterTest(unittest.TestCase):
     def setUp(self):

@@ -1,12 +1,13 @@
 import kivy
 import Networking.IP as IP
 from Networking.RemuTCP import RemuTCP
-from GUI.GUIFactory import GUIFactory #ÄLÄ POISTA
+from GUI.GUIFactory import RemuSM, SwitchLayout, InfoLayout #ÄLÄ POISTA
 from kivy.app import App
 from kivy.lang.builder import Builder
 from Domain.Slave import Slave
 from Domain.Master import Master
 from Domain.Presentation import Presentation
+from kivy.logger import Logger
 
 """
     HANDLES THE NAMING OF SLAVES AND MASTER AND THE MESSAGE SENT
@@ -28,6 +29,15 @@ class RemuApp(App):
         self.slaves = None
         self.servicemode = None
         self.localip = IP.get_local_ip_address()
+        Logger.info("\t \t \t \t \t \t \t \t \t\t \t \t  ****************************** ")
+        Logger.info("\t \t \t \t \t \t \t \t \t\t \t \t  *      R.I.P GUIFactory      * ")
+        Logger.info("\t \t \t \t \t \t \t \t \t\t \t \t  *                            * ")
+        Logger.info("\t \t \t \t \t \t \t \t \t\t \t \t  *   You were always there    * ")
+        Logger.info("\t \t \t \t \t \t \t \t \t\t \t \t  *     completely useless     * ")
+        Logger.info("\t \t \t \t \t \t \t \t \t\t \t \t  *       but ever present     * ")
+        Logger.info("\t \t \t \t \t \t \t \t \t\t \t \t  *                            * ")
+        Logger.info("\t \t \t \t \t \t \t \t \t\t \t \t  *          2017-2017         * ")
+        Logger.info("\t \t \t \t \t \t \t \t \t\t \t \t  ****************************** ")
 
     def build_config(self, config):
         """

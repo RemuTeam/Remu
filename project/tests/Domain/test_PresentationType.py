@@ -1,5 +1,7 @@
 import unittest
-from Domain.ContentType import ContentType
+
+from Constants.ContentType import ContentType
+
 
 class TestPresentationType(unittest.TestCase):
     def test_image_value_is_zero(self):

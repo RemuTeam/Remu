@@ -1,6 +1,8 @@
 import json
-from Domain.Command import Command
-from Domain.MessageKeys import MessageKeys
+
+from Constants.Command import Command
+
+from Constants.MessageKeys import MessageKeys
 
 
 class Message:

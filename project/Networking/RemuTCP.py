@@ -2,7 +2,7 @@ import sys
 import kivy
 from kivy.app import App
 from Domain.Message import Message
-
+from kivy.logger import Logger
 
 #############################################
 """
@@ -43,7 +43,8 @@ class RemuProtocol(protocol.Protocol):
         self.factory.connection.on_connection(self.transport)
 
     def dataReceived(self, data):
-        print("data:", data)
+        Logger.debug("RemuTCP: data received")
+        Logger.debug("RemuTCP: %s", str(data))
         response = self.factory.connection.handle_message(data.decode('utf-8'))
         if response:
             self.transport.write(response.encode('utf-8'))
@@ -56,14 +57,14 @@ class RemuProtocolFactory(protocol.ClientFactory):
         self.connection = connection
 
     def startedConnecting(self, connector):
-        print('Started to connect.')
+        Logger.info("RemuTCP: Started to connect")
 
     def clientConnectionLost(self, connector, reason):
-        print('Lost connection.')
+        Logger.info("RemuTCP: Lost connection.")
         self.connection.parent.on_connection_lost()
 
     def clientConnectionFailed(self, connector, reason):
-        print('Connection failed.')
+        Logger.info("RemuTCP: Connection failed.")
 
 
 class RemuTCP:
@@ -106,14 +107,14 @@ class RemuTCP:
         The constructor calls when computer is indentified as a slave. Uses imported reactor to start listening for TCP
         connection possibility in port 8000
         """
-        print("listening")
+        Logger.info("RemuTCP: Listening")
         self.listener = reactor.listenTCP(port, RemuProtocolFactory(self))
 
     def on_connection(self, connection):
         """
         Sets the parameter connection to point to the succesfully made connection
         """
-        print("Connected successfully!")
+        Logger.info("RemuTCP: Connected successfully!")
         self.connection = connection
         full_address = self.address if self.address else "localhost"
         full_address += ':' + str(self.port)
@@ -141,7 +142,8 @@ class RemuTCP:
         if response:
             response.set_field("name", self.__get_name())
             response.set_field("address", msg.get_field("sender"))
-            print("response to json:", response.fields)
+            Logger.debug("RemuTCP: response to json")
+            Logger.debug("RemuTCP: %s", str(response.fields))
             return response.to_json()
         return None
 

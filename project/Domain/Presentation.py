@@ -1,9 +1,10 @@
 import os
+from Constants.MessageKeys import MessageKeys
+from Constants.PathConstants import PathConstants
 from PIL import Image
+from Constants.ContentType import ContentType
 from Domain.PresentationElement import PresentationElement
-from Domain.ContentType import ContentType
-from Domain.PathConstants import PathConstants
-from Domain.MessageKeys import MessageKeys
+from kivy.logger import Logger
 
 
 class Presentation:
@@ -20,10 +21,20 @@ class Presentation:
         """
         Construct the presentation
         """
-        self.presentation_elements = None
+        self.presentation_elements = []
         self.presentation_filenames = []
         self.index = -1
         self.media_path = PathConstants.MEDIA_FOLDER
+
+    def __len__(self):
+        """
+        This function is called when len(presentation) is called.
+        The length of a presentation is equal to the length of
+        its presentation_filenames list.
+        :return: a non-negative integer, the number of files
+                 in the presentation
+        """
+        return len(self.presentation_filenames)
 
     def set_source_folder(self, path):
         """
@@ -40,10 +51,10 @@ class Presentation:
         Loads the pictures to the presentation
         The directory to load the files from is "images"
         """
-        print("creating PRESENTATIOOONNNN!!!!!")
+        Logger.info("Presentation: Creating presentation")
         if self.presentation_elements is None or len(self.presentation_elements) == 0:
             path = os.path.join(os.getcwd(), self.media_path)
-            print(path)
+            Logger.info("Media path: %s", path)
             self.get_presentation_elements_from_path()
 
     def get_presentation_elements_from_path(self):
@@ -52,11 +63,11 @@ class Presentation:
         as parameter
         """
         self.presentation_elements = []
-        print("Creating the presentation elements from folder " + self.media_path)
+        Logger.debug("Presentation: Creating the presentation elements from folder " + self.media_path)
         for filename in self.presentation_filenames:
             extension = filename.split(".")[-1]
             relative_filename = self.media_path + "/" + filename
-            print(relative_filename)
+            Logger.debug("Relative filename: %s", relative_filename)
 
             if extension in self.VIDEO_FORMATS:
                 self.presentation_elements.append(PresentationElement(ContentType.Video, relative_filename))
@@ -65,7 +76,7 @@ class Presentation:
             elif extension in self.TEXT_FORMATS:
                 self.presentation_elements.append(PresentationElement(ContentType.Text, relative_filename))
             else:
-                print("Unsupported filetype: " + extension)
+                Logger.error("Presentation: Unsupported filetype \"%s\" ", extension)
 
     @staticmethod
     def filetype_is_supported(filename):

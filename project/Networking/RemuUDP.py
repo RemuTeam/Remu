@@ -3,8 +3,9 @@ from twisted.internet import reactor
 from kivy.app import App
 import kivy.clock
 import Networking.IP as IP
-
+from kivy.logger import Logger
 from socket import SOL_SOCKET, SO_BROADCAST
+
 
 class EchoClientDatagramProtocol(DatagramProtocol):
     """
@@ -33,7 +34,7 @@ class EchoClientDatagramProtocol(DatagramProtocol):
         name = app.config.get("name")
         udp_port = app.config.getint('udp port')
         bcast = app.config.get('broadcast address')
-        print('broadcast address =', bcast)
+        Logger.info('RemuUDP: broadcast address = %s', bcast)
 
         msg = (name + ": connect to me").encode()
 
@@ -46,7 +47,7 @@ class EchoClientDatagramProtocol(DatagramProtocol):
             bcast = base + ".255"
             self.transport.write(msg, (bcast, udp_port))
             self.transport.write(msg, ('<broadcast>', udp_port))
-        print("message sent")
+        Logger.debug("RemuUDP: Message sent")
 
     def startProtocol(self):
         """
@@ -69,9 +70,9 @@ class EchoClientDatagramProtocol(DatagramProtocol):
         Is called when a datagram is received. If master receives a UDP datagram, it tries to connect to the sender.
         """
         if not self.is_slave:
-            self.udplistener.master.add_slave(host[0], datagram.decode('utf-8').split(":")[0]) #shutup
-        print('Datagram received: %s' % datagram.decode('utf-8'))
-        print(host)
+            self.udplistener.master.add_slave(host[0], datagram.decode('utf-8').split(":")[0])
+        Logger.debug('RemuUDP: Datagram received: %s', datagram.decode('utf-8'))
+        Logger.debug("RemuUDP: Host = %s", host)
 
 
 class Beacon:
@@ -87,7 +88,7 @@ class Beacon:
         """
         Cancels beaconing and closes the used port.
         """
-        print("Stopping beacon")
+        Logger.info("RemuUDP: Stopping beacon")
         if self.protocol is not None:
             self.protocol.event.cancel()
             #self.protocol.stopProtocol()
@@ -97,7 +98,7 @@ class Beacon:
         """
         Starts broadcasting the beacon signal to all ports.
         """
-        print("Starting beacon")
+        Logger.info("RemuUDP: Starting beacon")
         self.protocol = EchoClientDatagramProtocol(True, self)
         #0 means any port
 
@@ -119,7 +120,7 @@ class MasterUDPListener:
         """
         Called when the MasterUDPListener is initialized. Starts the protocol for listening for the beacon slaves
         """
-        print("Starting listening on beacons")
+        Logger.info("RemuUDP: Listening to beacons")
         self.protocol = EchoClientDatagramProtocol(False, self)
         udp_port = App.get_running_app().config.getint('udp port')
         self.transport = reactor.listenUDP(udp_port, self.protocol)
@@ -129,7 +130,7 @@ class MasterUDPListener:
         """
         Called when the Master stops receiving UDP datagrams. Stops listening to slave beacons and stops the protocol
         """
-        print("Stopping listening")
+        Logger.info("RemuUDP: Stopping listening")
         if self.protocol is not None:
             self.protocol.stopProtocol()
             self.protocol = None

@@ -1,15 +1,16 @@
 import unittest
-from Domain.Slave import Slave
-from Domain.Message import Message
-from Domain.Command import Command
-from Domain.Presentation import Presentation
-from Networking.RemuTCP import RemuTCP
-from GUI.GUIFactory import PresentationLayout
 from unittest.mock import Mock
-from Domain.MessageKeys import MessageKeys
 from unittest.mock import patch
-from Domain.ContentType import ContentType
-from Domain.PathConstants import PathConstants
+
+from Constants.Command import Command
+from Constants.PathConstants import PathConstants
+
+from Constants.MessageKeys import MessageKeys
+from Domain.Message import Message
+from Domain.Presentation import Presentation
+from Domain.Slave import Slave
+from GUI.GUIFactory import PresentationLayout
+
 
 class SlaveTest(unittest.TestCase):
 

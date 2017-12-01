@@ -1,11 +1,10 @@
 import ipaddress
-from Networking.RemuTCP import RemuTCP
+from Constants.Command import *
+from Constants.MessageKeys import MessageKeys
 from Domain.Message import Message
-from Domain.Command import *
-from Domain.MessageKeys import MessageKeys
 from Domain.Presentation import Presentation
-from functools import partial
-
+from Networking.RemuTCP import RemuTCP
+from kivy.logger import Logger
 
 class SlaveConnection:
     """
@@ -43,11 +42,10 @@ class SlaveConnection:
             ipaddress.ip_address(ip_address)
             self.full_address = ip_address + ":" + str(port)
             self.connection = RemuTCP(self, True, ip_address, int(port))
-            print("Slave added")
+            Logger.info("SlaveConnection: Slave added: %s", ip_address)
         except ValueError as e:
             self.connection = None
-            print("Invalid IP-address or port")
-            print(e)
+            Logger.error("SlaveConnection: Invalid IP-address or port. Error: \"%s\", str(e)")
 
     def __send_command(self, command, params=None):
         """
@@ -55,7 +53,7 @@ class SlaveConnection:
         """
         if self.connection:
             msg = Message()
-            print(params)
+            Logger.debug("SlaveConnection: %s", str(params))
             msg.set_field(MessageKeys.type_key, "command")
             msg.set_field(MessageKeys.command_key, command)
             msg.set_field(MessageKeys.params_key, params)
@@ -136,10 +134,10 @@ class SlaveConnection:
         """
         Invalid command handler, doesn't do anything useful except catch bad mistakes
         """
-        print("Invalid command given")
+        Logger.error("SlaveConnection: Invalid command given")
 
     def handle_retrieve_files_response(self, fields):
-        print("Slave", fields["sender"], "retrieved files, yay!")
+        Logger.info("SlaveConnection: Slave %s retrieved files, yay!", fields["sender"])
 
     def connection_established(self, full_address):
         """
@@ -159,7 +157,8 @@ class SlaveConnection:
         """
         Handles incoming messages
         """
-        print(msg.fields)
+        Logger.debug("SlaveConnection: Message received!")
+        Logger.debug("SlaveConnection: Message content: \"%s\"", str(msg.fields))
         if MessageKeys.response_key in msg.fields:
             self.handle_responses[msg.get_response()](self, msg.fields)
 

@@ -1,9 +1,9 @@
-from twisted.protocols.ftp import FTPFactory, FTPRealm
-from twisted.cred.portal import Portal
-from twisted.cred.checkers import AllowAnonymousAccess, FilePasswordDB
-from twisted.internet import reactor
-from Domain.Command import Notification
 import os
+from twisted.cred.checkers import AllowAnonymousAccess, FilePasswordDB
+from twisted.cred.portal import Portal
+from twisted.internet import reactor
+from twisted.protocols.ftp import FTPFactory, FTPRealm
+from kivy.logger import Logger
 
 class RemuFTPServer:
     """
@@ -107,11 +107,10 @@ class FileBufferingProtocol(Protocol):
 
         data:   the received data
         """
-        # print("data received!")
         self.__buffer.write(data)
         if self.__file is not None and self.buffersize_limit_reached():
             self.write_buffer_to_file()
-            print("file written")
+            Logger.debug("RemuFTP: file written")
 
     def set_file(self, filename):
         """
@@ -253,7 +252,7 @@ class RemuFTPClient:
         """
         A callback function for a failed connection
         """
-        print("Connection Failed:" + f)
+        Logger.error("RemuFTP: Connection Failed" + f)
 
     def connectionMade(self, ftpClient):
         """
@@ -270,15 +269,16 @@ class RemuFTPClient:
         """
         A callback function for a failed request
         """
-        print('Failed.  Error was:')
-        print(error)
+        Logger.error("RemuFTP: Failed request")
+        Logger.error("RemuFTP: %s", str(error))
+
 
     def __getFiles(self, result, fileListProtocol, ftpClient):
         """
         A callback function for handling a successful
         file listing retrieval from the server
         """
-        print('Processed file listing')
+        Logger.info("RemuFTP: Processed file listing")
         self.files = fileListProtocol.files
         for file in self.files:
             self.file_queue.put(file["filename"])
@@ -290,7 +290,7 @@ class RemuFTPClient:
         """
         A callback function that writes the buffer to its file
         """
-        print("now writing file")
+        Logger.info("RemuFTP: Writing file")
         self.bufferingProtocol.write_buffer_to_file()
         self.retrieveFiles()
 

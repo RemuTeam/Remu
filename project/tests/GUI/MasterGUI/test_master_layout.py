@@ -1,5 +1,5 @@
 import unittest
-from GUI.GUIFactory import MasterGUILayout
+from GUI.MasterGUI.MasterGUILayout import MasterGUILayout
 
 
 class MasterLayoutTests(unittest.TestCase):
@@ -8,10 +8,10 @@ class MasterLayoutTests(unittest.TestCase):
         self.import_to_presentations = ["a", "b"]
         self.import_files = ["c.jpg", "d.txt"]
         self.gui = MasterGUILayout()
-        self.slave_overview = self.gui.ids.slave_overview
-        self.slave_presentations = self.slave_overview.ids.slave_presentations
+        self.project_overview = self.gui.ids.project_overview
+        self.slave_presentations = self.project_overview.ids.slave_presentations
         for pres in self.presentations:
-            self.slave_overview.new_presentation_to_overview(pres)
+            self.project_overview.new_presentation_to_overview(pres)
         self.gui.import_to_presentations = self.import_to_presentations
         self.gui.import_list = self.import_files
 
