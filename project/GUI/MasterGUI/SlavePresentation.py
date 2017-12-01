@@ -81,7 +81,7 @@ class SlavePresentation(StackLayout):
     def change_draggability(self, draggable):
         self.get_presentation_from_widgets()
         for visual in self.visuals:
-            visual.do_things(draggable)
+            visual.toggle_dragging(draggable)
 
 
 class SlaveVisualProperty(DragBehavior, Button):
@@ -100,7 +100,7 @@ class SlaveVisualProperty(DragBehavior, Button):
         self.being_moved = False
         self.going_forward = True
 
-    def do_things(self, draggable):
+    def toggle_dragging(self, draggable):
         if draggable:
             self.drag_distance = 0
         else:
@@ -136,8 +136,8 @@ class SlaveVisualProperty(DragBehavior, Button):
 
     def __lt__(self, other):
         """
-        Compares the object's x coordinate with another object's and for some reason returns if the object's x is greater than rather than less than;
-        it just works this way
+        Compares the object's x coordinate with another object's and for some reason returns if the object's x is
+        greater than rather than less than; it just works this way
         :param other: Another SlaveVisualProperty object
         :return: boolean whether the object is greater than other.
         """
