@@ -343,7 +343,10 @@ RemuSM:
 # ImportFilesPopUp is a popup for file importing interaction
 #
 <ImportFilesPopUp>:
-    title: "Select files to import"
+
+
+<FileHandlerPopUp>:
+    title: root.title
     BoxLayout:
         size: root.size
         pos: root.pos
@@ -364,9 +367,9 @@ RemuSM:
                     valign: "middle"
             FileChooserIconView:
                 id: filechooser
-                multiselect: True   # allows selection of multiple files
-                path: root.media_path     # the default path to open
-                filters: root.supportedFormats  # filters the files to show
+                multiselect: root.multiselect   # allows selection of multiple files
+                path: root.default_path     # the default path to open
+                filters: root.filters  # filters the files to show
 
             BoxLayout:
                 size_hint_y: None
@@ -375,10 +378,10 @@ RemuSM:
                     text: "Cancel"
                     on_release: root.dismiss()
                 Button:
-                    id: import_button
+                    id: callback_button
                     disabled: True
-                    text: "Import"
-                    on_release: root.import_files_for_presentation(filechooser.path, filechooser.selection)
+                    text: root.button_text
+                    on_release: root.exit_callback(filechooser.path, filechooser.selection)
                     on_release: root.dismiss()
         StackLayout:
             orientation: "tb-lr"
