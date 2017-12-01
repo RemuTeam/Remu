@@ -1,5 +1,5 @@
 import os
-
+import json
 from Constants.MessageKeys import MessageKeys
 from Constants.PathConstants import PathConstants
 from PIL import Image
@@ -145,7 +145,7 @@ class Presentation:
     def get_message_dictionary(self):
         """
         Returns the presentation's content in a dictionary form. Useful when serializing the content into JSON.
-        :return: Dictionary
+        :return: Dictionarydis
         """
         dict = {}
         dict[MessageKeys.index_key] = self.index
@@ -173,12 +173,6 @@ class Presentation:
         Sets the names of the files from a ready made list.
         """
         self.presentation_filenames = filenamelist
-
-    """
-    #Override json serialization
-    def json_dump(self):
-        pass
-    """
 
     @staticmethod
     def CreatePresentation(entries):

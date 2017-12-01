@@ -114,8 +114,10 @@ class RemuApp(App):
             new_master = Master(layout)
             self.set_servicemode(new_master, True)
             empty_project = Project()
-            empty_project.create_test_presentation()
-            empty_project.save_project()
+
+            # Uncomment to test
+            # empty_project.create_test_presentation()
+
             new_master.project = empty_project
             new_master.load_project_to_gui()
         else:
