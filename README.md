@@ -1,6 +1,9 @@
 # Remu [![Build Status](https://travis-ci.org/RemuTeam/Remu.svg?branch=master)](https://travis-ci.org/RemuTeam/Remu) [![Coverage Status](https://coveralls.io/repos/github/RemuTeam/Remu/badge.svg?branch=master)](https://coveralls.io/github/RemuTeam/Remu?branch=master)
-Remu is a tool for controlling visual presentations for music performances. With Remu, you can create visual presentations and share them into other devices via WiFi network. 
+Remu is a tool for controlling visual presentations for music performances. With Remu, you can create visual presentations and share them with other devices via WiFi network, and then show through projectors to accompany musical performances.
 
+The aim of Remu is to make the administration of visuals in a musical performance easy. Remu works with a master/slave architecture, where a single device is configured to be a master that sends commands to slaves. With the master device, you can create the presentations to be shown, and then show multiple presentations simultaneously with several devices. 
+
+Remu is a work in progress, and is licensed under MIT license. All contributing is appreciated!
 
 ## Installing
 
@@ -37,11 +40,11 @@ How to begin
 Making a presentation
 
 In master-mode, you can make a new presentation by typing the name into the text field and pressing "New Presentation".
-Then you can import files to presentations by going to "import files" and there selecting files and checking the box \n
-corresponding to the presentation you want the files imported to. You can also switch the positions of the files \n
+Then you can import files to presentations by going to "import files" and there selecting files and checking the box
+corresponding to the presentation you want the files imported to. You can also switch the positions of the files
 in the master view, by double clicking a file and dragging it to it's new position in the presentation line.
 
-Now it is time to connect the slave machines to your master computer and show your presentation! :smile:
+Now it is time to connect the slave machines to your master computer and show your presentation!
 
 By starting this Remu with other machines, and choosing the Slave mode, they automatically signal your master computer
 of their existence. Now that you have some presentations done, you can connect a slave and its presentations.
@@ -58,8 +61,7 @@ When the last file is shown the presentation will end. Congratulations, now you 
 
 ## Definition of done:
 
-1. Testit ovat olemassa ja menevät läpi
-2. Testit ovat puskettu Travikselle ja menevät läpi
-3. Koodi on selkeää ja dokumentoitua
-4. Vähintään 2 tiimiläistä on validoinut koodin
-5. Koodi on käytettävissä tuotannossa
+1. Features are tested reasonably and pass the tests
+2. Tests are run in Travis and pass
+3. Code is easily understandable and well commented
+4. At least 2 RemuTeam members have validated the code.
