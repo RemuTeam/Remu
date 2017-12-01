@@ -1,5 +1,5 @@
 # Remu [![Build Status](https://travis-ci.org/RemuTeam/Remu.svg?branch=master)](https://travis-ci.org/RemuTeam/Remu) [![Coverage Status](https://coveralls.io/repos/github/RemuTeam/Remu/badge.svg?branch=master)](https://coveralls.io/github/RemuTeam/Remu?branch=master)
-Remu is a tool for controlling visual presentations for music performances. With Remu, you can create visual presentations and share them into other devices via wifi network. 
+Remu is a tool for controlling visual presentations for music performances. With Remu, you can create visual presentations and share them into other devices via WiFi network. 
 
 
 ## Installing
@@ -28,7 +28,33 @@ In the terminal, navigate into the project directory, and from there run command
    ``` 
    
 ## Usage
-TBA
+How to begin
+
+1. Start the App with your computer and the computers that will handle to visual show.
+2. Select "Master" for the computer that will be the one you will use during the show.
+3. Select "Slave" for the other computers
+
+Making a presentation
+
+In master-mode, you can make a new presentation by typing the name into the text field and pressing "New Presentation".
+Then you can import files to presentations by going to "import files" and there selecting files and checking the box \n
+corresponding to the presentation you want the files imported to. You can also switch the positions of the files \n
+in the master view, by double clicking a file and dragging it to it's new position in the presentation line.
+
+Now it is time to connect the slave machines to your master computer and show your presentation! :smile:
+
+By starting this Remu with other machines, and choosing the Slave mode, they automatically signal your master computer
+of their existence. Now that you have some presentations done, you can connect a slave and its presentations.
+Click the name of the presentations on your master computer. This opens up a list of all the possible slaves. Check
+the wanted one and press confirm. Now the presentation is sent to the slave machine.
+
+So you have made a presentation and sent it to its corresponding slave. All that is left is showing the presentation!
+
+If all the steps have been done correctly, the start presentation button on master should be available now. When you
+press it, the presentation will begin. You will see in green, which one of the files is being shown and you can proceed
+with the presentation by clicking the show next button.
+
+When the last file is shown the presentation will end. Congratulations, now you have used the RemuApp:)
 
 ## Definition of done:
 
