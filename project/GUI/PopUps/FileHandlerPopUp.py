@@ -18,7 +18,7 @@ class FileHandlerPopUp(Popup, EventDispatcher):
     filters = ListProperty()
     local_presentation_selection = ListProperty()
 
-    def __init__(self, title, imported_files, default_path, callback, callback_button_text, filters=[],
+    def __init__(self, title, default_path, callback, callback_button_text, filters=[], imported_files=None,
                  selected_presentations=None, multiselect=False, presentation_names=None, test_mode=False):
         """
         A constructor
@@ -57,7 +57,8 @@ class FileHandlerPopUp(Popup, EventDispatcher):
     def check_selections(self, instance, value):
         selection = self.ids.filechooser.selection
         callback_button = self.ids.callback_button
-        if len(selection) == 0 or len(self.selected_presentations) == 0:
+        if len(selection) == 0 or \
+                (self.selected_presentations is not None and len(self.selected_presentations) == 0):
             callback_button.disabled = True
         else:
             callback_button.disabled = False

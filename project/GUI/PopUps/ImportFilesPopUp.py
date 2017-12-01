@@ -2,7 +2,6 @@ import os
 from shutil import copyfile
 
 from Constants.TestReturnValue import *
-from kivy.properties import StringProperty, ListProperty
 from kivy.event import EventDispatcher
 
 from Constants.SupportedFileTypes import AllSupportedFormats

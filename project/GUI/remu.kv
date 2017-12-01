@@ -127,11 +127,11 @@ RemuSM:
         id: save_project
         disabled: True
         text: "Save project"
-        on_press: print("Juuh")
+        on_press: root.save_project()
     Button:
         id: open_project
         text: "Open project"
-        on_press: print("Juuh")
+        on_press: root.open_project()
 
 
 #
@@ -344,6 +344,15 @@ RemuSM:
 #
 <ImportFilesPopUp>:
 
+#
+# ProjectSavePopUp is a popup for project saving interaction
+#
+<ProjectSavePopUp>:
+
+#
+# ProjectOpenPopUp is a popup for project opening interaction
+#
+<ProjectOpenPopUp>:
 
 <FileHandlerPopUp>:
     title: root.title

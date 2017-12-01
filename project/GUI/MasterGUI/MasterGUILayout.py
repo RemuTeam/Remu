@@ -4,12 +4,15 @@ from kivy.event import EventDispatcher
 from kivy.properties import ListProperty, NumericProperty
 from kivy.properties import StringProperty, BooleanProperty
 from kivy.uix.screenmanager import Screen
+from kivy.uix.boxlayout import BoxLayout
 
 from Constants.Command import Notification
 from GUI.PopUps.ImportFilesPopUp import ImportFilesPopUp
 from GUI.PopUps.PopUps import MasterBackPopUp
 from GUI.PopUps.RemovePresentationsPopUp import RemovePresentationsPopUp
 from GUI.PopUps.PopUps import ExceptionAlertPopUp
+from GUI.PopUps.ProjectOpenPopUp import ProjectOpenPopUp
+from GUI.PopUps.ProjectSavePopUp import ProjectSavePopUp
 
 class MasterGUILayout(Screen, EventDispatcher):
     """
@@ -288,3 +291,10 @@ class MasterGUILayout(Screen, EventDispatcher):
                       Notification.CONNECTION_TERMINATED: remove_slave_presentation,
                       Notification.PRESENTING_DISABLED: start_presentation_button_disabled
                       }
+
+class BottomPanel(BoxLayout):
+    def open_project(self):
+        ProjectOpenPopUp(self, PathConstants.ABSOLUTE_PROJECT_FOLDER).open()
+
+    def save_project(self):
+        ProjectSavePopUp(self, PathConstants.ABSOLUTE_PROJECT_FOLDER).open()
