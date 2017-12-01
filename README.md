@@ -2,7 +2,7 @@
 Remu is a tool for controlling visual presentations for music performances. With Remu, you can create visual presentations and share them into other devices via wifi network. 
 
 
-## Asennus
+## Installing
 
 Before installing, make sure that you have python 3.x, pip and [Kivy dependencies](https://kivy.org) installed
 
