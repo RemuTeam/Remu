@@ -20,21 +20,24 @@ class ProjectOverview(BoxLayout):
         self.effect_cls = ScrollEffect
         self.max = 0
 
-    def new_presentation_to_overview(self, name):
+    def new_presentation_to_overview(self, name, given_presentation=None):
         """
-        Creates a new empty presentation to the ProjectOverview, sets the key with name parameter.
+        Creates a new GUI element for a single presentation. Is used when creating a new presentation and when loading
+        a saved presentation
         :param name:
-        :return:
+        :return: Nothing
         """
         master = App.get_running_app().servicemode
-        new_presentation = SlavePresentation(Presentation())
+        if given_presentation is None:
+            given_presentation = Presentation()
+        new_slave_presentation = SlavePresentation(given_presentation)
         #button = Button(text=name, size_hint=(1, 0.2))
         #lf = lambda a: BindPresentationToSlavePopUp(master.slave_connections.keys(), new_presentation.get_presentation_from_widgets(), master, button).open()
         #button.on_press = lf
         self.slave_buttons[name] = Button(text=name,
                                                    size_hint=(1, 0.2),
-                                                   on_press=lambda a: BindPresentationToSlavePopUp(master.slave_connections.keys(), new_presentation.get_presentation_from_widgets(), master, a).open())
-        self.slave_presentations[name] = new_presentation
+                                                   on_press=lambda a: BindPresentationToSlavePopUp(master.slave_connections.keys(), new_slave_presentation.get_presentation_from_widgets(), master, a).open())
+        self.slave_presentations[name] = new_slave_presentation
         self.ids.slave_names.add_widget(self.slave_buttons[name])
         self.ids.slave_presentations.add_widget(self.slave_presentations[name])
 

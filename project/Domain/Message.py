@@ -1,7 +1,6 @@
 import json
 
 from Constants.Command import Command
-
 from Constants.MessageKeys import MessageKeys
 
 

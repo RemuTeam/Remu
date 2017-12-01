@@ -174,6 +174,12 @@ class Presentation:
         """
         self.presentation_filenames = filenamelist
 
+    """
+    #Override json serialization
+    def json_dump(self):
+        pass
+    """
+
     @staticmethod
     def CreatePresentation(entries):
         """
