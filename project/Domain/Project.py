@@ -37,6 +37,10 @@ class Project:
         with open(filename, mode='w') as f:
             f.write(json_string)
 
+    def load_from_file(self, filename):
+        with open(filename, mode='r') as f:
+            json_str = f.read()
+            self.load_json(json_str)
 
     def load_json(self, json_str):
         """
