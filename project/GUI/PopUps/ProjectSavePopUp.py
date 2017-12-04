@@ -1,6 +1,9 @@
 from kivy.event import EventDispatcher
 
 from GUI.PopUps.FileHandlerPopUp import FileHandlerPopUp
+from Constants.FileHandlingMode import SaveProject
+from Constants.FileHandler import write_file
+import os
 
 
 class ProjectSavePopUp(FileHandlerPopUp, EventDispatcher):
@@ -21,16 +24,16 @@ class ProjectSavePopUp(FileHandlerPopUp, EventDispatcher):
                                                default_path=project_path,
                                                callback=self.save_project,
                                                callback_button_text="Save",
-                                               multiselect=False)
+                                               file_handling_mode=SaveProject)
         self.project_path = project_path
         self.listener = listener
         self.test_mode = test_mode
 
-    def save_project(self, path, filename):
+    def save_project(self, path, dont_use_this_list, savefilename):
         """
         PLEASE IMPLEMENT ASAP!
         :param path:
-        :param filename:
+        :param savefilename:
         :return:
         """
-        pass
+        write_file(path, savefilename + ".remu", self.listener.project.dump_json())

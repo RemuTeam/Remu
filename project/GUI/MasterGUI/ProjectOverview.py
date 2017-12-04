@@ -4,6 +4,7 @@ from kivy.app import App
 from kivy.effects.scroll import ScrollEffect
 from GUI.MasterGUI.SlavePresentation import SlavePresentation
 from Domain.Presentation import Presentation
+from Domain.Project import Project
 from GUI.PopUps.BindPresentationToSlavePopUp import BindPresentationToSlavePopUp
 
 class ProjectOverview(BoxLayout):
@@ -17,8 +18,9 @@ class ProjectOverview(BoxLayout):
         super(ProjectOverview, self).__init__(**kwargs)
         self.slave_buttons = {}
         self.slave_presentations = {}
+        self.project = Project()
         self.effect_cls = ScrollEffect
-        self.max = 0
+        self.max = 1
 
     def new_presentation_to_overview(self, name, given_presentation=None):
         """
@@ -30,6 +32,7 @@ class ProjectOverview(BoxLayout):
         master = App.get_running_app().servicemode
         if given_presentation is None:
             given_presentation = Presentation()
+            self.project.presentations.append((name, given_presentation))
         new_slave_presentation = SlavePresentation(given_presentation)
         #button = Button(text=name, size_hint=(1, 0.2))
         #lf = lambda a: BindPresentationToSlavePopUp(master.slave_connections.keys(), new_presentation.get_presentation_from_widgets(), master, button).open()
@@ -38,8 +41,11 @@ class ProjectOverview(BoxLayout):
                                                    size_hint=(1, 0.2),
                                                    on_press=lambda a: BindPresentationToSlavePopUp(master.slave_connections.keys(), new_slave_presentation.get_presentation_from_widgets(), master, a).open())
         self.slave_presentations[name] = new_slave_presentation
+        #self.project.presentations.append((name, given_presentation))
         self.ids.slave_names.add_widget(self.slave_buttons[name])
         self.ids.slave_presentations.add_widget(self.slave_presentations[name])
+        self.max = max(self.max, len(given_presentation))
+        self.update_presentation_widths()
 
     def add_files_to_a_presentation(self, presentation_name, import_list):
         """
@@ -109,12 +115,12 @@ class ProjectOverview(BoxLayout):
 
     def reset_all_presentations(self):
         for presentation in self.slave_presentations.values():
-            presentation.change_draggability(not not not False)
+            presentation.change_draggability(True)
             presentation.reset()
 
     def disable_rearrangement_of_buttons(self):
         for presentation in self.slave_presentations.values():
-            presentation.change_draggability(not not not True)
+            presentation.change_draggability(False)
 
     def remove_presentation(self,name):
         """
@@ -122,7 +128,14 @@ class ProjectOverview(BoxLayout):
         :param name:
         :return:
         """
+        self.project.remove_from_presentations(name)
         self.ids.slave_presentations.remove_widget(self.slave_presentations[name])
         self.ids.slave_names.remove_widget(self.slave_buttons[name])
         del self.slave_buttons[name]
         del self.slave_presentations[name]
+
+    def remove_presentations(self):
+        self.ids.slave_presentations.clear_widgets()
+        self.ids.slave_names.clear_widgets()
+        self.slave_buttons = {}
+        self.slave_presentations = {}

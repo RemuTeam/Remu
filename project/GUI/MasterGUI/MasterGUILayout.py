@@ -54,6 +54,9 @@ class MasterGUILayout(Screen, EventDispatcher):
         self.project_overview = self.ids.project_overview
         self.master = None
 
+    def setup_project(self, project):
+        self.project_overview.project = project
+
     def notify_file_import(self):
         """
         Notifies the layout for a single file import
@@ -271,6 +274,9 @@ class MasterGUILayout(Screen, EventDispatcher):
         for name in selected_presentations:
             self.project_overview.remove_presentation(name)
 
+    def clear_presentations(self):
+        self.project_overview.remove_presentations()
+
     def notify(self, notification, data=None):
         """
         Handles the received notification from master
@@ -294,7 +300,7 @@ class MasterGUILayout(Screen, EventDispatcher):
 
 class BottomPanel(BoxLayout):
     def open_project(self):
-        ProjectOpenPopUp(self, PathConstants.ABSOLUTE_PROJECT_FOLDER).open()
+        ProjectOpenPopUp(App.get_running_app().servicemode, PathConstants.ABSOLUTE_PROJECT_FOLDER).open()
 
     def save_project(self):
-        ProjectSavePopUp(self, PathConstants.ABSOLUTE_PROJECT_FOLDER).open()
+        ProjectSavePopUp(App.get_running_app().servicemode, PathConstants.ABSOLUTE_PROJECT_FOLDER).open()

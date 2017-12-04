@@ -75,7 +75,7 @@ class TestImportFilesPopup(unittest.TestCase):
         self.assertEqual(len(self.popup.local_presentation_selection), 0)
 
     def test_start_import(self):
-        self.popup.import_files_for_presentation(None, self.copy_files)
+        self.popup.import_files_for_presentation(None, self.copy_files, None)
         self.assertEqual(self.popup.listener.counter, 2)
 
     def test_import_from_media_dir(self):
