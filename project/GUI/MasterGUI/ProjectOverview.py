@@ -6,6 +6,7 @@ from GUI.MasterGUI.SlavePresentation import SlavePresentation
 from Domain.Presentation import Presentation
 from GUI.PopUps.BindPresentationToSlavePopUp import BindPresentationToSlavePopUp
 
+
 class ProjectOverview(BoxLayout):
     """
     ProjectOverview class is used in the master GUI, to keep track of the slaves in the presentation. It maintains two
@@ -17,6 +18,7 @@ class ProjectOverview(BoxLayout):
         super(ProjectOverview, self).__init__(**kwargs)
         self.slave_buttons = {}
         self.slave_presentations = {}
+        self.project = None
         self.effect_cls = ScrollEffect
         self.max = 0
 
@@ -38,6 +40,7 @@ class ProjectOverview(BoxLayout):
                                                    size_hint=(1, 0.2),
                                                    on_press=lambda a: BindPresentationToSlavePopUp(master.slave_connections.keys(), new_slave_presentation.get_presentation_from_widgets(), master, a).open())
         self.slave_presentations[name] = new_slave_presentation
+        self.project.presentations.append((name, given_presentation))
         self.ids.slave_names.add_widget(self.slave_buttons[name])
         self.ids.slave_presentations.add_widget(self.slave_presentations[name])
 
@@ -122,6 +125,7 @@ class ProjectOverview(BoxLayout):
         :param name:
         :return:
         """
+        self.project.remove_from_presentations(name)
         self.ids.slave_presentations.remove_widget(self.slave_presentations[name])
         self.ids.slave_names.remove_widget(self.slave_buttons[name])
         del self.slave_buttons[name]
