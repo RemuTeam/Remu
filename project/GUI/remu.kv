@@ -125,7 +125,7 @@ RemuSM:
     size_hint: 1, 0.1
     Button:
         id: save_project
-        disabled: True
+        disabled: False
         text: "Save project"
         on_press: root.save_project()
     Button:
@@ -342,17 +342,17 @@ RemuSM:
 #
 # ImportFilesPopUp is a popup for file importing interaction
 #
-<ImportFilesPopUp>:
+<ImportFilesPopUp@FileHandlingPopUp>:
 
 #
 # ProjectSavePopUp is a popup for project saving interaction
 #
-<ProjectSavePopUp>:
+<ProjectSavePopUp@FileHandlingPopUp>:
 
 #
 # ProjectOpenPopUp is a popup for project opening interaction
 #
-<ProjectOpenPopUp>:
+<ProjectOpenPopUp@FileHandlingPopUp>:
 
 <FileHandlerPopUp>:
     title: root.title
@@ -361,6 +361,7 @@ RemuSM:
         pos: root.pos
         orientation: "horizontal"
         BoxLayout:
+            id: filechoosing_area
             size_hint: 0.7, 1
             orientation: "vertical"
             BoxLayout:
@@ -376,10 +377,21 @@ RemuSM:
                     valign: "middle"
             FileChooserIconView:
                 id: filechooser
+                size_hint: 1, 0.8
                 multiselect: root.multiselect   # allows selection of multiple files
                 path: root.default_path     # the default path to open
                 filters: root.filters  # filters the files to show
-
+            BoxLayout:
+                id: filename_input
+                orientation: "horizontal"
+                size_hint: 1, 0.1
+                Label:
+                    size_hint: 0.25, 1
+                    text: "Save file as:"
+                TextInput:
+                    id: text_input
+                    text: ""
+                    on_text: root.check_filename(self, self.text)
             BoxLayout:
                 size_hint_y: None
                 height: 30
@@ -390,9 +402,10 @@ RemuSM:
                     id: callback_button
                     disabled: True
                     text: root.button_text
-                    on_release: root.exit_callback(filechooser.path, filechooser.selection)
+                    on_release: root.exit_callback(filechooser.path, filechooser.selection, text_input.text)
                     on_release: root.dismiss()
         StackLayout:
+            id: presentation_list_area
             orientation: "tb-lr"
             size_hint: 0.3, 1
             Label:
