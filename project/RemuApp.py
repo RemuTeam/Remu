@@ -127,7 +127,6 @@ class RemuApp(App):
 
             # Uncomment to test
             # empty_project.create_test_presentation()
-
             new_master.setup_project(empty_project)
             new_master.load_project_to_gui()
         else:

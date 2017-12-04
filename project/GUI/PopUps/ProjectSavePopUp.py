@@ -2,6 +2,8 @@ from kivy.event import EventDispatcher
 
 from GUI.PopUps.FileHandlerPopUp import FileHandlerPopUp
 from Constants.FileHandlingMode import SaveProject
+from Constants.FileHandler import write_file
+import os
 
 
 class ProjectSavePopUp(FileHandlerPopUp, EventDispatcher):
@@ -34,4 +36,4 @@ class ProjectSavePopUp(FileHandlerPopUp, EventDispatcher):
         :param savefilename:
         :return:
         """
-        print("i pass:", path, savefilename)
+        write_file(path, savefilename + ".remu", self.listener.project.dump_json())

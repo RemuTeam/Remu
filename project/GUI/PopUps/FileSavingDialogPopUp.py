@@ -2,7 +2,7 @@ from kivy.uix.popup import Popup
 from kivy.properties import StringProperty
 
 from GUI.PopUps.PopUps import ExceptionAlertPopUp
-from Constants.FilenameChecker import check_filename
+from Constants.FileHandler import check_filename
 
 import os
 from shutil import copy

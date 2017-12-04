@@ -1,3 +1,19 @@
+import os
+
+def read_file(filename):
+    with open(filename, "r") as f:
+        return f.read()
+
+def read_lines(filename):
+    with open(filename, "r") as f:
+        return f.readlines()
+
+def write_file(path, filename, data):
+    if check_filename(filename):
+        with open(os.path.join(path, filename), "w") as f:
+            f.write(data)
+
+
 """
 This list contains all characters that are reserved when naming a file
 either in Unix or Windows

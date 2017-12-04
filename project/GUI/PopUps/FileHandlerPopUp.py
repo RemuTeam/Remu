@@ -5,7 +5,7 @@ from kivy.uix.popup import Popup
 from kivy.uix.boxlayout import BoxLayout
 
 from GUI.CustomWidgets import CheckBoxBonanza
-from Constants.FilenameChecker import check_filename
+from Constants.FileHandler import check_filename
 
 
 class FileHandlerPopUp(Popup, EventDispatcher):

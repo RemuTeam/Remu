@@ -2,6 +2,8 @@ from kivy.uix.stacklayout import StackLayout
 from kivy.uix.behaviors import DragBehavior
 from kivy.uix.button import Button
 from kivy.properties import StringProperty
+import os
+from kivy.logger import Logger
 
 class SlavePresentation(StackLayout):
     """
@@ -21,7 +23,8 @@ class SlavePresentation(StackLayout):
         Creates the visual widgets for the slave's visuals
         """
         for i in range(0, len(import_list)):
-            filename = import_list[i].split("/")[-1]
+            filename = import_list[i].split(os.sep)[-1]
+            Logger.debug("SlavePresentation: Creating widget for %s", filename)
             filename = filename[:100] #[0][:100]
             if len(filename) == 100:
                 filename += "..."
