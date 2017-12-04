@@ -4,6 +4,7 @@ from kivy.app import App
 from kivy.effects.scroll import ScrollEffect
 from GUI.MasterGUI.SlavePresentation import SlavePresentation
 from Domain.Presentation import Presentation
+from Domain.Project import Project
 from GUI.PopUps.BindPresentationToSlavePopUp import BindPresentationToSlavePopUp
 
 
@@ -18,7 +19,7 @@ class ProjectOverview(BoxLayout):
         super(ProjectOverview, self).__init__(**kwargs)
         self.slave_buttons = {}
         self.slave_presentations = {}
-        self.project = None
+        self.project = Project()
         self.effect_cls = ScrollEffect
         self.max = 0
 
