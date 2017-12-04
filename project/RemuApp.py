@@ -6,6 +6,7 @@ from kivy.app import App
 from kivy.lang.builder import Builder
 from Domain.Slave import Slave
 from Domain.Master import Master
+from Domain.Project import Project
 from Domain.Presentation import Presentation
 from kivy.logger import Logger
 
@@ -28,6 +29,11 @@ class RemuApp(App):
         self.isMaster = False
         self.slaves = None
         self.servicemode = None
+        try:
+            self.localip = IP.get_local_ip_address()
+            self.connected = True
+        except Exception as ex:
+            self.connected = False
         self.localip = IP.get_local_ip_address()
         Logger.info("\t \t \t \t \t \t \t \t \t\t \t \t  ****************************** ")
         Logger.info("\t \t \t \t \t \t \t \t \t\t \t \t  *      R.I.P GUIFactory      * ")
@@ -117,6 +123,13 @@ class RemuApp(App):
         if is_master:
             new_master = Master(layout)
             self.set_servicemode(new_master, True)
+            empty_project = Project()
+
+            # Uncomment to test
+            # empty_project.create_test_presentation()
+
+            new_master.project = empty_project
+            new_master.load_project_to_gui()
         else:
             new_slave = Slave(layout)
             tcp_port = self.config.getint('tcp port')

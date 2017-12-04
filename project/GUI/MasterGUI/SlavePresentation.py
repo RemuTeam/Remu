@@ -21,11 +21,11 @@ class SlavePresentation(StackLayout):
         Creates the visual widgets for the slave's visuals
         """
         for i in range(0, len(import_list)):
-
-            filename = import_list[i][:100] #[0][:100]
+            filename = import_list[i].split("/")[-1]
+            filename = filename[:100] #[0][:100]
             if len(filename) == 100:
                 filename += "..."
-            visual = SlaveVisualProperty(filename.split("/")[-1])
+            visual = SlaveVisualProperty(filename)
             self.visuals.append(visual)
             self.add_widget(visual)
         self.visualize_next()
@@ -47,22 +47,21 @@ class SlavePresentation(StackLayout):
         presentation_content = []
         for i in range(len(self.children)):
             presentation_content.append(self.children[i].visual_name)
-        return presentation_content[::-1]
+        self.presentation_data.set_files(presentation_content[::-1])
+        return self.presentation_data
+
+    def sort(self):
+        self.children.sort()
+        self.get_presentation_from_widgets()
 
     def visualize_next(self):
         """
         Highlights the next visual, indicating it is the currently active visual
         """
-        if self.current_active == -1:
-            self.current_active += 1
-            return -1
-        self.visuals[self.current_active - 1].set_inactive()
-        if self.current_active == len(self.visuals):
-            self.current_active = -1
-        if -1 < self.current_active < len(self.visuals):
-            self.visuals[self.current_active].set_active()
-            self.current_active += 1
-        return self.current_active
+        for visual in self.visuals:
+            visual.set_inactive()
+        self.visuals[self.presentation_data.index].set_active() if self.presentation_data.index != -1 else None
+        return self.presentation_data.index
 
     def reset(self):
         self.current_active = 0
@@ -83,6 +82,11 @@ class SlavePresentation(StackLayout):
     def get_presentation_size(self):
         return len(self.presentation_data)
 
+    def change_draggability(self, draggable):
+        self.get_presentation_from_widgets()
+        for visual in self.visuals:
+            visual.toggle_dragging(draggable)
+
 
 class SlaveVisualProperty(DragBehavior, Button):
     """
@@ -99,6 +103,12 @@ class SlaveVisualProperty(DragBehavior, Button):
         self.old_x = self.x
         self.being_moved = False
         self.going_forward = True
+
+    def toggle_dragging(self, draggable):
+        if draggable:
+            self.drag_distance = 0
+        else:
+            self.drag_distance = 6666666666666666
 
     def on_press(self):
         print("Showing visual property information not yet implemented!")
@@ -130,8 +140,8 @@ class SlaveVisualProperty(DragBehavior, Button):
 
     def __lt__(self, other):
         """
-        Compares the object's x coordinate with another object's and for some reason returns if the object's x is greater than rather than less than;
-        it just works this way
+        Compares the object's x coordinate with another object's and for some reason returns if the object's x is
+        greater than rather than less than; it just works this way
         :param other: Another SlaveVisualProperty object
         :return: boolean whether the object is greater than other.
         """
@@ -145,7 +155,7 @@ class SlaveVisualProperty(DragBehavior, Button):
         """
         super(SlaveVisualProperty, self).on_touch_up(touch)
         self.being_moved = False
-        self.parent.children.sort()
+        self.parent.sort()
 
     def is_update_required(self):
         """

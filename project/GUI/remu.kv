@@ -87,7 +87,7 @@ RemuSM:
             Button:
                 id: show_next
                 text: "show next"
-                on_press: root.send_message_to_slave()
+                on_press: root.request_next_element_from_all_slaves()
             Button:
                 id: back_button
                 text: "Back"
@@ -106,28 +106,33 @@ RemuSM:
                 hint_text: "Presentation Name"
             Button:
                 id: new_presentation_button
-                text: "New\nPresentation"
+                text: "New\npresentation"
                 disabled: True
-                on_press: root.new_presentation(txt_input.text)
+                on_press: root.create_new_presentation(txt_input.text)
             #    text: "Add Slave"
             #    on_press: root.add_slave_connection(txt_input.text)
             Button:
                 id: remove_presentations_button
                 text: "Remove\npresentations"
                 on_release: root.show_remove_presentations_popup()
-
         ProjectOverview:
             id: project_overview
-        BoxLayout:
+        BottomPanel:
             id: bottom_panel
-            orientation: 'horizontal'
-            size_hint: 1, 0.1
-            Label:
-                id: information_text
-                halign: 'left'
-                text: root.debug_text
-            Label:
-                text: root.label_text
+
+<BottomPanel@BoxLayout>:
+    orientation: 'horizontal'
+    size_hint: 1, 0.1
+    Button:
+        id: save_project
+        disabled: True
+        text: "Save project"
+        on_press: root.save_project()
+    Button:
+        id: open_project
+        text: "Open project"
+        on_press: root.open_project()
+
 
 #
 # SlaveGUILayout contains the waiting view for slave mode. When the presentation starts, slave device changes to
@@ -188,6 +193,7 @@ RemuSM:
         StackLayout:
             id: slave_names
             size_hint: 1/6, 1
+            padding: 0, 2, 0, 0
             orientation: 'lr-tb'
         ScrollView:
             id: scrollview
@@ -195,6 +201,7 @@ RemuSM:
             size_hint: 5/6, 1
             StackLayout:
                 id: slave_presentations
+                padding: 0,2,0,0
                 size_hint_y: 1
                 size_hint_x: None
                 width: root.width
@@ -204,7 +211,7 @@ RemuSM:
 #
 <SlavePresentation>
     spacing: 5
-    padding: 5, 5, 5, 5
+    padding: 2, 0, 2, 2
     size_hint_y: 0.2
     orientation: 'lr-tb'
 
@@ -232,7 +239,7 @@ RemuSM:
     text_size: self.size
     halign: 'center'
     valign: 'middle'
-    padding: (5, 2)
+    #padding: (0, 1)
 
 <InfoLayout>:
     id:info_gui_layout
@@ -336,7 +343,19 @@ RemuSM:
 # ImportFilesPopUp is a popup for file importing interaction
 #
 <ImportFilesPopUp>:
-    title: "Select files to import"
+
+#
+# ProjectSavePopUp is a popup for project saving interaction
+#
+<ProjectSavePopUp>:
+
+#
+# ProjectOpenPopUp is a popup for project opening interaction
+#
+<ProjectOpenPopUp>:
+
+<FileHandlerPopUp>:
+    title: root.title
     BoxLayout:
         size: root.size
         pos: root.pos
@@ -357,9 +376,9 @@ RemuSM:
                     valign: "middle"
             FileChooserIconView:
                 id: filechooser
-                multiselect: True   # allows selection of multiple files
-                path: root.media_path     # the default path to open
-                filters: root.supportedFormats  # filters the files to show
+                multiselect: root.multiselect   # allows selection of multiple files
+                path: root.default_path     # the default path to open
+                filters: root.filters  # filters the files to show
 
             BoxLayout:
                 size_hint_y: None
@@ -368,10 +387,10 @@ RemuSM:
                     text: "Cancel"
                     on_release: root.dismiss()
                 Button:
-                    id: import_button
+                    id: callback_button
                     disabled: True
-                    text: "Import"
-                    on_release: root.import_files_for_presentation(filechooser.path, filechooser.selection)
+                    text: root.button_text
+                    on_release: root.exit_callback(filechooser.path, filechooser.selection)
                     on_release: root.dismiss()
         StackLayout:
             orientation: "tb-lr"

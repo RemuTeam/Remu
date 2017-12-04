@@ -49,7 +49,7 @@ class Slave:
         Is used when the file transfer is ready to load the presentation
         :return: Nothing
         """
-        self.presentation.load()
+        self.presentation.load() if len(self.presentation.presentation_elements) == 0 else self.presentation.reload()
 
     def set_presentation(self, presentation):
         """

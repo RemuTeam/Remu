@@ -21,13 +21,22 @@ class PresentationLayout(Screen):
         """
         super(PresentationLayout, self).__init__(**kwargs)
         self.slave = None
-        self.presentation_type = None
         self.start_screen = PresentationElement(ContentType.Image, "background/black_as_kivys_soul.png")
 
     def on_pre_enter(self, *args):
+        """
+        Called when the transition to this screen starts
+        :param args:
+        :return:
+        """
         self.hide_widgets()
 
     def on_enter(self, *args):
+        """
+        Called when the transition to this screen is in progress
+        :param args:
+        :return:
+        """
         self.slave = App.get_running_app().servicemode
         self.slave.set_layout(self)
         self.set_visible_widget(self.start_screen)
@@ -40,23 +49,11 @@ class PresentationLayout(Screen):
         """
         pass
 
-    def set_presentation_mode(self, presentation_type):
-        """
-        Sets the right media widget based on the presentation mode.
-
-        presentation_type:  a PresentationType object
-        """
-        self.set_visible_widget(presentation_type)
-        self.presentation_type = presentation_type
-
     def set_visible_widget(self, element):
         """
-        Sets the visible widget according to the presentation's type
+        Sets the visible widget according to the PresentationElement given as parameter
 
-        Hides the "picture" widget if TextPresentation
-        Hides the "text_field" widget if PicPresentation
-
-        presentation_type:  a PresentationType object
+        :param element: a PresentationElement object
         """
         self.hide_widgets()
 
@@ -75,7 +72,7 @@ class PresentationLayout(Screen):
         """
         Shows a given widget. Unlike in the hiding, height doesn't need to be modified when showing widget. Otherwise
         acts as a counter-method for the hide_widget method.
-        :param widget:
+        :param widget: the widget to show
         :return: Nothing
         """
         widget.opacity = 1
@@ -83,7 +80,7 @@ class PresentationLayout(Screen):
 
     def hide_widgets(self):
         """
-        Hides all of the different type of widgets.
+        Hides all of the different type of PresentationElement widgets.
         :return: Nothing
         """
         self.hide_widget(self.ids.picture)
@@ -95,21 +92,12 @@ class PresentationLayout(Screen):
         Hides a widget. Size_hint_y and height are set to zero, so that the widgets do not take up space in the screen.
         Opacity is also set to zero, in case the widget would be still visible (text-elements need this to be hidden
         properly)
-        :param widget:
+        :param widget: the Widget to hide
         :return: Nothing
         """
         widget.opacity = 0
         widget.size_hint_y = 0
         widget.height = '0dp'
-
-    def show(self, content):
-        """
-        Shows the next element of the show
-        """
-        if self.presentation_type == ContentType.Image:
-            self.image_source = content
-        elif self.presentation_type == ContentType.Text:
-            self.text_element = content
 
     def reset_presentation(self):
         """

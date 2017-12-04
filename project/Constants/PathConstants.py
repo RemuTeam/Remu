@@ -8,5 +8,7 @@ class PathConstants:
     """
     TEST_MEDIA_FOLDER = "test_media"
     MEDIA_FOLDER = "media"
+    PROJECT_FOLDER = "remuprojects"
     ABSOLUTE_MEDIA_FOLDER = os.path.join(os.getcwd(), MEDIA_FOLDER)
     ABSOLUTE_TEST_MEDIA_FOLDER = os.path.join(os.getcwd(), TEST_MEDIA_FOLDER)
+    ABSOLUTE_PROJECT_FOLDER = os.path.join(os.getcwd(), PROJECT_FOLDER)

@@ -13,7 +13,7 @@ class Presentation:
     is responsible for loading the content from the media folder, and acts as a mediator when the application asks for
     a presentation element to show in the GUI.
     """
-    IMAGE_FORMATS = ["jpg"]
+    IMAGE_FORMATS = ["jpg", "png"]
     VIDEO_FORMATS = ["mp4"]
     TEXT_FORMATS = ["txt"]
 
@@ -144,7 +144,7 @@ class Presentation:
     def get_message_dictionary(self):
         """
         Returns the presentation's content in a dictionary form. Useful when serializing the content into JSON.
-        :return: Dictionary
+        :return: Dictionarydis
         """
         dict = {}
         dict[MessageKeys.index_key] = self.index

@@ -19,7 +19,7 @@ class SlaveConnection:
         """
         self.master = master
         self.set_connection(connection)
-        self.presentation = []
+        self.presentation = None
         self.full_address = "localhost:8000"
         self.slave_name = slave_name
         self.connected = self.connection is not None
@@ -98,11 +98,10 @@ class SlaveConnection:
         """
         self.__send_command(Command.END_PRESENTATION.value)
 
-    def retrieve_presentation_files(self, port, subpath, filenames):
-        self.presentation = filenames
+    def retrieve_presentation_files(self, port, subpath):
         params = {MessageKeys.ftp_port_key: port,
                   MessageKeys.ftp_subpath_key: subpath,
-                  MessageKeys.presentation_content_key: filenames}
+                  MessageKeys.presentation_content_key: self.presentation.presentation_filenames}
         self.__send_command(Command.RETRIEVE_FILES.value, params)
 
     def handle_presentation_response(self, data):
@@ -119,6 +118,7 @@ class SlaveConnection:
         """
         Handles command to show next file
         """
+        self.presentation.index = response[MessageKeys.index_key]
         self.currently_showing = response[MessageKeys.index_key]
         self.master.notify(Notification.PRESENTATION_STATUS_CHANGE, self.currently_showing)
 

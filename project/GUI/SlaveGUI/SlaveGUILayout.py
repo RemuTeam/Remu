@@ -23,17 +23,25 @@ class SlaveGUILayout(Screen):
         self.slave = None
 
     def on_pre_enter(self, *args):
+        """
+        This function is called when the transition to this Screen is in progress
+        :param args:
+        :return:
+        """
         if self.slave is None:
             self.slave = App.get_running_app().get_slave(self)
             self.slave.set_layout(self)
 
     def init_presentation(self):
+        """
+        Starts the presentation by preparing the presentation layout
+        :return: None
+        """
         self.prepare_for_presentation_mode()
 
     def prepare_for_presentation_mode(self):
         """
-        Sets the app's main window to full screen and hides the
-        mouse cursor.
+        Prepares the presentation mode and changes layout to PresentationLayout.
         """
         window = self.get_root_window()
         window.show_cursor = False
@@ -46,4 +54,9 @@ class SlaveGUILayout(Screen):
         SlaveBackPopUp().open()
 
     def set_info_text(self, info_text):
+        """
+        Sets the layouts info text to parameter
+        :param info_text:
+        :return:
+        """
         self.info_text = info_text

@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import patch
 from Networking.RemuFTP import *
+import os
 
 class RemuFTPServerTest(unittest.TestCase):
     def setUp(self):
@@ -36,6 +37,11 @@ class FileBufferingProtocolTest(unittest.TestCase):
         self.file = "ababa.bab"
         self.testData = bytearray("datatata", "utf-8")
         self.newBufferSizeLimit = len(self.testData) / 2
+
+    def tearDown(self):
+        f = os.path.join(os.getcwd(), self.file)
+        if os.path.isfile(f):
+            os.remove(f)
 
     def init_test_file(self, filename):
         with open(filename, "w") as f:

@@ -21,6 +21,7 @@ class Master:
         self.slave_connections = {}
         self.presentations = []
         self.layout = layout
+        self.project = None
         self.FTPServer = None
         self.UDPListener = None
 
@@ -62,7 +63,7 @@ class Master:
         Logger.debug("Master: Slave length: %s", str(len(self.slave_connections)))
         Logger.debug("Master: Presentation length: %s", str(len(self.presentations)))
 
-        if len(self.slave_connections) >= len(self.presentations) or True:
+        if len(self.slave_connections) >= len(self.presentations): #or True:
             self.layout.notify(Notification.PRESENTING_DISABLED, False)
         else:
             self.layout.notify(Notification.PRESENTING_DISABLED, True)
@@ -70,6 +71,7 @@ class Master:
     def bind_slave_to_presentation(self, presentation, slaveconnection_to_bind):
 
         self.slave_connections[slaveconnection_to_bind].presentation = presentation
+        print(self.slave_connections[slaveconnection_to_bind].presentation.presentation_filenames)
         #for slave_presentation in self.layout.ids.slave_overview.slave_presentations.values():
         #    self.presentations.append(slave_presentation.get_presentation_from_widgets())
         #presentation = self.presentations[0]
@@ -83,6 +85,14 @@ class Master:
         """
         self.slave_connections[slave_connection.full_address] = slave_connection
 
+    def load_project_to_gui(self):
+        """
+        Takes all tuples (named_presentation) from project class, which contain presentation's name and content, and
+        requests master's layout to make gui widgets based on the project.
+        :return: Nothing
+        """
+        for named_presentation in self.project.presentations:
+            self.layout.create_new_presentation(named_presentation[0], named_presentation[1])
 
     def request_next(self):
         """
@@ -157,7 +167,7 @@ class Master:
         for slavec in self.slave_connections.values():
             #presentation = self.presentations[i]
             i += 1
-            slavec.retrieve_presentation_files(8005, '.', slavec.presentation)
+            slavec.retrieve_presentation_files(8005, '.')
 
     def end_presentation(self):
         """
@@ -206,3 +216,8 @@ class Master:
                       Notification.CONNECTION_ESTABLISHED: update_connection,
                       Notification.CONNECTION_TERMINATED: remove_slave
                       }
+"""
+def load_project_to_gui()
+    for named_presentation in self.project.presentations:
+        self.layout.create_new_presentation(named_presentation[0], named_presentation[1])
+"""
