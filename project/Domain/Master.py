@@ -24,6 +24,10 @@ class Master:
         self.FTPServer = None
         self.UDPListener = None
 
+    def setup_project(self, project):
+        self.project = project
+        self.layout.setup_project(project)
+
     def start_ftp_server(self, path, port):
         """
         Starts an FTP server in a designated path and port

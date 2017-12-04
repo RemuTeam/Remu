@@ -2,6 +2,7 @@ import json
 from Domain.Presentation import Presentation
 from kivy.logger import Logger
 
+
 class Project:
     """
     A project is a collection of presentations that should be shown simultaneously.
@@ -9,9 +10,16 @@ class Project:
 
     def __init__(self):
         """
-        Creates an empty project
+        Creates an empty project, and initializes an empty list for presentations. Presentations are stored as a list of
+        tuples, the first part of tuple being name of the presentation and the second part being an instance of
+        presentation class.
         """
-        self.presentations = [] #Lista tupleja, muodossa [(esityksenNimi, presentation), (toisenEsityksenNimi, toinenPresentation)]
+        self.presentations = []
+
+    def remove_from_presentations(self, name):
+        for presentation in self.presentations:
+            if presentation[0] == name:
+                self.presentations.remove(presentation)
 
     def dump_json(self):
         """

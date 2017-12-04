@@ -51,6 +51,9 @@ class MasterGUILayout(Screen, EventDispatcher):
         self.project_overview = self.ids.project_overview
         self.master = None
 
+    def setup_project(self, project):
+        self.project_overview.project = project
+
     def notify_file_import(self):
         """
         Notifies the layout for a single file import
