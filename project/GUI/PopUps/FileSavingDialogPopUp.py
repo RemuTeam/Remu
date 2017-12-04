@@ -2,6 +2,7 @@ from kivy.uix.popup import Popup
 from kivy.properties import StringProperty
 
 from GUI.PopUps.PopUps import ExceptionAlertPopUp
+from Constants.FilenameChecker import check_filename
 
 import os
 from shutil import copy
@@ -16,12 +17,6 @@ class FileSavingDialogPopUp(Popup):
     destination = StringProperty('')
     new_filename = StringProperty('')
     original_destination_filename_only = StringProperty('')
-
-    """
-    This list contains all characters that are reserved when naming a file
-    either in Unix or Windows
-    """
-    RESERVED_FILENAME_CHARS = ["/", "\\", "?", "%", "*", ":", "|", '"', "<", ">"]
 
     def __init__(self, source, destination, filename_list, listener, media_path):
         """
@@ -61,23 +56,11 @@ class FileSavingDialogPopUp(Popup):
         :return:
         """
         copy_file_btn = self.ids.copy_file_button
-        if not filename or filename in self.media_files \
-                or self.__contains_reserved_chars(filename):
-            copy_file_btn.disabled = not False
+        if filename in self.media_files or not check_filename(filename):
+            copy_file_btn.disabled = True
         else:
-            copy_file_btn.disabled = not True
+            copy_file_btn.disabled = False
 
-    def __contains_reserved_chars(self, filename):
-        """
-        Checks if the given filename contains any reserved characters
-        :param filename: a string, the file's name
-        :return: a boolean, True if reserved characters were encountered, False otherwise
-        """
-        for reserved_char in self.RESERVED_FILENAME_CHARS:
-            if reserved_char in filename:
-                return True
-
-        return False
 
     def __prefilled_new_file_name(self, destination):
         """

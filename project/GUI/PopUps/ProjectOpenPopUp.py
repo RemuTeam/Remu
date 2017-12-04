@@ -1,6 +1,7 @@
 from kivy.event import EventDispatcher
 
 from GUI.PopUps.FileHandlerPopUp import FileHandlerPopUp
+from Constants.FileHandlingMode import OpenProject
 
 
 class ProjectOpenPopUp(FileHandlerPopUp, EventDispatcher):
@@ -21,12 +22,12 @@ class ProjectOpenPopUp(FileHandlerPopUp, EventDispatcher):
                                                default_path=project_path,
                                                callback=self.open_project,
                                                callback_button_text="Open",
-                                               multiselect=False)
+                                               file_handling_mode=OpenProject)
         self.project_path = project_path
         self.listener = listener
         self.test_mode = test_mode
 
-    def open_project(self, path, selection):
+    def open_project(self, path, selection, savefilename=None):
         """
         IMPLEMENT ME ASAP!
         :param path:

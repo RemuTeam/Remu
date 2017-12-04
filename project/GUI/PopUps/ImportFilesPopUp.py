@@ -5,6 +5,7 @@ from Constants.TestReturnValue import *
 from kivy.event import EventDispatcher
 
 from Constants.SupportedFileTypes import AllSupportedFormats
+from Constants.FileHandlingMode import ImportMultipleFiles
 from GUI.PopUps.FileSavingDialogPopUp import FileSavingDialogPopUp
 from GUI.PopUps.FileHandlerPopUp import FileHandlerPopUp
 
@@ -28,16 +29,16 @@ class ImportFilesPopUp(FileHandlerPopUp, EventDispatcher):
                                                imported_files=imported_files,
                                                default_path=media_path,
                                                callback=self.import_files_for_presentation,
+                                               file_handling_mode=ImportMultipleFiles,
                                                callback_button_text="Import",
                                                filters=AllSupportedFormats,
                                                selected_presentations=selected_presentations,
-                                               multiselect=True,
                                                presentation_names=presentations)
         self.media_path = media_path
         self.listener = listener
         self.test_mode = test_mode
 
-    def import_files_for_presentation(self, path, selection):
+    def import_files_for_presentation(self, path, selection, savefilename):
         """
         Opens one or multiple files from a path
         :param path: the path to open files from
