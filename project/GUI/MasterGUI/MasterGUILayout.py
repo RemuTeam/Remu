@@ -122,13 +122,13 @@ class MasterGUILayout(Screen, EventDispatcher):
         """
         self.master.add_slave(address)
 
-    def create_new_presentation(self, name):
+    def create_new_presentation(self, name, presentation=None):
         """
         Creates a new presentation into the master's gui
         :param name: Name of the presentation to be created
         :return: Nothing
         """
-        self.project_overview.new_presentation_to_overview(name)
+        self.project_overview.new_presentation_to_overview(name, presentation)
         self.ids.txt_input.text = ""
 
     def request_next_element_from_all_slaves(self):
