@@ -35,6 +35,20 @@ class Project:
 
         return json.dumps(list_presentations)
 
+    def save_to_file(self, filename):
+        """
+        Writes the project to file as JSON.
+        :param filename: file to be written
+        :return: Nothing
+        """
+        json_string = self.dump_json()
+        with open(filename, mode='w') as f:
+            f.write(json_string)
+
+    def load_from_file(self, filename):
+        with open(filename, mode='r') as f:
+            json_str = f.read()
+            self.load_json(json_str)
 
     def load_json(self, json_str):
         """
