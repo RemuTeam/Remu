@@ -50,12 +50,11 @@ class InfoLayout(Screen):
         t = f.read()
     text = t
 
-
+    
 class RemuSM(ScreenManager):
     """
     Handles changing the GUI-layouts as different screens for the
     application, and also acts as the root widget
-
     Inherits kivy.uix.screenmanager.ScreenManager
     """
 
@@ -132,10 +131,8 @@ class GUIFactory:
     parent in Main.py
     """"""
     remuapp = None
-
     def __init__(self):
         pass
-
     def set_parent(self, remuapp):
         """"""
         Sets the current running app as the GUIFactory instance's
@@ -143,3 +140,4 @@ class GUIFactory:
         """"""
         self.remuapp = remuapp
 """
+    
