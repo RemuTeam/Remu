@@ -111,7 +111,7 @@ class ProjectOverview(BoxLayout):
         current = 9999
         for slave_presentation in self.slave_presentations.values():
             current = min(current, slave_presentation.update_status())
-        self.ids.scrollview.scroll_x = current/self.max if current >= 0 else 0
+        self.ids.scrollview.scroll_x = (current+1)/self.max if current >= 1 else 0
 
     def reset_all_presentations(self):
         for presentation in self.slave_presentations.values():

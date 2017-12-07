@@ -168,7 +168,7 @@ class SlaveVisualProperty(DragBehavior, Button):
         """
         if self.going_forward:
             return self.x-self.old_x > self.width + 5 or abs(self.x-self.old_x) > self.width + 20
-        return self.old_x-self.x < self.width + 5 or abs(self.x-self.old_x) > self.width + 20
+        return self.old_x-self.x > self.width + 5 or abs(self.x-self.old_x) > self.width + 20
 
     def on_x(self, *largs):
         if self.is_update_required() and self.being_moved:
