@@ -5,11 +5,10 @@ class Command(IntEnum):
     """
     Enumerators for master's commands in TCP json-requests
     """
-    REQUEST_PRESENTATION = 0    # for requesting slave's presentation object
+    INVALID_COMMAND = 0         # for invalid requests
     SHOW_NEXT = 1               # for requesting slave to show next element
     END_PRESENTATION = 2        # for requesting slave to end the current presentation
     DROP_CONNECTION = 3         # for informing the slave that the connection is terminated
-    INVALID_COMMAND = -1        # for invalid requests
     RETRIEVE_FILES = 4          # for requesting the slave to retrieve files from the master
     SEND_PRESENTATION = 5       # for sending presentation from master to slave
 
