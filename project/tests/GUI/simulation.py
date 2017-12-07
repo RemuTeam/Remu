@@ -129,6 +129,12 @@ class Simulator(object):
         widget = self.collected_widgets[int(node.get('__element_id'))]
         return widget
 
+    def get_multiple_elements_with_selector(self, selector):
+        self.rebuild_tree()
+        nodes = self.tree.xpath(selector)
+        assert nodes, ("%s not found in widgets tree" % selector)
+        return nodes
+
     # ASSERTIONS
     def assert_exists(self, selector, to_mark=True):
         self.rebuild_tree()

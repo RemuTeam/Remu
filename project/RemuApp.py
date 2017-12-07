@@ -35,6 +35,7 @@ class RemuApp(App):
         except Exception as ex:
             self.connected = False
         self.localip = IP.get_local_ip_address()
+        Logger.info("")
         Logger.info("\t \t \t \t \t \t \t \t \t\t \t \t  ****************************** ")
         Logger.info("\t \t \t \t \t \t \t \t \t\t \t \t  *      R.I.P GUIFactory      * ")
         Logger.info("\t \t \t \t \t \t \t \t \t\t \t \t  *                            * ")

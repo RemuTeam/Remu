@@ -12,27 +12,25 @@ def test_switch_layout_components(simulator):
     simulator.assert_count(get_from_layout("Switch", "Button"), 3)
 
     # deep tree goes reversed through the tree
-    simulator.assert_text(get_from_layout("Switch", "Button", 1), "Master")
-    simulator.assert_text(get_from_layout("Switch", "Button", 2), "Slave")
-    simulator.assert_text(get_from_layout("Switch", "Button", 3), "Info")
+    simulator.assert_text(get_from_layout("Switch", "Button", None, 1), "Master")
+    simulator.assert_text(get_from_layout("Switch", "Button", None, 2), "Slave")
+    simulator.assert_text(get_from_layout("Switch", "Button", None, 3), "Info")
 
 @pytest.mark.parametrize("params", [{}])
 @simulate
 def test_master_gui_components(simulator):
-    simulator.tap(get_from_layout("Switch", "Button", 1))
-
-    #simulator.assert_text(get_from_layout("Master", "Button", 1), "Start\npresentation")
-    #simulator.assert_text(get_from_layout("Master", "Button", 2), "show next")
-    #simulator.assert_text(get_from_layout("Master", "Button", 3), "Back")
-    #simulator.assert_text(get_from_layout("Master", "Button", 4), "New\npresentation")
-    #simulator.assert_text(get_from_layout("Master", "Button", 5), "Remove\npresentations")
-    #simulator.assert_disabled(get_from_layout("Master", "Button", 1))
+    simulator.tap(get_from_layout("Switch", "Button", None, 1))
+    simulator.assert_text(get_from_layout("Master", "Button", None, 5), "Open files")
+    simulator.assert_text(get_from_layout("Master", "Button", None, 6), "New\npresentation")
+    simulator.assert_text(get_from_layout("Master", "Button", None, 7), "Remove\npresentations")
+    simulator.assert_text(get_from_layout("Master", "Button", "//BottomPanel", 1), "Save project")
+    simulator.assert_text(get_from_layout("Master", "Button", "//BottomPanel", 2), "Open project")
 
 @pytest.mark.parametrize("params", [{}])
 @simulate
 def test_slave_button_works(simulator):
-    simulator.tap(get_from_layout("Switch", "Button", 2))
-    simulator.assert_text(get_from_layout("Slave", "Label", 1), "Currently in slave mode")
+    simulator.tap(get_from_layout("Switch", "Button", None, 2))
+    simulator.assert_text(get_from_layout("Slave", "Label", None, 1), "Currently in slave mode")
 
 #@pytest.mark.parametrize("params", [{}])
 #@simulate
