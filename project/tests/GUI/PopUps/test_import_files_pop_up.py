@@ -7,6 +7,7 @@ from Constants.TestReturnValue import TestReturnValue
 from Constants.PathConstants import PathConstants
 from GUI.PopUps.FileSavingDialogPopUp import FileSavingDialogPopUp
 from GUI.PopUps.ImportFilesPopUp import ImportFilesPopUp
+from Services.FileCopyService import COPY_EXTENSION
 
 
 class TestImportFilesPopup(unittest.TestCase):
@@ -36,27 +37,6 @@ class TestImportFilesPopup(unittest.TestCase):
             move(os.path.join(self.temp_dir, self.movable_file),
                  os.path.join(PathConstants.ABSOLUTE_TEST_MEDIA_FOLDER, self.movable_file))
             rmtree(self.temp_dir, True)
-
-    """
-    def test_import_button(self):
-        self.assertTrue(self.popup.ids.import_button.disabled)
-
-    def test_import_button_2(self):
-        self.popup.ids.filechooser.selection.append("test")
-        self.popup.check_selections(None, None)
-        self.assertTrue(self.popup.ids.import_button.disabled)
-
-    def test_import_button_3(self):
-        self.popup.selected_presentations.append("test")
-        self.popup.check_selections(None, None)
-        self.assertTrue(self.popup.ids.import_button.disabled)
-
-    def test_import_button_4(self):
-        self.popup.ids.filechooser.selection.append("test")
-        self.popup.selected_presentations.append("test")
-        self.popup.check_selections(None, None)
-        self.assertFalse(self.popup.ids.import_button.disabled)
-    """
 
     def test_init_populates_presentation_list_properly(self):
         self.assertEqual(len(self.popup.ids.presentation_list.children), 2)
@@ -121,7 +101,7 @@ class TestFileSavingDialogPopUp(unittest.TestCase):
         self.destination = os.path.join(PathConstants.ABSOLUTE_TEST_MEDIA_FOLDER, self.filename_1)
         self.popup = FileSavingDialogPopUp(self.source, self.destination, [], MasterGUIImpl(),
                                            PathConstants.ABSOLUTE_TEST_MEDIA_FOLDER)
-        ext = self.popup.COPY_EXTENSION
+        ext = COPY_EXTENSION
         self.alleged_new_filename_1 = "b" + ext + ".jpg"
         self.alleged_new_filename_2 = "a" + ext + ext + ".jpg"
         self.alleged_new_filename_3 = "c" + ext

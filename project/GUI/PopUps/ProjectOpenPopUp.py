@@ -1,8 +1,11 @@
 from kivy.event import EventDispatcher
 
 from GUI.PopUps.FileHandlerPopUp import FileHandlerPopUp
+from GUI.PopUps.PopUps import ExceptionAlertPopUp
 from Constants.FileHandlingMode import OpenProject
 from Constants.FileHandler import read_file
+from Constants.SupportedFileTypes import ProjectFileFormats
+
 import os
 
 
@@ -24,7 +27,8 @@ class ProjectOpenPopUp(FileHandlerPopUp, EventDispatcher):
                                                default_path=project_path,
                                                callback=self.open_project,
                                                callback_button_text="Open",
-                                               file_handling_mode=OpenProject)
+                                               file_handling_mode=OpenProject,
+                                               filters=ProjectFileFormats)
         self.project_path = project_path
         self.master = master
         self.test_mode = test_mode
@@ -37,6 +41,9 @@ class ProjectOpenPopUp(FileHandlerPopUp, EventDispatcher):
         :return:
         """
         json_str = read_file(os.path.join(path, selection[0]))
-        self.master.project.load_json(json_str)
-        self.master.layout.clear_presentations()
-        self.master.load_project_to_gui()
+        try:
+            self.master.project.load_json(json_str)
+            self.master.layout.clear_presentations()
+            self.master.load_project_to_gui()
+        except Exception as ex:
+            ExceptionAlertPopUp("Error while opening project", ex).open()

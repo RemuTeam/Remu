@@ -10,3 +10,4 @@ AllSupportedFormats = []
 AllSupportedFormats.extend(ImageFormats)
 AllSupportedFormats.extend(TextFormats)
 AllSupportedFormats.extend(VideoFormats)
+ProjectFileFormats = ["*.remu"]
