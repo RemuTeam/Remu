@@ -22,6 +22,11 @@ def write_file(path, filename, data):
             f.write(data)
 
 
+def append_to_file(filename, data):
+    with open(filename, "ab+") as file:
+        file.write(data)
+
+
 def copy_with_overwrite(source, destination):
     print("dest dir:""source:", source, "destination:", destination)
     destination_directory_str = os.sep
