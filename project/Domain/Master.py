@@ -34,7 +34,7 @@ class Master:
             self.project = project
             self.layout.setup_project(project)
         else:
-            print("ERROR PROJEKTI EI KELPAA!!!!!!")
+            Logger.error("Master: Invalid project")
 
     def verify_project(self, project):
         available_files = fh.get_filenames_from_path(PathConstants.ABSOLUTE_MEDIA_FOLDER)
