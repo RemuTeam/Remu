@@ -1,6 +1,8 @@
 import json
 from Domain.Presentation import Presentation
 from kivy.logger import Logger
+import Utils.FileHandler as fh
+from Constants.PathConstants import PathConstants
 
 
 class Project:
@@ -31,7 +33,10 @@ class Project:
         # A list with presentation-objects replaced with the list of files in that project
         list_presentations = []
         for tuple in self.presentations:
-            list_presentations.append((tuple[0], tuple[1].presentation_filenames))
+            filenames = []
+            for path in tuple[1].presentation_filenames:
+                filenames.append(fh.get_filename_only(path))
+            list_presentations.append((tuple[0], filenames))
 
         return json.dumps(list_presentations)
 
@@ -67,8 +72,12 @@ class Project:
         for presentation_tuple in project_list:
             name = presentation_tuple[0]
             files = presentation_tuple[1]
+            paths = []
+            for file in files:
+                path = fh.absolute_path(PathConstants.ABSOLUTE_MEDIA_FOLDER, file)
+                paths.append(path)
             pres = Presentation()
-            pres.presentation_filenames = files
+            pres.presentation_filenames = paths
             presentation_list.append((name, pres))
 
         self.presentations = presentation_list

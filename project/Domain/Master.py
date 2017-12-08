@@ -5,6 +5,10 @@ from Domain.SlaveConnection import SlaveConnection
 from Networking.RemuFTP import RemuFTPServer
 from Networking.RemuUDP import MasterUDPListener
 from kivy.logger import Logger
+import Utils.FileHandler as fh
+from Constants.PathConstants import PathConstants
+import Constants.SupportedFileTypes as supp
+
 
 
 class Master:
@@ -26,8 +30,27 @@ class Master:
         self.UDPListener = None
 
     def setup_project(self, project):
-        self.project = project
-        self.layout.setup_project(project)
+        if self.verify_project(project):
+            self.project = project
+            self.layout.setup_project(project)
+        else:
+            print("ERROR PROJEKTI EI KELPAA!!!!!!")
+
+    def verify_project(self, project):
+        available_files = fh.get_filenames_from_path(PathConstants.ABSOLUTE_MEDIA_FOLDER)
+        for presentation in project.presentations:
+            for filepath in presentation[1].presentation_filenames:
+                filename = fh.get_filename_only(filepath)
+                if fh.check_filename(filename) is False:
+                    Logger.debug("Master: Invalid filename: %s ", filename)
+                    return False
+                if not filename in available_files:
+                    Logger.debug("Master: File not found in media folder: %s", filename)
+                    return False
+                if not supp.extension_is_supported(fh.get_type_extension(filename)):
+                    Logger.debug("Master: Invalid file type: %s", filename)
+                    return False
+        return True
 
     def start_ftp_server(self, path, port):
         """
