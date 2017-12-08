@@ -141,3 +141,7 @@ def contains_reserved_chars(filename):
             return True
 
     return False
+
+def get_type_extension(filename):
+    return filename.split(".")[-1]
+

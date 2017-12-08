@@ -7,6 +7,7 @@ from Constants.SupportedFileTypes import ProjectFileFormats
 from GUI.PopUps.FileHandlerPopUp import FileHandlerPopUp
 from GUI.PopUps.PopUps import ExceptionAlertPopUp
 from Utils.FileHandler import read_file
+from Domain.Project import Project
 
 
 class ProjectOpenPopUp(FileHandlerPopUp, EventDispatcher):
@@ -42,6 +43,9 @@ class ProjectOpenPopUp(FileHandlerPopUp, EventDispatcher):
         """
         json_str = read_file(os.path.join(path, selection[0]))
         try:
+            project = Project()
+            project.load_json(json_str)
+            #self.master.setup_project(project)
             self.master.project.load_json(json_str)
             self.master.layout.clear_presentations()
             self.master.load_project_to_gui()
