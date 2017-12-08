@@ -67,19 +67,12 @@ class Master:
         Logger.debug("Master: Slave length: %s", str(len(self.slave_connections)))
         Logger.debug("Master: Presentation length: %s", str(len(self.presentations)))
 
-        if len(self.slave_connections) >= len(self.presentations): #or True:
-            self.layout.notify(Notification.PRESENTING_DISABLED, False)
-        else:
-            self.layout.notify(Notification.PRESENTING_DISABLED, True)
 
     def bind_slave_to_presentation(self, presentation, slaveconnection_to_bind):
 
         self.slave_connections[slaveconnection_to_bind].presentation = presentation
-        print(self.slave_connections[slaveconnection_to_bind].presentation.presentation_filenames)
-        #for slave_presentation in self.layout.ids.slave_overview.slave_presentations.values():
-        #    self.presentations.append(slave_presentation.get_presentation_from_widgets())
-        #presentation = self.presentations[0]
-        #slave_to_bind.presentation = presentation
+        self.layout.notify(Notification.PRESENTING_DISABLED, False)
+        Logger.debug("Master: bound presentation %s", self.slave_connections[slaveconnection_to_bind].presentation.presentation_filenames)
 
     def add_slave_connection(self, slave_connection):
         """
