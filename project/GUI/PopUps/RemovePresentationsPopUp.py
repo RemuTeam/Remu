@@ -10,10 +10,11 @@ class RemovePresentationsPopUp(Popup, EventDispatcher):
 
     def __init__(self, presentations, listener):
 
-        super(RemovePresentationsPopUp,self).__init__()
+        super(RemovePresentationsPopUp, self).__init__()
+        self.checkboxes = []
         self.populate_presentation_list(presentations)
-        self.selected_presentations=[]
-        self.listener=listener
+        self.selected_presentations = []
+        self.listener = listener
 
     def populate_presentation_list(self, presentations):
         """
@@ -23,7 +24,9 @@ class RemovePresentationsPopUp(Popup, EventDispatcher):
         """
         presentation_list = self.ids.presentation_list
         for p in presentations:
-            presentation_list.add_widget(CheckBoxBonanza(p, 0.05, self.on_checkbox_active))
+            cbb = CheckBoxBonanza(p, 0.05, self.on_checkbox_active)
+            presentation_list.add_widget(cbb)
+            self.checkboxes.append(cbb)
 
     def on_checkbox_active(self, checkbox, value):
         """

@@ -1,19 +1,8 @@
-import os
 import unittest
-from shutil import copy, rmtree, move
-
-from Constants.TestReturnValue import TestReturnValue
-
-from Constants.PathConstants import PathConstants
-from GUI.PopUps.FileSavingDialogPopUp import FileSavingDialogPopUp
-from GUI.PopUps.ImportFilesPopUp import ImportFilesPopUp
 from GUI.PopUps.BindPresentationToSlavePopUp import BindPresentationToSlavePopUp
-from Domain.Slave import Slave
 from Domain.Master import Master
-from Domain.SlaveConnection import SlaveConnection
 from GUI.MasterGUI.MasterGUILayout import MasterGUILayout
 from unittest.mock import Mock
-from Domain.Presentation import Presentation
 from kivy.uix.button import Button
 
 
@@ -25,7 +14,7 @@ class TestBindPresentationToSlavePopup(unittest.TestCase):
         self.button = Button()
         self.bind_popup = BindPresentationToSlavePopUp([self.slave_name], None, self.master, self.button)
 
-    def test_init_populates_presentation_list_properly(self):
+    def test_init_setups_properly(self):
         self.assertIsNone(self.bind_popup.presentation)
         self.assertEquals(self.bind_popup.listener, self.master)
         self.assertEquals(self.bind_popup.button, self.button)
