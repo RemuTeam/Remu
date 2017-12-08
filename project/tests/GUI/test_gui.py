@@ -31,6 +31,8 @@ def test_master_gui_components(simulator):
 def test_slave_button_works(simulator):
     simulator.tap(get_from_layout("Switch", "Button", None, 2))
     simulator.assert_text(get_from_layout("Slave", "Label", None, 1), "Currently in slave mode")
+    simulator.tap(get_from_layout("Slave", "Button", None, 1))
+
 
 #@pytest.mark.parametrize("params", [{}])
 #@simulate
@@ -52,13 +54,3 @@ def test_slave_button_works(simulator):
     #simulator.assert_text(get_from_layout("Slave", "Label", 1), "Currently in slave view")
 
     #simulator.app.close_connections()
-
-#@pytest.mark.parametrize("params", [{}])
-#@simulate
-#def test_MasterBackPopup(simulator):
- #   simulator.tap(switch_layout_button(1))
- #   simulator.tap(master_layout_button(2))
-    #simulator.assert_count(master_back_popup_buttons(),2)
-    #simulator.assert_count(master_back_popup_labels(),1)
-    #simulator.tap(master_back_popup_button(1))
-    #simulator.assert_text(switch_layout_button(1),"Master")

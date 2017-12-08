@@ -22,6 +22,9 @@ class SlaveGUILayout(Screen):
         super(SlaveGUILayout, self).__init__(**kwargs)
         self.slave = None
 
+    def go_back(self):
+        print("Back method not implemented in SlaveGUILayout")
+
     def on_pre_enter(self, *args):
         """
         This function is called when the transition to this Screen is in progress

@@ -9,6 +9,7 @@ from Domain.Master import Master
 from Domain.Project import Project
 from Domain.Presentation import Presentation
 from kivy.logger import Logger
+from kivy.core.window import Window
 
 """
     HANDLES THE NAMING OF SLAVES AND MASTER AND THE MESSAGE SENT
@@ -35,6 +36,8 @@ class RemuApp(App):
         except Exception as ex:
             self.connected = False
         self.localip = IP.get_local_ip_address()
+        self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
+        self._keyboard.bind(on_key_down=self._on_keyboard_down)
         Logger.info("")
         Logger.info("\t \t \t \t \t \t \t \t \t\t \t \t  ****************************** ")
         Logger.info("\t \t \t \t \t \t \t \t \t\t \t \t  *      R.I.P GUIFactory      * ")
@@ -45,6 +48,30 @@ class RemuApp(App):
         Logger.info("\t \t \t \t \t \t \t \t \t\t \t \t  *                            * ")
         Logger.info("\t \t \t \t \t \t \t \t \t\t \t \t  *          2017-2017         * ")
         Logger.info("\t \t \t \t \t \t \t \t \t\t \t \t  ****************************** ")
+
+    def _keyboard_closed(self):
+        """
+        Unbinds the keybindings made in __init__ and _on_keyboard_down
+        :return: Nothing
+        """
+        self._keyboard.unbind(on_key_down=self._on_keyboard_down)
+        self._keyboard = None
+
+    def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
+        """
+        Defines keybindings to the program by overriding the _on_keyboard_down method. If you want to implement global
+        key commands, it can be done here.
+        :param keyboard:
+        :param keycode:
+        :param text:
+        :param modifiers:
+        :return:
+        """
+        if keycode[1] == 'b'and self.servicemode is not None:
+            self.servicemode.layout.go_back()
+        if keycode[1] == 'escape':
+            App.stop(self)
+        return True
 
     def build_config(self, config):
         """
@@ -155,7 +182,3 @@ class RemuApp(App):
         """
         if self.servicemode:
             self.servicemode.close_all_connections()
-
-    #def init_presentation(self):
-        #self.servicemode.set_presentation(Presentation())
-    #    pass

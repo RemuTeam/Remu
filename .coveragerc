@@ -5,3 +5,11 @@ omit =
     /home/travis/virtualenv/*
     project/tests/*
     project/RemuCoverageTester.py
+    project/Networking/IP.py
+    project/Main.py
+[report]
+exclude_lines =
+    def on_connection
+    def end_connection
+    def connect
+    def disconnect
