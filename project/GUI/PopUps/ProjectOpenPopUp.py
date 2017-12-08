@@ -45,8 +45,7 @@ class ProjectOpenPopUp(FileHandlerPopUp, EventDispatcher):
         try:
             project = Project()
             project.load_json(json_str)
-            #self.master.setup_project(project)
-            self.master.project.load_json(json_str)
+            self.master.setup_project(project)
             self.master.layout.clear_presentations()
             self.master.load_project_to_gui()
         except Exception as ex:

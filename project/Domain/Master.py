@@ -7,7 +7,7 @@ from Networking.RemuUDP import MasterUDPListener
 from kivy.logger import Logger
 import Utils.FileHandler as fh
 from Constants.PathConstants import PathConstants
-from Constants.SupportedFileTypes import AllSupportedFormats
+import Constants.SupportedFileTypes as supp
 
 
 
@@ -39,15 +39,16 @@ class Master:
     def verify_project(self, project):
         available_files = fh.get_filenames_from_path(PathConstants.ABSOLUTE_MEDIA_FOLDER)
         for presentation in project.presentations:
-            for filename in presentation[1].presentation_filenames:
+            for filepath in presentation[1].presentation_filenames:
+                filename = fh.get_filename_only(filepath)
                 if fh.check_filename(filename) is False:
-                    print("Vääriä merkkejä tms: ", filename)
+                    Logger.debug("Master: Invalid filename: %s ", filename)
                     return False
                 if not filename in available_files:
-                    print("Ei semmosta tiedostoa: ", filename)
+                    Logger.debug("Master: File not found in media folder: %s", filename)
                     return False
-                if fh.get_type_extension(filename) not in AllSupportedFormats:
-                    print("Tiedostomuoto ei kelpaa: ", filename)
+                if not supp.extension_is_supported(fh.get_type_extension(filename)):
+                    Logger.debug("Master: Invalid file type: %s", filename)
                     return False
         return True
 

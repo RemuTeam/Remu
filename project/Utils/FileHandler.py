@@ -38,7 +38,7 @@ def create_directory(path):
 
 def prefilled_new_file_name(destination, path):
     """
-    A private method to create a prefilled filename based on
+    Create a prefilled filename based on
     the original destination filename. The filename will differ
     from all the file names currently in the app's media folder
     :param destination: a string, the destination as "path1/path2/filename.ext"
@@ -144,5 +144,7 @@ def contains_reserved_chars(filename):
     return False
 
 def get_type_extension(filename):
-    return filename.split(".")[-1]
+    return filename.split('.')[-1]
 
+def absolute_path(directory, file):
+    return os.path.join(directory, file)
