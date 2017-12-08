@@ -1,11 +1,9 @@
-from kivy.app import App
 from kivy.event import EventDispatcher
 from kivy.properties import StringProperty, ListProperty, BooleanProperty
 from kivy.uix.popup import Popup
-from kivy.uix.boxlayout import BoxLayout
 
 from GUI.CustomWidgets import CheckBoxBonanza
-from Constants.FileHandler import check_filename
+from Utils.FileHandler import check_filename
 
 
 class FileHandlerPopUp(Popup, EventDispatcher):

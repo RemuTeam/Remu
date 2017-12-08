@@ -2,12 +2,11 @@ import os
 import unittest
 from shutil import copy, rmtree, move
 
-from Constants.TestReturnValue import TestReturnValue
-
 from Constants.PathConstants import PathConstants
+from Constants.TestReturnValue import TestReturnValue
 from GUI.PopUps.FileSavingDialogPopUp import FileSavingDialogPopUp
 from GUI.PopUps.ImportFilesPopUp import ImportFilesPopUp
-from Services.FileCopyService import COPY_EXTENSION
+from Utils.FileHandler import COPY_EXTENSION
 
 
 class TestImportFilesPopup(unittest.TestCase):

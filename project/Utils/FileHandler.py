@@ -1,9 +1,39 @@
-from Constants.FileHandler import copy_with_overwrite, write_file
-
 import os
+from shutil import copy
 
 # the string to use when prefilling the name for copied file
 COPY_EXTENSION = "_copy"
+
+
+def read_file(filename):
+    with open(filename, "r") as f:
+        return f.read()
+
+
+def read_lines(filename):
+    with open(filename, "r") as f:
+        return f.readlines()
+
+
+def write_file(path, filename, data):
+    if check_filename(filename):
+        create_directory(path)
+        with open(os.path.join(path, filename), "w") as f:
+            f.write(data)
+
+
+def copy_with_overwrite(source, destination):
+    print("dest dir:""source:", source, "destination:", destination)
+    destination_directory_str = os.sep
+    destination_directory_str.join(destination.split(os.sep)[:-1])
+    print(destination_directory_str)
+    create_directory(destination_directory_str)
+    copy(source, destination)
+
+
+def create_directory(path):
+    if not os.path.isdir(path):
+        os.mkdir(path)
 
 
 def prefilled_new_file_name(destination, path):
@@ -34,18 +64,11 @@ def create_filename_with_extensions(filename_and_extensions, path):
     existing_files = get_filenames_from_path(path)
     extensions = filename_and_extensions[1:]
     filename_with_extensions = filename_and_extensions[0]
-    print(existing_files, current_filename_with_extensions(filename_with_extensions, extensions))
     while current_filename_with_extensions(filename_with_extensions, extensions) in existing_files:
         filename_with_extensions += COPY_EXTENSION
     for i in range(len(extensions)):
         filename_with_extensions += '.' + extensions[i]
     return filename_with_extensions
-
-
-def get_filenames_from_path(path):
-    filenames = [file for file in os.listdir(path) if
-                 os.path.isfile(os.path.join(path, file))]
-    return filenames
 
 
 def current_filename_with_extensions(filename, extensions):
@@ -61,19 +84,6 @@ def current_filename_with_extensions(filename, extensions):
     return filename_with_extensions
 
 
-def create_new_file(self):
-    """
-    Creates a new file.
-    :return: None
-    """
-    separated_path_list = self.destination_name.split(os.sep)
-    separated_path_list[len(separated_path_list) - 1] = self.ids.save_as.text
-    file_to_save = separated_path_list[0]
-    for i in range(1, len(separated_path_list)):
-        file_to_save += os.sep + separated_path_list[i]
-    self.copy_file_as(file_to_save)
-
-
 def copy_file_as(source, destination, path):
     """
     Copies the source file to to another location.
@@ -85,3 +95,49 @@ def copy_file_as(source, destination, path):
 
 def save_source_as(data, destination, path):
     write_file(path, destination, data)
+
+
+def get_filenames_from_path(path):
+    filenames = [file for file in os.listdir(path) if
+                 os.path.isfile(os.path.join(path, file))]
+    return filenames
+
+
+def get_filename_with_extension(filename, extension):
+    separated_filename = filename.split(os.sep)[-1]
+    separated_extension = separated_filename.split(".")
+    if separated_extension is not None and separated_extension[-1] != extension:
+        return filename + "."  + extension
+    return filename
+
+
+"""
+This list contains all characters that are reserved when naming a file
+either in Unix or Windows
+"""
+ReservedFilenameChars = ["/", "\\", "?", "%", "*", ":", "|", '"', "<", ">"]
+
+
+def check_filename(filename):
+    """
+    A static method to check whether filename is valid
+    :param filename: a string, the filename to check
+    :return: True if valid, False otherwise
+    """
+    if not filename or contains_reserved_chars(filename):
+        return False
+    else:
+        return True
+
+
+def contains_reserved_chars(filename):
+    """
+    Checks whether the filename contains OS-reserved characters
+    :param filename: the filename to check
+    :return: True if contains reserved characters, False otherwise
+    """
+    for reserved_char in ReservedFilenameChars:
+        if reserved_char in filename:
+            return True
+
+    return False

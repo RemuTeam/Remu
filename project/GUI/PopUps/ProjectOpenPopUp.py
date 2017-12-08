@@ -1,12 +1,12 @@
+import os
+
 from kivy.event import EventDispatcher
 
+from Constants.FileHandlingMode import OpenProject
+from Constants.SupportedFileTypes import ProjectFileFormats
 from GUI.PopUps.FileHandlerPopUp import FileHandlerPopUp
 from GUI.PopUps.PopUps import ExceptionAlertPopUp
-from Constants.FileHandlingMode import OpenProject
-from Constants.FileHandler import read_file
-from Constants.SupportedFileTypes import ProjectFileFormats
-
-import os
+from Utils.FileHandler import read_file
 
 
 class ProjectOpenPopUp(FileHandlerPopUp, EventDispatcher):

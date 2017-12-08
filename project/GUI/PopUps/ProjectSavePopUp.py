@@ -1,10 +1,11 @@
+import os
+
 from kivy.event import EventDispatcher
 
+from Constants.FileHandlingMode import SaveProject
 from GUI.PopUps.FileHandlerPopUp import FileHandlerPopUp
 from GUI.PopUps.FileSavingDialogPopUp import FileSavingDialogPopUp
-from Constants.FileHandlingMode import SaveProject
-from Constants.FileHandler import write_file
-import os
+from Utils.FileHandler import write_file
 
 
 class ProjectSavePopUp(FileHandlerPopUp, EventDispatcher):
