@@ -93,10 +93,6 @@ def copy_file_as(source, destination, path):
     copy_with_overwrite(source, destination)
 
 
-def save_source_as(data, destination, path):
-    write_file(path, destination, data)
-
-
 def get_filenames_from_path(path):
     filenames = [file for file in os.listdir(path) if
                  os.path.isfile(os.path.join(path, file))]
@@ -108,6 +104,11 @@ def get_filename_with_extension(filename, extension):
     separated_extension = separated_filename.split(".")
     if separated_extension is not None and separated_extension[-1] != extension:
         return filename + "."  + extension
+    return filename
+
+
+def get_filename_only(filepath):
+    filename = filepath.split(os.sep)[-1]
     return filename
 
 
