@@ -108,3 +108,6 @@ class PresentationLayout(Screen):
         self.slave.reset_presentation()
         self.parent.get_screen('slave_gui_layout').set_info_text("Presentation ended\nCurrently in slave mode")
         App.get_running_app().root.change_screen_to("slave_gui_layout")
+
+    def error(self, message, exception):
+        pass

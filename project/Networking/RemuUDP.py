@@ -27,27 +27,30 @@ class EchoClientDatagramProtocol(DatagramProtocol):
         """
         Sends the beaconing signal as a broadcast.
         """
+        try:
+            app = App.get_running_app()
+            address = app.localip
 
-        app = App.get_running_app()
-        address = app.localip
+            name = app.config.get("name")
+            udp_port = app.config.getint('udp port')
+            bcast = app.config.get('broadcast address')
+            Logger.info('RemuUDP: broadcast address = %s', bcast)
 
-        name = app.config.get("name")
-        udp_port = app.config.getint('udp port')
-        bcast = app.config.get('broadcast address')
-        Logger.info('RemuUDP: broadcast address = %s', bcast)
+            msg = (name + ": connect to me").encode()
 
-        msg = (name + ": connect to me").encode()
+            if bcast != '<broadcast>':
+                self.transport.write(msg, (bcast, udp_port))
 
-        if bcast != '<broadcast>':
-            self.transport.write(msg, (bcast, udp_port))
-
-        else:
-            stop = address.rfind('.')
-            base = address[:stop]
-            bcast = base + ".255"
-            self.transport.write(msg, (bcast, udp_port))
-            self.transport.write(msg, ('<broadcast>', udp_port))
-        Logger.debug("RemuUDP: Message sent")
+            else:
+                stop = address.rfind('.')
+                base = address[:stop]
+                bcast = base + ".255"
+                self.transport.write(msg, (bcast, udp_port))
+                self.transport.write(msg, ('<broadcast>', udp_port))
+            Logger.debug("RemuUDP: Message sent")
+        except Exception as ex:
+            servicemode = App.get_running_app().servicemode
+            servicemode.handle_exception("Error while sending UDP datagram", ex)
 
     def startProtocol(self):
         """

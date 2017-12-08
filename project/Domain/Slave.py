@@ -213,3 +213,6 @@ class Slave:
         Uses a RemuUDP method to stop listening to the UDP connection
         """
         self.beacon.stop_beaconing()
+
+    def handle_exception(self, message, exception):
+        self.layout.error(message, exception)

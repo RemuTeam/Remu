@@ -1,7 +1,7 @@
 from kivy.uix.screenmanager import Screen
 from kivy.properties import StringProperty
 from kivy.app import App
-from GUI.PopUps.PopUps import SlaveBackPopUp
+from GUI.PopUps.PopUps import SlaveBackPopUp, ExceptionAlertPopUp
 
 class SlaveGUILayout(Screen):
     """
@@ -60,3 +60,6 @@ class SlaveGUILayout(Screen):
         :return:
         """
         self.info_text = info_text
+
+    def error(self, message, exception):
+        ExceptionAlertPopUp(message, exception).open()

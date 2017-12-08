@@ -1,8 +1,8 @@
-import os
 from twisted.cred.checkers import AllowAnonymousAccess, FilePasswordDB
 from twisted.cred.portal import Portal
 from twisted.internet import reactor
 from twisted.protocols.ftp import FTPFactory, FTPRealm
+from Utils.FileHandler import append_to_file, get_filenames_from_path
 from kivy.logger import Logger
 
 class RemuFTPServer:
@@ -150,9 +150,9 @@ class FileBufferingProtocol(Protocol):
         Appends the buffer's content to the file
         and flushes the buffer.
         """
-        with open(self.__file, "ab+") as file:
-            buffer_content = self.flush_buffer()
-            file.write(buffer_content)
+        buffer_content = self.flush_buffer()
+        append_to_file(self.__file, buffer_content)
+
 
     def set_buffersize_limit(self, new_buffersize_limit):
         """
@@ -299,7 +299,7 @@ class RemuFTPClient:
         A function that attempts to retrieve all the
         files listed in the self.files object from the server
         """
-        existing_files = self.get_existing_files(self.write_path)
+        existing_files = get_filenames_from_path(self.write_path)
         if self.fileCounter < len(self.files):
             print("-------------************----------------")
             print("retrieving file number: " + str(self.fileCounter + 1) + " out of " + str(len(self.files)))
@@ -329,9 +329,3 @@ class RemuFTPClient:
                 print('    %s: %d bytes, %s' \
                       % (file['filename'], file['size'], file['date']))
             print('Total: %d files' % (len(self.files)))
-
-    def get_existing_files(self, path):
-        filenames = []
-        for filename in os.listdir(path):
-            filenames.append(filename)
-        return filenames

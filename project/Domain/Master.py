@@ -253,6 +253,10 @@ class Master:
                       Notification.CONNECTION_ESTABLISHED: update_connection,
                       Notification.CONNECTION_TERMINATED: remove_slave
                       }
+
+    def handle_exception(self, message, exception):
+        self.layout.error(message, exception)
+
 """
 def load_project_to_gui()
     for named_presentation in self.project.presentations:

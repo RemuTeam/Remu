@@ -298,6 +298,10 @@ class MasterGUILayout(Screen, EventDispatcher):
                       Notification.PRESENTING_DISABLED: start_presentation_button_disabled
                       }
 
+    def error(self, message, exception):
+        ExceptionAlertPopUp(message, exception).open()
+
+
 class BottomPanel(BoxLayout):
     def open_project(self):
         ProjectOpenPopUp(App.get_running_app().servicemode, PathConstants.ABSOLUTE_PROJECT_FOLDER).open()
