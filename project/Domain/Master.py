@@ -75,7 +75,7 @@ class Master:
     def bind_slave_to_presentation(self, presentation, slaveconnection_to_bind):
 
         self.slave_connections[slaveconnection_to_bind].presentation = presentation
-        print(self.slave_connections[slaveconnection_to_bind].presentation.presentation_filenames)
+        #print(self.slave_connections[slaveconnection_to_bind].presentation.presentation_filenames)
         #for slave_presentation in self.layout.ids.slave_overview.slave_presentations.values():
         #    self.presentations.append(slave_presentation.get_presentation_from_widgets())
         #presentation = self.presentations[0]

@@ -3,6 +3,7 @@ from kivy.event import EventDispatcher
 
 from GUI.CustomWidgets import CheckBoxBonanza
 
+
 class BindPresentationToSlavePopUp(Popup, EventDispatcher):
     """
     A kivy popup that allows the user to remove made presentations in master mode
@@ -10,9 +11,10 @@ class BindPresentationToSlavePopUp(Popup, EventDispatcher):
 
     def __init__(self, available_slaves, presentation, listener, button):
         super(BindPresentationToSlavePopUp, self).__init__()
+        self.checkboxes = []
         self.populate_presentation_list(available_slaves)
         self.presentation = presentation
-        self.listener=listener
+        self.listener = listener
         self.selected_slave = None
         self.button = button
 
@@ -26,6 +28,7 @@ class BindPresentationToSlavePopUp(Popup, EventDispatcher):
         for p in available_slaves:
             cbb = CheckBoxBonanza(p, 0.05, self.on_checkbox_active)
             cbb.ids.checker.group = "check yo self before you wreck yo self"
+            self.checkboxes.append(cbb)
             slave_list.add_widget(cbb)
 
     def on_checkbox_active(self, checkbox, value):
