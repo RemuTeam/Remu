@@ -99,16 +99,6 @@ class MasterTest(unittest.TestCase):
 
         mock_method.assert_called_once_with(Notification.CONNECTION_ESTABLISHED, "localhost:8000")
 
-    def test_update_connection_works3(self):
-        with patch.object(SlaveConnection, 'request_presentation', return_value=None) as mock_method:
-            connection_mock = Mock(RemuTCP)
-            slave_connection_mock = SlaveConnection(self.mock_master)
-            slave_connection_mock.set_connection(connection_mock)
-            self.mock_master.add_slave_connection(slave_connection_mock)
-            self.mock_master.notify(Notification.CONNECTION_ESTABLISHED, "localhost:8000")
-
-        #mock_method.assert_called_once_with()
-
     def test_close_connections(self):
         with patch.object(RemuTCP, 'end_connection', return_value=None) as mock_method:
             connection_mock = RemuTCP(self.mock_master, True, "")

@@ -49,7 +49,7 @@ class Presentation:
     def __create_presentation(self):
         """
         Loads the pictures to the presentation
-        The directory to load the files from is "images"
+        The directory to load the files from is defined in PathConstants
         """
         Logger.info("Presentation: Creating presentation")
         if self.presentation_elements is None or len(self.presentation_elements) == 0:
@@ -151,34 +151,8 @@ class Presentation:
         dict[MessageKeys.presentation_content_key] = self.get_presentation_content()
         return dict
 
-    def add_elements(self, element_dict):
-        """
-        Creates PresentationElements into the presentation_elements list from a given dictionary. At least, the
-        dictionary needs to contain information about the type of the given element in ContentType form, and the name
-        of the file.
-        :param element_dict:
-        :return: Nothing
-        """
-        content = element_dict[MessageKeys.presentation_content_key]
-        if content is not None:
-            if self.presentation_elements is None:
-                self.presentation_elements = []
-
-            for element in content:
-                self.presentation_elements.append(PresentationElement(element[1], element[0]))
-
     def set_files(self, filenamelist):
         """
         Sets the names of the files from a ready made list.
         """
         self.presentation_filenames = filenamelist
-
-    @staticmethod
-    def CreatePresentation(entries):
-        """
-        Creates a Presentation. Uses the parameter entries to update the presentation contents.
-        """
-        presentation = Presentation()
-        presentation.add_elements(entries)
-
-        return presentation
