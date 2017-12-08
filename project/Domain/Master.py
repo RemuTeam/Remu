@@ -29,15 +29,25 @@ class Master:
         self.FTPServer = None
         self.UDPListener = None
 
-    def setup_project(self, project):
-        if self.verify_project(project):
+    def setup_project(self, project, media_path=PathConstants.ABSOLUTE_MEDIA_FOLDER):
+        """
+        Load a new project. Verifies that the project is valid and then loads it to the GUI
+        :param project: The project to be loaded
+        :return: Nothing
+        """
+        if self.verify_project(project, media_path):
             self.project = project
             self.layout.setup_project(project)
         else:
             Logger.error("Master: Invalid project")
 
-    def verify_project(self, project):
-        available_files = fh.get_filenames_from_path(PathConstants.ABSOLUTE_MEDIA_FOLDER)
+    def verify_project(self, project, media_path=PathConstants.ABSOLUTE_MEDIA_FOLDER):
+        """
+        Verifies that all required files exist, filetypes are supported and filenames are valid.
+        :param project: The project to be verified
+        :return: True if valid, False otherwise
+        """
+        available_files = fh.get_filenames_from_path(media_path)
         for presentation in project.presentations:
             for filepath in presentation[1].presentation_filenames:
                 filename = fh.get_filename_only(filepath)
