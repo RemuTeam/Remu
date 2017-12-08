@@ -4,7 +4,7 @@ from kivy.event import EventDispatcher
 
 from Constants.FileHandlingMode import SaveProject
 from GUI.PopUps.FileHandlerPopUp import FileHandlerPopUp
-from GUI.PopUps.FileSavingDialogPopUp import FileSavingDialogPopUp
+from GUI.PopUps.ProjectCopyDialogPopUp import ProjectCopyDialogPopUp
 from Utils.FileHandler import write_file, get_filename_with_extension
 
 
@@ -42,6 +42,6 @@ class ProjectSavePopUp(FileHandlerPopUp, EventDispatcher):
         destination = os.path.join(path, filename_with_extension)
         source = self.listener.project.dump_json()
         if os.path.isfile(destination):
-            FileSavingDialogPopUp(source, destination, None, self, path, source_is_file=False).open()
+            ProjectCopyDialogPopUp(source, destination, self, path).open()
         else:
             write_file(path, filename_with_extension, source)

@@ -1,6 +1,5 @@
 from kivy.properties import StringProperty
 from kivy.uix.popup import Popup
-from kivy.logger import Logger
 
 from GUI.PopUps.PopUps import ExceptionAlertPopUp
 from Utils.FileHandler import *
@@ -14,8 +13,11 @@ class FileSavingDialogPopUp(Popup):
     destination = StringProperty('')
     new_filename = StringProperty('')
     original_destination_filename_only = StringProperty('')
+    folder_name = StringProperty('')
+    dismiss_button_text = StringProperty('')
 
-    def __init__(self, source, destination, filename_list, listener, media_path, source_is_file=True):
+    def __init__(self, source, destination, filename_list, listener, path,
+                 folder_name, dismiss_button_text):
         """
         The source and destination files are passed as arguments
         :param source: a string, the source file with path
@@ -26,14 +28,15 @@ class FileSavingDialogPopUp(Popup):
         self.source = source
         self.destination_name = destination
         self.destination = destination
-        self.path = media_path
+        self.path = path
+        self.folder_name = folder_name
+        self.dismiss_button_text = dismiss_button_text
         self.media_files = get_filenames_from_path(self.path)
         self.new_filename = prefilled_new_file_name(self.destination, self.path)
-        self.original_destination_filename_only = self.__parse_filename_only(destination)
+        self.original_destination_filename_only = get_filename_only(destination)
         self.ids.save_as.bind(text=self.on_text)
         self.filename_list = filename_list
         self.listener = listener
-        self.source_is_file = source_is_file
 
     def on_text(self, instance, filename):
         """
@@ -47,38 +50,6 @@ class FileSavingDialogPopUp(Popup):
             copy_file_btn.disabled = True
         else:
             copy_file_btn.disabled = False
-
-    def __parse_filename_only(self, filepath):
-        """
-        A private helper method to return the file name from a
-        "path1/path2/path3/filename.ext" string.
-        :param filepath: a string, the pathpathpathfile-thingy
-        :return: a string the file name only
-        """
-        paths_and_file_list = filepath.split(os.sep)
-        return paths_and_file_list[len(paths_and_file_list) - 1]
-
-    def replace_file(self):
-        self.copy_source_file_as(self.destination) if self.source_is_file else self.save_source(self.destination)
-
-    def create_new_file(self):
-        filename = os.path.join(self.path, self.ids.save_as.text)
-        self.copy_source_file_as(filename) if self.source_is_file else self.save_source(self.ids.save_as.text)
-
-    def copy_source_file_as(self, filename):
-        try:
-            copy_file_as(self.source, filename, self.path)
-            self.filename_list.append(filename)
-            self.listener.notify_file_import()
-        except Exception as ex:
-            self.error(ex)
-
-    def save_source(self, filename):
-        try:
-            Logger.debug("FSDPopUP:Creating new file as " + filename)
-            write_file(self.path, filename, self.source)
-        except Exception as ex:
-            self.error(ex)
 
     def error(self, exception):
         ExceptionAlertPopUp("Error writing file", exception).open()

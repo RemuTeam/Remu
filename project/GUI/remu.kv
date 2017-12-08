@@ -432,6 +432,10 @@ RemuSM:
         size_hint: 0.8, 1
         text: root.presentation_name
 
+<ProjectCopyDialogPopUp@FileSavingDialogPopUp>:
+
+<FileCopyDialogPopUp@FileSavingDialogPopUp>:
+
 #
 # FileSavingDialogPopUp asks for input when file already exists
 # in the media folder.
@@ -443,7 +447,7 @@ RemuSM:
         pos: root.pos
         orientation: "vertical"
         Label:
-            text: "The file " + root.original_destination_filename_only + " already exists in the media folder. What do you want to do?"
+            text: "The file " + root.original_destination_filename_only + " already exists in the " + root.folder_name + ". What do you want to do?"
         BoxLayout:
             orientation: "horizontal"
             Label:
@@ -456,7 +460,7 @@ RemuSM:
         BoxLayout:
             orientation: "horizontal"
             Button:
-                text: "Import from media"
+                text: root.dismiss_button_text
                 on_release: root.dismiss()
             Button:
                 text: "Replace file"
