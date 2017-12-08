@@ -5,3 +5,4 @@ omit =
     /home/travis/virtualenv/*
     project/tests/*
     project/RemuCoverageTester.py
+    project/Networking/*
