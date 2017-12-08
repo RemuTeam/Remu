@@ -1,7 +1,6 @@
-import os
-
 from kivy.properties import StringProperty
 from kivy.uix.popup import Popup
+from kivy.logger import Logger
 
 from GUI.PopUps.PopUps import ExceptionAlertPopUp
 from Utils.FileHandler import *
@@ -60,24 +59,24 @@ class FileSavingDialogPopUp(Popup):
         return paths_and_file_list[len(paths_and_file_list) - 1]
 
     def replace_file(self):
-        self.copy_source_file_as(self.destination) if self.source_is_file else self.save_source_as(self.destination)
+        self.copy_source_file_as(self.destination) if self.source_is_file else self.save_source(self.destination)
 
     def create_new_file(self):
         filename = os.path.join(self.path, self.ids.save_as.text)
-        self.copy_source_file_as(filename) if self.source_is_file else self.save_source_as(filename)
+        self.copy_source_file_as(filename) if self.source_is_file else self.save_source(self.ids.save_as.text)
 
     def copy_source_file_as(self, filename):
         try:
-            print(self.source, filename)
             copy_file_as(self.source, filename, self.path)
             self.filename_list.append(filename)
             self.listener.notify_file_import()
         except Exception as ex:
             self.error(ex)
 
-    def save_source_as(self, filename):
+    def save_source(self, filename):
         try:
-            save_source_as(self.source, filename, self.path)
+            Logger.debug("FSDPopUP:Creating new file as " + filename)
+            write_file(self.path, filename, self.source)
         except Exception as ex:
             self.error(ex)
 
