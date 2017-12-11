@@ -20,8 +20,8 @@ from kivy.core.window import Window
 kivy.require('1.10.0')
 
 
-
 BuildKV = Builder.load_file('GUI/remu.kv')
+
 
 class RemuApp(App):
 
@@ -36,18 +36,18 @@ class RemuApp(App):
         except Exception as ex:
             self.connected = False
         self.localip = IP.get_local_ip_address()
-        self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
+        self._keyboard = Window.request_keyboard(self._keyboard_closed, self.root)
         self._keyboard.bind(on_key_down=self._on_keyboard_down)
         Logger.info("")
-        Logger.info("\t \t \t \t \t \t \t \t \t\t \t \t  ****************************** ")
-        Logger.info("\t \t \t \t \t \t \t \t \t\t \t \t  *      R.I.P GUIFactory      * ")
-        Logger.info("\t \t \t \t \t \t \t \t \t\t \t \t  *                            * ")
-        Logger.info("\t \t \t \t \t \t \t \t \t\t \t \t  *   You were always there    * ")
-        Logger.info("\t \t \t \t \t \t \t \t \t\t \t \t  *     completely useless     * ")
-        Logger.info("\t \t \t \t \t \t \t \t \t\t \t \t  *       but ever present     * ")
-        Logger.info("\t \t \t \t \t \t \t \t \t\t \t \t  *                            * ")
-        Logger.info("\t \t \t \t \t \t \t \t \t\t \t \t  *          2017-2017         * ")
-        Logger.info("\t \t \t \t \t \t \t \t \t\t \t \t  ****************************** ")
+        Logger.info("\t \t \t \t \t \t \t \t \t \t \t \t  ****************************** ")
+        Logger.info("\t \t \t \t \t \t \t \t \t \t \t \t  *      R.I.P GUIFactory      * ")
+        Logger.info("\t \t \t \t \t \t \t \t \t \t \t \t  *                            * ")
+        Logger.info("\t \t \t \t \t \t \t \t \t \t \t \t  *   You were always there    * ")
+        Logger.info("\t \t \t \t \t \t \t \t \t \t \t \t  *     completely useless     * ")
+        Logger.info("\t \t \t \t \t \t \t \t \t \t \t \t  *       but ever present     * ")
+        Logger.info("\t \t \t \t \t \t \t \t \t \t \t \t  *                            * ")
+        Logger.info("\t \t \t \t \t \t \t \t \t \t \t \t  *          2017-2017         * ")
+        Logger.info("\t \t \t \t \t \t \t \t \t \t \t \t  ****************************** ")
 
     def _keyboard_closed(self):
         """
