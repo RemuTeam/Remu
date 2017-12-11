@@ -23,3 +23,4 @@ exclude_lines =
     def retrieve_files_over_ftp
     def handle_file_retrieval
     pass
+    def import_files_from_media_folder
