@@ -10,17 +10,15 @@ from Utils.FileHandler import write_file, get_filename_with_extension
 
 class ProjectSavePopUp(FileHandlerPopUp, EventDispatcher):
     """
-    A file selection and opening popup
+    A Remu Project saving popup
     """
 
-    def __init__(self, listener, project_path, test_mode=False):
+    def __init__(self, master, project_path, test_mode=False):
         """
-        Constructor
-
-        :param listener: the component to inform about file imports
-        :param imported_files: a kivy ListProperty to store files that are imported
-        :param presentations: a list of Presentation names
-        :param
+        Contructor
+        :param master: the Master object the Project is connected to
+        :param project_path: the default project path
+        :param test_mode: if True, the popup is opened in test mode, False by default
         """
         super(ProjectSavePopUp, self).__init__(title="Save project",
                                                default_path=project_path,
@@ -28,19 +26,20 @@ class ProjectSavePopUp(FileHandlerPopUp, EventDispatcher):
                                                callback_button_text="Save",
                                                file_handling_mode=SaveProject)
         self.project_path = project_path
-        self.listener = listener
+        self.master = master
         self.test_mode = test_mode
 
-    def save_project(self, path, dont_use_this_list, savefilename):
+    def save_project(self, path, selection, savefilename):
         """
-        PLEASE IMPLEMENT ASAP!
-        :param path:
-        :param savefilename:
-        :return:
+        A callback method to be called when a project is saved
+        :param path: the path to save the project to
+        :param selection: a selection of files, not used
+        :param savefilename: the name of the project file to be saved
+        :return: None
         """
         filename_with_extension = get_filename_with_extension(savefilename, "remu")
         destination = os.path.join(path, filename_with_extension)
-        source = self.listener.project.dump_json()
+        source = self.master.project.dump_json()
         if os.path.isfile(destination):
             ProjectCopyDialogPopUp(source, destination, self, path).open()
         else:

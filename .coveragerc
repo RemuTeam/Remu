@@ -16,3 +16,10 @@ exclude_lines =
     def disconnect
     Logger.debug
     Logger.info
+    def __getFiles
+    def writeFile
+    def retrieveFiles
+    def printFiles
+    def retrieve_files_over_ftp
+    def handle_file_retrieval
+    pass
