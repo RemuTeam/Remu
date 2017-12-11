@@ -153,3 +153,8 @@ class MasterTest(unittest.TestCase):
         self.mock_master.layout.setup_project.assert_not_called()
         self.assertNotEqual(self.mock_master.project, project)
 
+    def test_adding_slave(self):
+        with patch.object(SlaveConnection, 'connect_to_IP', return_value=None):
+            self.mock_master.add_slave("127.0.0.1", 'help')
+            self.assertEqual(self.mock_master.slave_connections['help'].full_address, 'localhost:8000')
+

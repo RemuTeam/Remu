@@ -130,7 +130,7 @@ def check_filename(filename):
     :param filename: a string, the filename to check
     :return: True if valid, False otherwise
     """
-    if not filename or contains_reserved_chars(filename):
+    if not filename.strip() or contains_reserved_chars(filename):
         return False
     else:
         return True
