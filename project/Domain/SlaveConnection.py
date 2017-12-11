@@ -80,6 +80,11 @@ class SlaveConnection:
         self.presentation = presentation
 
     def send_presentation(self, presentation_filenames):
+        """
+        Sends the given presentation's filenames to the slave that the SlaveConnection instance represents.
+        :param presentation_filenames: List of the filenames contained in the presentation
+        :return: Nothing
+        """
         self.set_presentation(presentation_filenames)
         params = {}
         params[MessageKeys.presentation_content_key] = presentation_filenames
@@ -93,6 +98,12 @@ class SlaveConnection:
         self.__send_command(Command.END_PRESENTATION.value)
 
     def retrieve_presentation_files(self, port, subpath):
+        """
+        Retrieves the actual presentation files from the master through an FTP connection
+        :param port: FTP connection port
+        :param subpath: Subpath to the default media path
+        :return:
+        """
         params = {MessageKeys.ftp_port_key: port,
                   MessageKeys.ftp_subpath_key: subpath,
                   MessageKeys.presentation_content_key: self.presentation.presentation_filenames}

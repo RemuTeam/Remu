@@ -1,7 +1,7 @@
 import kivy
 import Networking.IP as IP
 from Networking.RemuTCP import RemuTCP
-from GUI.GUIFactory import RemuSM, SwitchLayout, InfoLayout #ÄLÄ POISTA
+from GUI.GUICore import RemuSM, SwitchLayout, InfoLayout #ÄLÄ POISTA
 from kivy.app import App
 from kivy.lang.builder import Builder
 from Domain.Slave import Slave
@@ -14,7 +14,7 @@ from kivy.core.window import Window
 """
     HANDLES THE NAMING OF SLAVES AND MASTER AND THE MESSAGE SENT
     
-    Called by Main.py. and uses GUIFactory.py to add the actual functionalities to the layouts,
+    Called by Main.py. and uses GUICore.py to add the actual functionalities to the layouts,
     produces by the Buildkv
 """
 kivy.require('1.10.0')
@@ -38,16 +38,6 @@ class RemuApp(App):
         self.localip = IP.get_local_ip_address()
         self._keyboard = Window.request_keyboard(self._keyboard_closed, self.root)
         self._keyboard.bind(on_key_down=self._on_keyboard_down)
-        Logger.info("")
-        Logger.info("\t \t \t \t \t \t \t \t \t \t \t \t  ****************************** ")
-        Logger.info("\t \t \t \t \t \t \t \t \t \t \t \t  *      R.I.P GUIFactory      * ")
-        Logger.info("\t \t \t \t \t \t \t \t \t \t \t \t  *                            * ")
-        Logger.info("\t \t \t \t \t \t \t \t \t \t \t \t  *   You were always there    * ")
-        Logger.info("\t \t \t \t \t \t \t \t \t \t \t \t  *     completely useless     * ")
-        Logger.info("\t \t \t \t \t \t \t \t \t \t \t \t  *       but ever present     * ")
-        Logger.info("\t \t \t \t \t \t \t \t \t \t \t \t  *                            * ")
-        Logger.info("\t \t \t \t \t \t \t \t \t \t \t \t  *          2017-2017         * ")
-        Logger.info("\t \t \t \t \t \t \t \t \t \t \t \t  ****************************** ")
 
     def _keyboard_closed(self):
         """
@@ -172,6 +162,10 @@ class RemuApp(App):
             self.servicemode.end_presentation()
 
     def reset_servicemode(self):
+        """
+        Sets the service mode to none and resets the resources used by the service mode
+        :return: Nothing
+        """
         self.end_presentation()
         self.close_connections()
         self.servicemode = None

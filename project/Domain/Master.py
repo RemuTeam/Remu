@@ -102,7 +102,12 @@ class Master:
 
 
     def bind_slave_to_presentation(self, presentation, slaveconnection_to_bind):
-
+        """
+        Binds a presentation to a slave. Used by the BindPresentationToSlavePopUp.
+        :param presentation: Presentation chosen
+        :param slaveconnection_to_bind: SlaveConnection that represents the slave for the master
+        :return:
+        """
         self.slave_connections[slaveconnection_to_bind].presentation = presentation
         self.layout.notify(Notification.PRESENTING_DISABLED, False)
         Logger.debug("Master: bound presentation %s", self.slave_connections[slaveconnection_to_bind].presentation.presentation_filenames)
@@ -193,10 +198,11 @@ class Master:
         self.layout.notify(notification, data)
 
     def send_presentations_to_slaves(self):
-        i = 0
+        """
+        Sends all of the files to the slaves with through FTP connection.
+        :return: Nothing
+        """
         for slavec in self.slave_connections.values():
-            #presentation = self.presentations[i]
-            i += 1
             slavec.retrieve_presentation_files(8005, '.')
 
     def end_presentation(self):
@@ -248,10 +254,10 @@ class Master:
                       }
 
     def handle_exception(self, message, exception):
+        """
+        Shows a brief explanation of an error occurred, along with the exact exception message to the layout
+        :param message: An explanation of the issue
+        :param exception: The caught exception
+        :return:
+        """
         self.layout.error(message, exception)
-
-"""
-def load_project_to_gui()
-    for named_presentation in self.project.presentations:
-        self.layout.create_new_presentation(named_presentation[0], named_presentation[1])
-"""

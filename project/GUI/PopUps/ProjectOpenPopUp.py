@@ -12,17 +12,16 @@ from Domain.Project import Project
 
 class ProjectOpenPopUp(FileHandlerPopUp, EventDispatcher):
     """
-    A file selection and opening popup
+    A project selecting and opening popup
     """
 
     def __init__(self, master, project_path, test_mode=False):
         """
-        Constructor
-
-        :param master: the component to inform about file imports
-        :param imported_files: a kivy ListProperty to store files that are imported
-        :param presentations: a list of Presentation names
-        :param
+        Constructs a pop up that is used to open a single saved project file.
+        The filechooser view is filtered and shows only files with the extension ".remu"
+        :param master: the Master object to connect the opened Project to
+        :param project_path: the default path for opening a project
+        :param test_mode: if True, the popup is opened in test mode, False by default
         """
         super(ProjectOpenPopUp, self).__init__(title="Open project",
                                                default_path=project_path,
@@ -36,10 +35,11 @@ class ProjectOpenPopUp(FileHandlerPopUp, EventDispatcher):
 
     def open_project(self, path, selection, savefilename=None):
         """
-        IMPLEMENT ME ASAP!
-        :param path:
-        :param selection:
-        :return:
+        A callback method to be called when the file to open has been selected
+        by the user.
+        :param path: the path to open the project file from
+        :param selection: a list, the selected file will be in the first index
+        :return: None
         """
         json_str = read_file(os.path.join(path, selection[0]))
         try:

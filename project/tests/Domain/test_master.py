@@ -7,7 +7,7 @@ from Constants.Command import Notification
 from Constants.PathConstants import PathConstants
 from Domain.Master import Master
 from Domain.SlaveConnection import SlaveConnection
-from GUI.GUIFactory import MasterGUILayout
+from GUI.GUICore import MasterGUILayout
 from Networking.RemuTCP import RemuTCP
 from Domain.Project import Project
 from Domain.Presentation import Presentation

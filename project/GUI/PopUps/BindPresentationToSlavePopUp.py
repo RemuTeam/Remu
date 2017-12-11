@@ -9,12 +9,12 @@ class BindPresentationToSlavePopUp(Popup, EventDispatcher):
     A kivy popup that allows the user to remove made presentations in master mode
     """
 
-    def __init__(self, available_slaves, presentation, listener, button):
+    def __init__(self, available_slaves, presentation, master, button):
         super(BindPresentationToSlavePopUp, self).__init__()
         self.checkboxes = []
         self.populate_presentation_list(available_slaves)
         self.presentation = presentation
-        self.listener = listener
+        self.listener = master
         self.selected_slave = None
         self.button = button
 
