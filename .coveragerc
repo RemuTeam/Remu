@@ -9,7 +9,10 @@ omit =
     project/Main.py
 [report]
 exclude_lines =
+    pragma: no cover
     def on_connection
     def end_connection
     def connect
     def disconnect
+    Logger.debug
+    Logger.info

@@ -1,7 +1,7 @@
 import kivy
 import Networking.IP as IP
 from Networking.RemuTCP import RemuTCP
-from GUI.GUIFactory import RemuSM, SwitchLayout, InfoLayout #ÄLÄ POISTA
+from GUI.GUICore import RemuSM, SwitchLayout, InfoLayout #ÄLÄ POISTA
 from kivy.app import App
 from kivy.lang.builder import Builder
 from Domain.Slave import Slave
@@ -14,7 +14,7 @@ from kivy.core.window import Window
 """
     HANDLES THE NAMING OF SLAVES AND MASTER AND THE MESSAGE SENT
     
-    Called by Main.py. and uses GUIFactory.py to add the actual functionalities to the layouts,
+    Called by Main.py. and uses GUICore.py to add the actual functionalities to the layouts,
     produces by the Buildkv
 """
 kivy.require('1.10.0')
@@ -172,6 +172,10 @@ class RemuApp(App):
             self.servicemode.end_presentation()
 
     def reset_servicemode(self):
+        """
+        Sets the service mode to none and resets the resources used by the service mode
+        :return: Nothing
+        """
         self.end_presentation()
         self.close_connections()
         self.servicemode = None

@@ -9,7 +9,7 @@ from Constants.MessageKeys import MessageKeys
 from Domain.Message import Message
 from Domain.Presentation import Presentation
 from Domain.Slave import Slave
-from GUI.GUIFactory import PresentationLayout
+from GUI.GUICore import PresentationLayout
 
 
 class SlaveTest(unittest.TestCase):

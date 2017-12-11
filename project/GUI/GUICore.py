@@ -18,7 +18,6 @@ project/GUI/remu.kv
 """
 
 
-
 class SwitchLayout(Screen):
     """
     Produces the GUI-layout that allows the user to choose
@@ -91,6 +90,9 @@ class RemuSM(ScreenManager):
         self.current = 'slave_gui_layout'
 
     def add_info_layout(self):
+        """
+        Creates a new info_gui_layout if it doesn't exist, and then shows it.
+        """
         if self.info_screen is None:
             self.info_screen = InfoLayout(name='info_gui_layout')
             self.add_widget(self.info_screen)
@@ -123,21 +125,3 @@ class RemuSM(ScreenManager):
     def get_current_layout(self):
         return self.current_screen
 
-"""
-class GUIFactory:
-    """"""
-    GUIFactory defines the functions for the layout components
-    The current running app is set as the GUIFactory instance's
-    parent in Main.py
-    """"""
-    remuapp = None
-    def __init__(self):
-        pass
-    def set_parent(self, remuapp):
-        """"""
-        Sets the current running app as the GUIFactory instance's
-        parent
-        """"""
-        self.remuapp = remuapp
-"""
-    

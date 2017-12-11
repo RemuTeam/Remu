@@ -19,6 +19,11 @@ class Project:
         self.presentations = []
 
     def remove_from_presentations(self, name):
+        """
+        Removes a single presentation by name. Assumes that the presentations are named uniquely.
+        :param name: The name of the presentation that is deleted
+        :return: Nothing
+        """
         for presentation in self.presentations:
             if presentation[0] == name:
                 self.presentations.remove(presentation)
@@ -39,21 +44,6 @@ class Project:
             list_presentations.append((tuple[0], filenames))
 
         return json.dumps(list_presentations)
-
-    def save_to_file(self, filename):
-        """
-        Writes the project to file as JSON.
-        :param filename: file to be written
-        :return: Nothing
-        """
-        json_string = self.dump_json()
-        with open(filename, mode='w') as f:
-            f.write(json_string)
-
-    def load_from_file(self, filename):
-        with open(filename, mode='r') as f:
-            json_str = f.read()
-            self.load_json(json_str)
 
     def load_json(self, json_str):
         """
