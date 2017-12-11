@@ -5,6 +5,10 @@ from Domain.SlaveConnection import SlaveConnection
 from Networking.RemuFTP import RemuFTPServer
 from Networking.RemuUDP import MasterUDPListener
 from kivy.logger import Logger
+import Utils.FileHandler as fh
+from Constants.PathConstants import PathConstants
+import Constants.SupportedFileTypes as supp
+
 
 
 class Master:
@@ -25,9 +29,38 @@ class Master:
         self.FTPServer = None
         self.UDPListener = None
 
-    def setup_project(self, project):
-        self.project = project
-        self.layout.setup_project(project)
+    def setup_project(self, project, media_path=PathConstants.ABSOLUTE_MEDIA_FOLDER):
+        """
+        Load a new project. Verifies that the project is valid and then loads it to the GUI
+        :param project: The project to be loaded
+        :return: Nothing
+        """
+        if self.verify_project(project, media_path):
+            self.project = project
+            self.layout.setup_project(project)
+        else:
+            Logger.error("Master: Invalid project")
+
+    def verify_project(self, project, media_path=PathConstants.ABSOLUTE_MEDIA_FOLDER):
+        """
+        Verifies that all required files exist, filetypes are supported and filenames are valid.
+        :param project: The project to be verified
+        :return: True if valid, False otherwise
+        """
+        available_files = fh.get_filenames_from_path(media_path)
+        for presentation in project.presentations:
+            for filepath in presentation[1].presentation_filenames:
+                filename = fh.get_filename_only(filepath)
+                if fh.check_filename(filename) is False:
+                    Logger.debug("Master: Invalid filename: %s ", filename)
+                    return False
+                if not filename in available_files:
+                    Logger.debug("Master: File not found in media folder: %s", filename)
+                    return False
+                if not supp.extension_is_supported(fh.get_type_extension(filename)):
+                    Logger.debug("Master: Invalid file type: %s", filename)
+                    return False
+        return True
 
     def start_ftp_server(self, path, port):
         """
@@ -67,19 +100,12 @@ class Master:
         Logger.debug("Master: Slave length: %s", str(len(self.slave_connections)))
         Logger.debug("Master: Presentation length: %s", str(len(self.presentations)))
 
-        if len(self.slave_connections) >= len(self.presentations): #or True:
-            self.layout.notify(Notification.PRESENTING_DISABLED, False)
-        else:
-            self.layout.notify(Notification.PRESENTING_DISABLED, True)
 
     def bind_slave_to_presentation(self, presentation, slaveconnection_to_bind):
 
         self.slave_connections[slaveconnection_to_bind].presentation = presentation
-        print(self.slave_connections[slaveconnection_to_bind].presentation.presentation_filenames)
-        #for slave_presentation in self.layout.ids.slave_overview.slave_presentations.values():
-        #    self.presentations.append(slave_presentation.get_presentation_from_widgets())
-        #presentation = self.presentations[0]
-        #slave_to_bind.presentation = presentation
+        self.layout.notify(Notification.PRESENTING_DISABLED, False)
+        Logger.debug("Master: bound presentation %s", self.slave_connections[slaveconnection_to_bind].presentation.presentation_filenames)
 
     def add_slave_connection(self, slave_connection):
         """
@@ -220,6 +246,10 @@ class Master:
                       Notification.CONNECTION_ESTABLISHED: update_connection,
                       Notification.CONNECTION_TERMINATED: remove_slave
                       }
+
+    def handle_exception(self, message, exception):
+        self.layout.error(message, exception)
+
 """
 def load_project_to_gui()
     for named_presentation in self.project.presentations:

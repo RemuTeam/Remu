@@ -1,7 +1,7 @@
 from kivy.uix.screenmanager import Screen
 from kivy.properties import StringProperty
 from kivy.app import App
-from GUI.PopUps.PopUps import SlaveBackPopUp
+from GUI.PopUps.PopUps import SlaveBackPopUp, ExceptionAlertPopUp
 
 class SlaveGUILayout(Screen):
     """
@@ -21,6 +21,9 @@ class SlaveGUILayout(Screen):
         """
         super(SlaveGUILayout, self).__init__(**kwargs)
         self.slave = None
+
+    def go_back(self):
+        print("Back method not implemented in SlaveGUILayout")
 
     def on_pre_enter(self, *args):
         """
@@ -60,3 +63,6 @@ class SlaveGUILayout(Screen):
         :return:
         """
         self.info_text = info_text
+
+    def error(self, message, exception):
+        ExceptionAlertPopUp(message, exception).open()

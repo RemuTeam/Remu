@@ -1,9 +1,11 @@
+import os
+
 from kivy.event import EventDispatcher
 
-from GUI.PopUps.FileHandlerPopUp import FileHandlerPopUp
 from Constants.FileHandlingMode import SaveProject
-from Constants.FileHandler import write_file
-import os
+from GUI.PopUps.FileHandlerPopUp import FileHandlerPopUp
+from GUI.PopUps.ProjectCopyDialogPopUp import ProjectCopyDialogPopUp
+from Utils.FileHandler import write_file, get_filename_with_extension
 
 
 class ProjectSavePopUp(FileHandlerPopUp, EventDispatcher):
@@ -36,4 +38,10 @@ class ProjectSavePopUp(FileHandlerPopUp, EventDispatcher):
         :param savefilename:
         :return:
         """
-        write_file(path, savefilename + ".remu", self.listener.project.dump_json())
+        filename_with_extension = get_filename_with_extension(savefilename, "remu")
+        destination = os.path.join(path, filename_with_extension)
+        source = self.listener.project.dump_json()
+        if os.path.isfile(destination):
+            ProjectCopyDialogPopUp(source, destination, self, path).open()
+        else:
+            write_file(path, filename_with_extension, source)

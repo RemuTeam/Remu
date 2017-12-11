@@ -34,3 +34,9 @@ class TestProjectMethods(unittest.TestCase):
 
         project.presentations.append((name1, presentation1))
         project.presentations.append((name2, presentation2))
+
+    def test_removing_from_presentations(self):
+        self.project.remove_from_presentations("kek")
+        self.assertEqual(len(self.project.presentations), 1)
+        self.assertEqual(self.project.presentations[0][0], "heck")
+

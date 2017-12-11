@@ -6,7 +6,7 @@ from kivy.event import EventDispatcher
 
 from Constants.SupportedFileTypes import AllSupportedFormats
 from Constants.FileHandlingMode import ImportMultipleFiles
-from GUI.PopUps.FileSavingDialogPopUp import FileSavingDialogPopUp
+from GUI.PopUps.FileCopyDialogPopUp import FileCopyDialogPopUp
 from GUI.PopUps.FileHandlerPopUp import FileHandlerPopUp
 
 
@@ -82,7 +82,7 @@ class ImportFilesPopUp(FileHandlerPopUp, EventDispatcher):
         if path != self.media_path and os.path.isfile(destination):
             if self.test_mode:
                 return TestReturnValue.FileSavingDialogPopUp
-            FileSavingDialogPopUp(source, destination, filename_list, listener, self.media_path).open()
+            FileCopyDialogPopUp(source, destination, filename_list, listener, self.media_path).open()
         elif path != self.media_path:
             copyfile(source, destination)
             filename_list.append(destination)

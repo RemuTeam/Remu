@@ -4,10 +4,13 @@ from unittest.mock import Mock
 from unittest.mock import patch
 
 from Constants.Command import Notification
+from Constants.PathConstants import PathConstants
 from Domain.Master import Master
 from Domain.SlaveConnection import SlaveConnection
 from GUI.GUIFactory import MasterGUILayout
 from Networking.RemuTCP import RemuTCP
+from Domain.Project import Project
+from Domain.Presentation import Presentation
 
 
 class MasterTest(unittest.TestCase):
@@ -99,16 +102,6 @@ class MasterTest(unittest.TestCase):
 
         mock_method.assert_called_once_with(Notification.CONNECTION_ESTABLISHED, "localhost:8000")
 
-    def test_update_connection_works3(self):
-        with patch.object(SlaveConnection, 'request_presentation', return_value=None) as mock_method:
-            connection_mock = Mock(RemuTCP)
-            slave_connection_mock = SlaveConnection(self.mock_master)
-            slave_connection_mock.set_connection(connection_mock)
-            self.mock_master.add_slave_connection(slave_connection_mock)
-            self.mock_master.notify(Notification.CONNECTION_ESTABLISHED, "localhost:8000")
-
-        #mock_method.assert_called_once_with()
-
     def test_close_connections(self):
         with patch.object(RemuTCP, 'end_connection', return_value=None) as mock_method:
             connection_mock = RemuTCP(self.mock_master, True, "")
@@ -118,3 +111,50 @@ class MasterTest(unittest.TestCase):
             self.mock_master.close_TCP_connections()
 
         mock_method.assert_called_once_with()
+
+    def test_setup_project_with_valid_project(self):
+        project = Project()
+        name1 = "test1"
+        presentation1 = Presentation()
+        presentation1.set_files(["a.jpg", "b.jpg"])
+
+        name2 = "test2"
+        presentation2 = Presentation()
+        presentation2.set_files(["b.jpg", "a.jpg"])
+
+        project.presentations.append((name1, presentation1))
+        project.presentations.append((name2, presentation2))
+
+        self.mock_master.setup_project(project, PathConstants.ABSOLUTE_TEST_MEDIA_FOLDER)
+        self.mock_master.layout.setup_project.assert_called_once_with(project)
+        self.assertEqual(self.mock_master.project, project)
+
+    def test_setup_project_with_unsupported_filetype(self):
+        project = Project()
+        name1 = "test1"
+        presentation1 = Presentation()
+        presentation1.set_files(["a.doc", "b.jpg"])
+
+        project.presentations.append((name1, presentation1))
+
+        self.mock_master.setup_project(project, PathConstants.ABSOLUTE_TEST_MEDIA_FOLDER)
+        self.mock_master.layout.setup_project.assert_not_called()
+        self.assertNotEqual(self.mock_master.project, project)
+
+    def test_setup_project_with_nonexistent_file(self):
+        project = Project()
+        name1 = "test1"
+        presentation1 = Presentation()
+        presentation1.set_files(["abadababababababbabababbababab.jpg", "b.jpg"])
+
+        project.presentations.append((name1, presentation1))
+
+        self.mock_master.setup_project(project, PathConstants.ABSOLUTE_TEST_MEDIA_FOLDER)
+        self.mock_master.layout.setup_project.assert_not_called()
+        self.assertNotEqual(self.mock_master.project, project)
+
+    def test_adding_slave(self):
+        with patch.object(SlaveConnection, 'connect_to_IP', return_value=None):
+            self.mock_master.add_slave("127.0.0.1", 'help')
+            self.assertEqual(self.mock_master.slave_connections['help'].full_address, 'localhost:8000')
+

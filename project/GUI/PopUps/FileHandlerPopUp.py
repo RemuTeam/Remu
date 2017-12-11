@@ -1,11 +1,10 @@
-from kivy.app import App
 from kivy.event import EventDispatcher
 from kivy.properties import StringProperty, ListProperty, BooleanProperty
 from kivy.uix.popup import Popup
-from kivy.uix.boxlayout import BoxLayout
 
 from GUI.CustomWidgets import CheckBoxBonanza
-from Constants.FileHandler import check_filename
+from Utils.FileHandler import check_filename, get_filename_only
+from Constants.FileHandlingMode import *
 
 
 class FileHandlerPopUp(Popup, EventDispatcher):
@@ -74,6 +73,10 @@ class FileHandlerPopUp(Popup, EventDispatcher):
             callback_button.disabled = True
         else:
             callback_button.disabled = False
+
+    def filechooser_selection_changed(self, selection):
+        if self.file_handling_mode == SaveProject and len(selection) > 0:
+            self.ids.text_input.text = get_filename_only(selection[0])
 
     def check_filename(self, instance, value):
         self.ids.callback_button.disabled = not check_filename(value)

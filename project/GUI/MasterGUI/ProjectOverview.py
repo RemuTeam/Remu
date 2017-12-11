@@ -111,20 +111,31 @@ class ProjectOverview(BoxLayout):
         current = 9999
         for slave_presentation in self.slave_presentations.values():
             current = min(current, slave_presentation.update_status())
-        self.ids.scrollview.scroll_x = current/self.max if current >= 0 else 0
+        self.ids.scrollview.scroll_x = (current+1)/self.max if current >= 1 else 0
 
     def reset_all_presentations(self):
+        """
+        Resets the presentations to their starting states and allows their
+        elements to be rearranged.
+        :return:
+        """
         for presentation in self.slave_presentations.values():
             presentation.change_draggability(True)
             presentation.reset()
 
     def disable_rearrangement_of_buttons(self):
+        """
+        Called when Master starts the presentation so that the
+        presentation elements won't be out of sync with what the
+        slaves are showing.
+        :return:
+        """
         for presentation in self.slave_presentations.values():
             presentation.change_draggability(False)
 
     def remove_presentation(self,name):
         """
-        masterlayout calls this method for all presentations that are to be removed from master_layout
+        Masterlayout calls this method for all presentations that are to be removed from master_layout
         :param name:
         :return:
         """
@@ -135,6 +146,11 @@ class ProjectOverview(BoxLayout):
         del self.slave_presentations[name]
 
     def remove_presentations(self):
+        """
+        Clears all presentations in the ProjectOverview. Called when
+        opening an existing project.
+        :return:
+        """
         self.ids.slave_presentations.clear_widgets()
         self.ids.slave_names.clear_widgets()
         self.slave_buttons = {}

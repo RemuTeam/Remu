@@ -13,14 +13,14 @@ class SlavePresentation(StackLayout):
 
     def __init__(self, presentation):
         super(SlavePresentation, self).__init__()
-        self.presentation_data = presentation
+        self.presentation_object = presentation
         self.visuals = []
-        self.current_active = -1
-        self.create_visual_widgets(self.presentation_data.presentation_filenames)
+        self.create_visual_widgets(self.presentation_object.presentation_filenames)
 
     def create_visual_widgets(self, import_list):
         """
-        Creates the visual widgets for the slave's visuals
+        Creates the visual widgets for the presentation elements in the
+        import list.
         """
         for i in range(0, len(import_list)):
             filename = import_list[i].split(os.sep)[-1]
@@ -39,19 +39,23 @@ class SlavePresentation(StackLayout):
         :param import_list: list of presentation elements' filenames to be added to the presentation
         :return:
         """
-        self.current_active = -1
         print("to import:", import_list)
-        self.presentation_data.presentation_filenames.extend(import_list)
+        self.presentation_object.presentation_filenames.extend(import_list)
         self.create_visual_widgets(import_list)
 
     def get_presentation_from_widgets(self):
+        """
+        Sorts the SlavePresentation and its Presentation object based
+        on the x-coordinates of SlaveVisualProperty objects.
+        :return: Presentation object
+        """
         self.visuals.sort()
         self.visuals = self.visuals[::-1]
         presentation_content = []
-        for i in range(len(self.children)):
-            presentation_content.append(self.children[i].visual_name)
-        self.presentation_data.set_files(presentation_content[::-1])
-        return self.presentation_data
+        for i in range(len(self.visuals)):
+            presentation_content.append(self.visuals[i].visual_name)
+        self.presentation_object.set_files(presentation_content)
+        return self.presentation_object
 
     def sort(self):
         self.children.sort()
@@ -63,11 +67,17 @@ class SlavePresentation(StackLayout):
         """
         for visual in self.visuals:
             visual.set_inactive()
-        self.visuals[self.presentation_data.index].set_active() if self.presentation_data.index != -1 else None
-        return self.presentation_data.index
+        if self.presentation_object.index == -1:
+            return self.presentation_object.index
+        self.visuals[self.presentation_object.index].set_active()
+        return self.presentation_object.index
 
     def reset(self):
-        self.current_active = 0
+        """
+        Resets the SlavePresentation and its Presentation object.
+        :return:
+        """
+        self.presentation_object.reset()
         for visual in self.visuals:
             visual.set_inactive()
 
@@ -79,13 +89,16 @@ class SlavePresentation(StackLayout):
         #    self.ids["btn_address"].background_color = [0.94, 0.025, 0.15, 1]
         return self.visualize_next()
 
-    def get_address(self):
-        return self.ids["btn_address"].text
-
     def get_presentation_size(self):
-        return len(self.presentation_data)
+        return len(self.presentation_object)
 
     def change_draggability(self, draggable):
+        """
+        Toggles dragging for all SlaveVisualProperty objects, also
+        updates the Presentation object in case it has gone out of sync.
+        :param draggable: Boolean value.
+        :return:
+        """
         self.get_presentation_from_widgets()
         for visual in self.visuals:
             visual.toggle_dragging(draggable)
@@ -108,10 +121,16 @@ class SlaveVisualProperty(DragBehavior, Button):
         self.going_forward = True
 
     def toggle_dragging(self, draggable):
+        """
+        Sets the minimum drag distance before the element begins
+        to move around. 1 << 16 is a bitwise operation that equals 2^16.
+        :param draggable: Boolean value
+        :return:
+        """
         if draggable:
             self.drag_distance = 0
         else:
-            self.drag_distance = 6666666666666666
+            self.drag_distance = 1 << 16
 
     def on_press(self):
         print("Showing visual property information not yet implemented!")
@@ -168,7 +187,7 @@ class SlaveVisualProperty(DragBehavior, Button):
         """
         if self.going_forward:
             return self.x-self.old_x > self.width + 5 or abs(self.x-self.old_x) > self.width + 20
-        return self.old_x-self.x < self.width + 5 or abs(self.x-self.old_x) > self.width + 20
+        return self.old_x-self.x > self.width + 5 or abs(self.x-self.old_x) > self.width + 20
 
     def on_x(self, *largs):
         if self.is_update_required() and self.being_moved:

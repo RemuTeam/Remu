@@ -1,7 +1,6 @@
 from kivy.app import App
 from kivy.properties import StringProperty
 from kivy.uix.screenmanager import Screen
-
 from Constants.ContentType import ContentType
 from Domain.PresentationElement import PresentationElement
 
@@ -22,6 +21,11 @@ class PresentationLayout(Screen):
         super(PresentationLayout, self).__init__(**kwargs)
         self.slave = None
         self.start_screen = PresentationElement(ContentType.Image, "background/black_as_kivys_soul.png")
+
+    def go_back(self):
+        print("Ugh. Fine.")
+        self.slave.presentation_ended = True
+        self.reset_presentation()
 
     def on_pre_enter(self, *args):
         """
@@ -108,3 +112,6 @@ class PresentationLayout(Screen):
         self.slave.reset_presentation()
         self.parent.get_screen('slave_gui_layout').set_info_text("Presentation ended\nCurrently in slave mode")
         App.get_running_app().root.change_screen_to("slave_gui_layout")
+
+    def error(self, message, exception):
+        pass

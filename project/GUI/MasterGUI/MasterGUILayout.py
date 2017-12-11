@@ -54,6 +54,9 @@ class MasterGUILayout(Screen, EventDispatcher):
         self.project_overview = self.ids.project_overview
         self.master = None
 
+    def go_back(self):
+        print("Back method not implemented in MasterGUILayout")
+
     def setup_project(self, project):
         self.project_overview.project = project
 
@@ -297,6 +300,10 @@ class MasterGUILayout(Screen, EventDispatcher):
                       Notification.CONNECTION_TERMINATED: remove_slave_presentation,
                       Notification.PRESENTING_DISABLED: start_presentation_button_disabled
                       }
+
+    def error(self, message, exception):
+        ExceptionAlertPopUp(message, exception).open()
+
 
 class BottomPanel(BoxLayout):
     def open_project(self):

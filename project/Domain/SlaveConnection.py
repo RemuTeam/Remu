@@ -59,12 +59,6 @@ class SlaveConnection:
             msg.set_field(MessageKeys.params_key, params)
             self.connection.send_message(msg)
 
-    def request_presentation(self):
-        """
-        Requests the presentation-object from slave
-        """
-        self.__send_command(Command.REQUEST_PRESENTATION.value)
-
     def show_next(self):
         """
         Ask slave to show next item in presentation
@@ -104,16 +98,6 @@ class SlaveConnection:
                   MessageKeys.presentation_content_key: self.presentation.presentation_filenames}
         self.__send_command(Command.RETRIEVE_FILES.value, params)
 
-    def handle_presentation_response(self, data):
-        """
-        Creates a presentation based on the message received from master
-        """
-        presentation = None
-        if MessageKeys.presentation_content_key in data:
-            presentation = Presentation.CreatePresentation(data[MessageKeys.presentation_content_key])
-        self.set_presentation(presentation)
-        self.master.notify(Notification.PRESENTATION_UPDATE, self)
-
     def handle_show_next_response(self, response=None):
         """
         Handles command to show next file
@@ -146,8 +130,7 @@ class SlaveConnection:
         self.connected = True
         self.master.notify(Notification.CONNECTION_ESTABLISHED, full_address)
 
-    handle_responses = {Command.REQUEST_PRESENTATION.value: handle_presentation_response,
-                        Command.SHOW_NEXT.value: handle_show_next_response,
+    handle_responses = {Command.SHOW_NEXT.value: handle_show_next_response,
                         Command.END_PRESENTATION.value: handle_ending_presentation,
                         Command.INVALID_COMMAND.value: handle_invalid_command_response,
                         Command.RETRIEVE_FILES.value: handle_retrieve_files_response

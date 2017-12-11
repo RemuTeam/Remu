@@ -57,12 +57,6 @@ class SlaveConnectionTest(unittest.TestCase):
         self.assertEqual(self.sc.currently_showing, "second")
     """
 
-    def test_request_presentation_calls_send_message(self):
-        self.sc.request_presentation()
-        calls = self.connection_mock.method_calls
-        name = calls[0][0]
-        self.assertEqual(name, "send_message")
-
     def test_show_next_calls_send_message(self):
         self.sc.show_next()
         calls = self.connection_mock.method_calls
