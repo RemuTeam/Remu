@@ -38,16 +38,6 @@ class RemuApp(App):
         self.localip = IP.get_local_ip_address()
         self._keyboard = Window.request_keyboard(self._keyboard_closed, self.root)
         self._keyboard.bind(on_key_down=self._on_keyboard_down)
-        Logger.info("")
-        Logger.info("\t \t \t \t \t \t \t \t \t \t \t \t  ****************************** ")
-        Logger.info("\t \t \t \t \t \t \t \t \t \t \t \t  *      R.I.P GUIFactory      * ")
-        Logger.info("\t \t \t \t \t \t \t \t \t \t \t \t  *                            * ")
-        Logger.info("\t \t \t \t \t \t \t \t \t \t \t \t  *   You were always there    * ")
-        Logger.info("\t \t \t \t \t \t \t \t \t \t \t \t  *     completely useless     * ")
-        Logger.info("\t \t \t \t \t \t \t \t \t \t \t \t  *       but ever present     * ")
-        Logger.info("\t \t \t \t \t \t \t \t \t \t \t \t  *                            * ")
-        Logger.info("\t \t \t \t \t \t \t \t \t \t \t \t  *          2017-2017         * ")
-        Logger.info("\t \t \t \t \t \t \t \t \t \t \t \t  ****************************** ")
 
     def _keyboard_closed(self):
         """
