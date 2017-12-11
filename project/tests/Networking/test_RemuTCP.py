@@ -1,6 +1,23 @@
 import unittest
-import time
 from Networking.RemuTCP import RemuTCP
+from Networking.RemuTCP import RemuProtocol
+from Networking.RemuTCP import RemuProtocolFactory
+from Domain.Message import Message
+
+from unittest.mock import patch
+
+class MockClass:
+
+    def write(self, *largs):
+        pass
+
+    def getPeer(self, *largs):
+        return self
+
+    def handle_message(self, *largs):
+        pass
+
+    host = "jee"
 
 class TestRemuTCPMethods(unittest.TestCase):
 
@@ -15,6 +32,16 @@ class TestRemuTCPMethods(unittest.TestCase):
         self.assertEqual("127.0.0.1", tcp.address)
         self.assertIsNone(tcp.listener)
 
+    def test_data_received(self):
+        with patch.object(MockClass, 'write', return_value=None) and\
+                patch.object(MockClass, 'handle_message', return_value=Message()):
+            remuprotocol = RemuProtocol()
+            remuprotocol.transport = MockClass()
+            tcp = RemuTCP(None, False, None, 8003)
+            tcp.connection = MockClass()
+            tcp.parent = MockClass()
+            remuprotocol.factory = RemuProtocolFactory(tcp)
+            remuprotocol.dataReceived(b'{"name": "test", "last": "case"}')
 
 
 
