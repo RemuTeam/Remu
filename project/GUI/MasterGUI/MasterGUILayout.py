@@ -54,6 +54,9 @@ class MasterGUILayout(Screen, EventDispatcher):
         self.project_overview = self.ids.project_overview
         self.master = None
 
+    def go_back(self):
+        print("Back method not implemented in MasterGUILayout")
+
     def setup_project(self, project):
         self.project_overview.project = project
 

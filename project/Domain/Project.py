@@ -81,17 +81,3 @@ class Project:
             presentation_list.append((name, pres))
 
         self.presentations = presentation_list
-
-    # POISTA JOSKUS JOOKO
-    def create_test_presentation(self):
-        Logger.warn("Project: create_test_presentation: PLEASE DELETE THIS AFTER EVERYTHING WORKS!")
-        name1 = "bullshit"
-        presentation1 = Presentation()
-        presentation1.set_files(["a.jpg", "b.jpg"])
-
-        name2 = "wtf"
-        presentation2 = Presentation()
-        presentation2.set_files(["b.jpg", "a.jpg"])
-
-        self.presentations.append((name1, presentation1))
-        self.presentations.append((name2, presentation2))

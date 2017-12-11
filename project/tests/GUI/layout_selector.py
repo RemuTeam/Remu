@@ -17,9 +17,11 @@ LAYOUTS = [SWITCH_LAYOUT, MASTER_LAYOUT, SLAVE_LAYOUT, PRESENTATION_LAYOUT]#, MA
 ELEMENTS = [BUTTONS, LABELS, IMAGES, TEXT_INPUTS]
 
 
-def get_from_layout(layout_name, element, i=None):
+def get_from_layout(layout_name, element, additional_selector=None, i=None):
     selector = ""
     selector += get_from_constants(layout_name, LAYOUTS)
+    if additional_selector is not None:
+        selector += str(additional_selector)
     selector += get_from_constants(element, ELEMENTS)
     if i is not None:
         selector += index(i)
