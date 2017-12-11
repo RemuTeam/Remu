@@ -158,3 +158,11 @@ class MasterTest(unittest.TestCase):
             self.mock_master.add_slave("127.0.0.1", 'help')
             self.assertEqual(self.mock_master.slave_connections['help'].full_address, 'localhost:8000')
 
+    def test_binding_slave(self):
+        with patch.object(MasterGUILayout, "notify", return_value=None) as notifier:
+            self.mock_master.add_slave_connection(SlaveConnection(None))
+            presentation = Presentation()
+            presentation.presentation_filenames = ["aaaa"]
+            self.mock_master.bind_slave_to_presentation(presentation, "localhost:8000")
+            self.assertEqual(self.mock_master.slave_connections["localhost:8000"].presentation.presentation_filenames, ["aaaa"])
+        self.layout.notify.assert_called_once_with(Notification.PRESENTING_DISABLED, False)
