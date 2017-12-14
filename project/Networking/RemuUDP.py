@@ -80,7 +80,8 @@ class EchoClientDatagramProtocol(DatagramProtocol):
 
 class Beacon:
     """
-    Beacons are created when the Slave is initialized. Handles slave's UDP packets, and broadcast a beacon signal across the network.
+    Beacons are created when the Slave is initialized. Handles slave's UDP packets, and broadcast a beacon signal across
+    the network.
     """
 
     def __init__(self):

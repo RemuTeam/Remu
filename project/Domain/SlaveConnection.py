@@ -124,7 +124,6 @@ class SlaveConnection:
         """
         self.currently_showing = -1
 
-
     def handle_invalid_command_response(self, data=None):
         """
         Invalid command handler, doesn't do anything useful except catch bad mistakes
