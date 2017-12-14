@@ -1,5 +1,6 @@
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock, MagicMock
+from unittest.mock import patch
 
 from Constants.Command import Command
 from Constants.Command import Notification
@@ -8,6 +9,7 @@ from Constants.MessageKeys import MessageKeys
 from Domain.Master import Master
 from Domain.Message import Message
 from Domain.SlaveConnection import SlaveConnection
+from Domain.Presentation import Presentation
 from Networking.RemuTCP import RemuTCP
 
 
@@ -112,3 +114,13 @@ class SlaveConnectionTest(unittest.TestCase):
         slavecon.on_connection_lost()
         slavecon.master.notify.called_once_with(Notification.CONNECTION_FAILED, "123.123.123.123:123123")
 
+    def test_send_presentation(self):
+        with patch.object(SlaveConnection, 'send_command', return_value=None) as mock_method:
+            self.sc.send_presentation(["a.jpg", "b.jpg"])
+        mock_method.assert_called_once_with(Command.SEND_PRESENTATION.value, {'presentation_content': ['a.jpg', 'b.jpg']})
+
+    def test_handle_show_next_response(self):
+        self.sc.master = MagicMock(Master)
+        self.sc.presentation = Presentation()
+        self.sc.handle_show_next_response({MessageKeys.index_key: 1})
+        self.sc.master.notify.assert_called_once_with(Notification.PRESENTATION_STATUS_CHANGE, 1)

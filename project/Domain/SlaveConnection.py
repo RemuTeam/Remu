@@ -47,7 +47,7 @@ class SlaveConnection:
             self.connection = None
             Logger.error("SlaveConnection: Invalid IP-address or port. Error: \"%s\", str(e)")
 
-    def __send_command(self, command, params=None):
+    def send_command(self, command, params=None):
         """
         Private function for sending commands
         """
@@ -63,13 +63,13 @@ class SlaveConnection:
         """
         Ask slave to show next item in presentation
         """
-        self.__send_command(Command.SHOW_NEXT.value)
+        self.send_command(Command.SHOW_NEXT.value)
 
     def terminate_connection(self):
         """
         Ask slave to reset the presentation and closes the connection to it.
         """
-        self.__send_command(Command.DROP_CONNECTION.value)
+        self.send_command(Command.DROP_CONNECTION.value)
         self.connection.end_connection() if self.connection else None
         self.master.notify(Notification.CONNECTION_TERMINATED, self)
 
@@ -89,13 +89,13 @@ class SlaveConnection:
         params = {}
         params[MessageKeys.presentation_content_key] = presentation_filenames
 
-        self.__send_command(Command.SEND_PRESENTATION.value, params)
+        self.send_command(Command.SEND_PRESENTATION.value, params)
 
     def end_presentation(self):
         """
         Ends the current presentation
         """
-        self.__send_command(Command.END_PRESENTATION.value)
+        self.send_command(Command.END_PRESENTATION.value)
 
     def retrieve_presentation_files(self, port, subpath):
         """
@@ -107,7 +107,7 @@ class SlaveConnection:
         params = {MessageKeys.ftp_port_key: port,
                   MessageKeys.ftp_subpath_key: subpath,
                   MessageKeys.presentation_content_key: self.presentation.presentation_filenames}
-        self.__send_command(Command.RETRIEVE_FILES.value, params)
+        self.send_command(Command.RETRIEVE_FILES.value, params)
 
     def handle_show_next_response(self, response=None):
         """
@@ -123,7 +123,6 @@ class SlaveConnection:
         reset its presentation
         """
         self.currently_showing = -1
-
 
     def handle_invalid_command_response(self, data=None):
         """

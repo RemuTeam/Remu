@@ -100,7 +100,6 @@ class Master:
         Logger.debug("Master: Slave length: %s", str(len(self.slave_connections)))
         Logger.debug("Master: Presentation length: %s", str(len(self.presentations)))
 
-
     def bind_slave_to_presentation(self, presentation, slaveconnection_to_bind):
         """
         Binds a presentation to a slave. Used by the BindPresentationToSlavePopUp.

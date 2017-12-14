@@ -33,7 +33,6 @@ def test_slave_button_works(simulator):
     simulator.assert_text(get_from_layout("Slave", "Label", None, 1), "Currently in slave mode")
     simulator.tap(get_from_layout("Slave", "Button", None, 1))
 
-
 #@pytest.mark.parametrize("params", [{}])
 #@simulate
 #def test_slave(simulator):

@@ -8,7 +8,7 @@ from Utils.FileHandler import *
 class FileSavingDialogPopUp(Popup):
     """
     A popup functionality to confirm actions
-    when copying a file that already exists.
+    when saving a file that already exists.
     """
     destination = StringProperty('')
     new_filename = StringProperty('')
@@ -19,10 +19,14 @@ class FileSavingDialogPopUp(Popup):
     def __init__(self, source, destination, filename_list, listener, path,
                  folder_name, dismiss_button_text):
         """
-        The source and destination files are passed as arguments
-        :param source: a string, the source file with path
-        :param destination: a string, the destination file with path
-        :param filename_list: the list to append the created filename
+        Constructs a popup
+        :param source: the source to copy
+        :param destination: the destinatio to copy the source to
+        :param filename_list:
+        :param listener:
+        :param path:
+        :param folder_name:
+        :param dismiss_button_text:
         """
         super(FileSavingDialogPopUp, self).__init__()
         self.source = source

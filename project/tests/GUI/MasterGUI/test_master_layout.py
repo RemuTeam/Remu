@@ -1,6 +1,14 @@
 import unittest
 from GUI.MasterGUI.MasterGUILayout import MasterGUILayout
 
+class MockClass:
+
+    def send_presentations_to_slaves(self):
+        pass
+
+    def end_presentation(self):
+        pass
+
 
 class MasterLayoutTests(unittest.TestCase):
     def setUp(self):
@@ -60,4 +68,19 @@ class MasterLayoutTests(unittest.TestCase):
         presentation_disabled_unchanged = self.gui.presenting_disabled
         self.gui.start_presentation_button_disabled(not presentation_disabled_unchanged)
         self.assertFalse(self.gui.presenting_disabled == presentation_disabled_unchanged)
+
+    def test_starting_presentation(self):
+        self.gui.master = MockClass()
+        self.gui.start_presentation()
+        self.assertEqual(self.gui.start_pres_btn.opacity, 0)
+
+    def test_stop_presentation(self):
+        self.gui.master = MockClass()
+        self.gui.stop_presentation()
+        self.assertEqual(self.gui.start_pres_btn.opacity, 1)
+
+    def test_get_presentation_list(self):
+        list = self.gui.get_presentation_list()
+        for item in self.presentations:
+            self.assertTrue(item in list)
 
