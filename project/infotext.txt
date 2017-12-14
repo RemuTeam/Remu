@@ -9,28 +9,43 @@ How to use RemuApp?
 
 Starting steps
 
-1. Start the App with your computer and the computers that will handle to visual show.
-2. Select "Master" for the computer that will be the one you will use during the show.
-3. Select "Slave" for the other computers
+1. Start the App with your computer and the computers that will show the visual show.
+2. Select "Master" for the computer that will be the one you will use during the show to handle the others.
+3. Select "Slave" for the other computers. These ones will be managed by your master computer. The other computers
+  can also be substituted with Rasberry pie 3s.
 
 Making a presentation
 
 In master-mode, you can make a new presentation by typing the name into the text field and pressing "New Presentation".
-Then you can import files to presentations by going to "import files" and there selecting files and checking the box
-corresponding to the presentation you want the files imported to. You can also switch the positions of the files
-in the master view, by double clicking a file and dragging it to it's new position in the presentation line.
+Then you can import files to this new presentation by going to "import files" and there selecting files and checking
+the box corresponding to the presentation you want the files imported to. You can also import files to already made
+presentations.
 
-Now it is time to connect the slave machines to your master computer and show your presentation! :smile:
+Modifying a presentation
 
-By starting this Remu with other machines, and choosing the Slave mode, they automatically signal your master computer
-of their existence. Now that you have some presentations done, you can connect a slave and its presentations.
-Click the name of the presentations on your master computer. This opens up a list of all the possible slaves. Check
-the wanted one and press confirm. Now the presentation is sent to the slave machine.
+You can also switch the positions of the files within an opened presentation in the master view, by double clicking a
+file in the presentation's file timeline and dragging it to it's new presentation position.
+You can also remove a presentation by clicking "Remove presentation" in master-mode and checking the presentations to be
+removed and confirming.
 
-So you have made a presentation and sent it to its corresponding slave. All that is left is showing the presentation!
+Saving an opening a presentation
 
-If all the steps have been done correctly, the start presentation button on master should be available now. When you
-press it, the presentation will begin. You will see in green, which one of the files is being shown and you can proceed
-with the presentation by clicking the show next button.
+You can save your made presentations, by clicking "Save project" in  master mode. You can name your project and press
+"Save". To open an existing group of presentations click "Open project" in master mode and select your saved project.
+A project consists of one or more presentations.
 
-When the last file is shown the presentation will end. Congratulations, now you have used the RemuApp:)
+Connecting presentations with slaves
+
+By starting RemuApp with other machines, and choosing the Slave mode, they automatically signal your master computer
+of their existence. Now that you have some presentations done, you can connect a slave to a presentation you want it to
+show. Click the name of a presentation on your master computer. This opens up a list of all the possible slaves you
+can give this presentation to. Check one and press confirm. Now the presentation is sent to the chosen slave machine.
+If you want, you can repeat this process with all the slaves available until all slaves have something to present.
+
+Showing project
+
+So, you have made a presentation and sent it to its corresponding slave. All that is left is to show your project!
+If all the steps have been done correctly, the "Start presentation" -button on your master computer should be available
+now. When you press it, the presentation will begin. You will see in green, which one of the files is being shown at
+the moment and you can proceed with the presentation by clicking the "Show next"- button.
+After the last file is shown the presentation will end. Congratulations, now you have used the RemuApp:)

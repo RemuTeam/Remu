@@ -81,5 +81,6 @@ class MasterLayoutTests(unittest.TestCase):
 
     def test_get_presentation_list(self):
         list = self.gui.get_presentation_list()
-        self.assertListEqual(list, self.presentations)
+        for item in self.presentations:
+            self.assertTrue(item in list)
 
