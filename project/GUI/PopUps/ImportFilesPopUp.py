@@ -1,5 +1,5 @@
 import os
-from shutil import copyfile
+from Utils.FileHandler import copy_file_as
 
 from Constants.TestReturnValue import *
 from kivy.event import EventDispatcher
@@ -12,18 +12,22 @@ from GUI.PopUps.FileHandlerPopUp import FileHandlerPopUp
 
 class ImportFilesPopUp(FileHandlerPopUp, EventDispatcher):
     """
-    A file selection and opening popup
+    A file selection and importing popup
     """
 
     def __init__(self, listener, imported_files, presentations,
                  selected_presentations, media_path, test_mode=False):
         """
-        Constructor
-
-        :param listener: the component to inform about file imports
-        :param imported_files: a kivy ListProperty to store files that are imported
-        :param presentations: a list of Presentation names
-        :param
+        Constructs a popup that supports the selection and importing of
+        multiple files at once to a single or multiple presentations.
+        If a file with the same name already exists in the media path,
+        opens a popup to query the user for the desirable action.
+        :param listener: the object to inform when a single file's import is ready
+        :param imported_files: a list to add the paths of the opened files
+        :param presentations: all the presentations in the current project
+        :param selected_presentations: the presentations to import to
+        :param media_path: the default path to open the filechooser to
+        :param test_mode: if True, the popup is opened in test mode, False by default
         """
         super(ImportFilesPopUp, self).__init__(title="Import files",
                                                imported_files=imported_files,
@@ -40,10 +44,10 @@ class ImportFilesPopUp(FileHandlerPopUp, EventDispatcher):
 
     def import_files_for_presentation(self, path, selection, savefilename):
         """
-        Opens one or multiple files from a path
+        Imports one or multiple files from a path.
         :param path: the path to open files from
         :param selection: a list the selected files in the path
-        :param presentation: the presentation to open the files to
+        :param savefilename: not used
         :return: None
         """
         self.listener.import_started(len(selection))
@@ -84,7 +88,7 @@ class ImportFilesPopUp(FileHandlerPopUp, EventDispatcher):
                 return TestReturnValue.FileSavingDialogPopUp
             FileCopyDialogPopUp(source, destination, filename_list, listener, self.media_path).open()
         elif path != self.media_path:
-            copyfile(source, destination)
+            copy_file_as(source, destination)
             filename_list.append(destination)
             listener.notify_file_import()
         else:

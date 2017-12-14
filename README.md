@@ -1,4 +1,4 @@
-# Remu [![Build Status](https://travis-ci.org/RemuTeam/Remu.svg?branch=master)](https://travis-ci.org/RemuTeam/Remu) [![Coverage Status](https://coveralls.io/repos/github/RemuTeam/Remu/badge.svg?branch=master)](https://coveralls.io/github/RemuTeam/Remu?branch=master)
+# Remu [![Build Status](https://travis-ci.org/RemuTeam/Remu.svg#1?branch=master)](https://travis-ci.org/RemuTeam/Remu) [![Coverage Status](https://coveralls.io/repos/github/RemuTeam/Remu/badge.svg#2?branch=master)](https://coveralls.io/github/RemuTeam/Remu?branch=master)
 Remu is a tool for controlling visual presentations for music performances. With Remu, you can create visual presentations and share them with other devices via WiFi network, and then show through projectors to accompany musical performances.
 
 The aim of Remu is to make the administration of visuals in a musical performance easy. Remu works with a master/slave architecture, where a single device is configured to be a master that sends commands to slaves. With the master device, you can create the presentations to be shown, and then show multiple presentations simultaneously with several devices. 

@@ -212,9 +212,9 @@ class MasterGUILayout(Screen, EventDispatcher):
         """
         Opens the popup that allows master to remove presentations
         """
-        RemovePresentationsPopUp(self.__get_presentation_list(), self).open()
+        RemovePresentationsPopUp(self.get_presentation_list(), self).open()
 
-    def __get_presentation_list(self):
+    def get_presentation_list(self):
         """
         Get all the names of presentations from project overview
         :return: a list of string, the names of presentations
@@ -229,7 +229,7 @@ class MasterGUILayout(Screen, EventDispatcher):
         Opens a Filechooser to load files
         :return: None
         """
-        ImportFilesPopUp(self, self.import_list, self.__get_presentation_list(), self.import_to_presentations,
+        ImportFilesPopUp(self, self.import_list, self.get_presentation_list(), self.import_to_presentations,
                          PathConstants.ABSOLUTE_MEDIA_FOLDER).open()
 
     def generate_presentation(self, slave_connection):
