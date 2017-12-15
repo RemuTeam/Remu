@@ -66,7 +66,7 @@ class Project:
             for file in files:
                 path = fh.absolute_path(PathConstants.ABSOLUTE_MEDIA_FOLDER, file)
                 paths.append(path)
-            pres = Presentation()
+            pres = Presentation(name)
             pres.presentation_filenames = paths
             presentation_list.append((name, pres))
 

@@ -36,6 +36,7 @@ class Slave:
         """
         self.master_connection = master_connection
         self.master_connection.parent = self
+        self.master_connection.run()
 
     def set_layout(self, new_layout):
         self.layout = new_layout

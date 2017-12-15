@@ -173,20 +173,19 @@ class Master:
         """
         self.layout.notify(notification, data)
 
-    def update_connection(self, notification, full_address):
+    def update_connection(self, notification, slave_name):
         """
         Handles a connection update event
 
         notification:   a Notification enum object instance
         data:           an object instance
         """
-        self.layout.notify(notification, full_address)
         if notification == Notification.CONNECTION_ESTABLISHED:
-            Logger.info("Master: Connection established: %s", full_address)
-
-
+            Logger.info("Master: Connection established: %s", slave_name)
         if notification == Notification.CONNECTION_FAILED:
-            self.layout.update_presentation_status(full_address)
+            Logger.warning("Master: Lost connection with slave %s", slave_name)
+            #self.remove_slave(Notification.CONNECTION_TERMINATED, self.slave_connections[slave_name])
+        self.layout.notify(notification, self.slave_connections[slave_name])
 
     def remove_slave(self, notification, data):
         """

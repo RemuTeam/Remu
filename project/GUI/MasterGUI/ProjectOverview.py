@@ -31,7 +31,7 @@ class ProjectOverview(BoxLayout):
         """
         master = App.get_running_app().servicemode
         if given_presentation is None:
-            given_presentation = Presentation()
+            given_presentation = Presentation(name)
             self.project.presentations.append((name, given_presentation))
         new_slave_presentation = SlavePresentation(given_presentation)
         #button = Button(text=name, size_hint=(1, 0.2))
@@ -133,7 +133,12 @@ class ProjectOverview(BoxLayout):
         for presentation in self.slave_presentations.values():
             presentation.change_draggability(False)
 
-    def remove_presentation(self,name):
+    def notify_connection_lost(self, slave_connection):
+        if slave_connection.presentation is not None:
+            button = self.slave_buttons[slave_connection.presentation.name]
+            button.disabled = True
+
+    def remove_presentation(self, name):
         """
         Masterlayout calls this method for all presentations that are to be removed from master_layout
         :param name:
