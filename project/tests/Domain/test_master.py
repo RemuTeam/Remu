@@ -90,7 +90,7 @@ class MasterTest(unittest.TestCase):
             self.mock_master.add_slave_connection(slave_connection_mock)
             self.mock_master.notify(Notification.CONNECTION_FAILED, "localhost:8000")
 
-        mock_method.assert_called_once_with(Notification.CONNECTION_FAILED, "localhost:8000")
+        mock_method.assert_called_once_with(Notification.CONNECTION_FAILED, slave_connection_mock)
 
     def test_update_connection_works2(self):
         with patch.object(self.layout, 'notify', return_value=None) as mock_method:
@@ -100,7 +100,7 @@ class MasterTest(unittest.TestCase):
             self.mock_master.add_slave_connection(slave_connection_mock)
             self.mock_master.notify(Notification.CONNECTION_ESTABLISHED, "localhost:8000")
 
-        mock_method.assert_called_once_with(Notification.CONNECTION_ESTABLISHED, "localhost:8000")
+        mock_method.assert_called_once_with(Notification.CONNECTION_ESTABLISHED, slave_connection_mock)
 
     def test_close_connections(self):
         with patch.object(RemuTCP, 'end_connection', return_value=None) as mock_method:

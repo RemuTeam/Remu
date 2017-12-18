@@ -49,6 +49,10 @@ class RemuProtocol(protocol.Protocol):
         if response:
             self.transport.write(response.encode('utf-8'))
 
+    def connectionLost(self, reason):
+        Logger.info("Apuva")
+        self.factory.connection.MASTERISDEAD()
+
 
 class RemuProtocolFactory(protocol.ClientFactory):
     protocol = RemuProtocol
@@ -67,6 +71,8 @@ class RemuProtocolFactory(protocol.ClientFactory):
         Logger.info("RemuTCP: Connection failed.")
 
 
+
+
 class RemuTCP:
 
     def __init__(self, parent=None, master=False, address=None, port=8000):
@@ -82,7 +88,13 @@ class RemuTCP:
         """
         The slave stops listening to the port in question
         """
-        self.listener.stopListening()
+        if self.listener:
+            self.listener.stopListening()
+
+    def MASTERISDEAD(self):
+        Logger.info("AHGFAAAAAAAAAA")
+        if not self.is_master:
+            self.parent.beacon.start_beaconing()
 
     def run(self):
         """
