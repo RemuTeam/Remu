@@ -5,6 +5,7 @@ from kivy.effects.scroll import ScrollEffect
 from GUI.MasterGUI.SlavePresentation import SlavePresentation
 from Domain.Presentation import Presentation
 from Domain.Project import Project
+from GUI.MasterGUI.SlavePresentationButton import SlavePresentationButton
 from GUI.PopUps.BindPresentationToSlavePopUp import BindPresentationToSlavePopUp
 
 class ProjectOverview(BoxLayout):
@@ -21,6 +22,7 @@ class ProjectOverview(BoxLayout):
         self.project = Project()
         self.effect_cls = ScrollEffect
         self.max = 1
+        self.in_editor_mode = True
 
     def new_presentation_to_overview(self, name, given_presentation=None):
         """
@@ -37,15 +39,22 @@ class ProjectOverview(BoxLayout):
         #button = Button(text=name, size_hint=(1, 0.2))
         #lf = lambda a: BindPresentationToSlavePopUp(master.slave_connections.keys(), new_presentation.get_presentation_from_widgets(), master, button).open()
         #button.on_press = lf
-        self.slave_buttons[name] = Button(text=name,
-                                                   size_hint=(1, 0.2),
-                                                   on_press=lambda a: BindPresentationToSlavePopUp(master.slave_connections.keys(), new_slave_presentation.get_presentation_from_widgets(), master, a).open())
+        self.slave_buttons[name] = SlavePresentationButton(text=name,
+                                                   size_hint=(1, 0.2))
+        self.slave_buttons[name].bind(on_press=lambda a: self.slave_button_action(new_slave_presentation.get_presentation_from_widgets(), self.slave_buttons[name]))
         self.slave_presentations[name] = new_slave_presentation
         #self.project.presentations.append((name, given_presentation))
         self.ids.slave_names.add_widget(self.slave_buttons[name])
         self.ids.slave_presentations.add_widget(self.slave_presentations[name])
         self.max = max(self.max, len(given_presentation))
         self.update_presentation_widths()
+
+    def slave_button_action(self, presentation, button):
+        master = App.get_running_app().servicemode
+        if self.in_editor_mode:
+            BindPresentationToSlavePopUp(master.slave_connections.keys(), presentation, master, button).open()
+        else:
+            button.slave_connection.show_next()
 
     def add_files_to_a_presentation(self, presentation_name, import_list):
         """
@@ -79,7 +88,13 @@ class ProjectOverview(BoxLayout):
         self.ids.slave_presentations.add_widget(self.slave_presentations[slave_connection.full_address])
         self.update_presentation_widths()
 
+    def setup_presentation(self):
+        self.in_editor_mode = False
+        self.disable_rearrangement_of_buttons()
 
+    def end_presentation(self):
+        self.in_editor_mode = True
+        self.reset_all_presentations()
 
     def update_presentation_widths(self):
         """

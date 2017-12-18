@@ -155,7 +155,7 @@ class MasterGUILayout(Screen, EventDispatcher):
             self.master.send_presentations_to_slaves()
             self.change_visibility_of_multiple_elements([self.start_pres_btn, self.back_btn], True)
             self.change_visibility_of_multiple_elements([self.show_next_btn, self.stop_pres_btn], False)
-            self.project_overview.disable_rearrangement_of_buttons()
+            self.project_overview.setup_presentation()
         except Exception as ex:
             ExceptionAlertPopUp("Error sending presentations to slave devices", ex).open()
 
@@ -167,7 +167,7 @@ class MasterGUILayout(Screen, EventDispatcher):
         self.change_visibility_of_multiple_elements([self.show_next_btn, self.stop_pres_btn], True)
         self.change_visibility_of_multiple_elements([self.start_pres_btn, self.back_btn], False)
         self.master.end_presentation()
-        self.project_overview.reset_all_presentations()
+        self.project_overview.end_presentation()
 
     def change_visibility_of_multiple_elements(self, list, hide):
         """

@@ -2,7 +2,7 @@ from kivy.uix.popup import Popup
 from kivy.event import EventDispatcher
 
 from GUI.CustomWidgets import CheckBoxBonanza
-
+from kivy.app import App
 
 class BindPresentationToSlavePopUp(Popup, EventDispatcher):
     """
@@ -20,7 +20,7 @@ class BindPresentationToSlavePopUp(Popup, EventDispatcher):
 
     def populate_presentation_list(self, available_slaves):
         """
-        adds the checkboslist and corresponding presentation list to RemovePresentationPopUp
+        adds the checkboxlist and corresponding presentation list to RemovePresentationPopUp
         :param available_slaves:
         :return:
         """
@@ -43,6 +43,8 @@ class BindPresentationToSlavePopUp(Popup, EventDispatcher):
 
     def confirm(self):
         if self.selected_slave:
+            slave = App.get_running_app().servicemode.slave_connections[self.selected_slave]
             self.listener.bind_slave_to_presentation(self.presentation, self.selected_slave)
+            self.button.slave_connection = slave
             self.button.text = self.button.text.split("\n")[0] + "\n" + self.selected_slave
             self.button.background_color = (1, 1, 1, 1)
