@@ -49,6 +49,9 @@ class RemuProtocol(protocol.Protocol):
         if response:
             self.transport.write(response.encode('utf-8'))
 
+    def connectionLost(self, reason):
+        self.factory.connection.connection_terminated()
+
 
 class RemuProtocolFactory(protocol.ClientFactory):
     protocol = RemuProtocol
@@ -67,30 +70,39 @@ class RemuProtocolFactory(protocol.ClientFactory):
         Logger.info("RemuTCP: Connection failed.")
 
 
+
+
 class RemuTCP:
 
     def __init__(self, parent=None, master=False, address=None, port=8000):
-        """
-        In constructor checks if the computer is a master, if yes it starts to commect to slave,
-        if no it is thus a slave and starts listening.
-        """
         self.connection = None
         self.address = None
         self.listener = None
         self.port = port
         self.parent = parent
         self.is_master = master
-        if master:
-            self.address = address
-            self.connect_to_slave(port)
-        else:
-            self.listen_to_master(port)
+        self.address = address
 
     def stop_listening(self):
         """
         The slave stops listening to the port in question
         """
-        self.listener.stopListening()
+        if self.listener:
+            self.listener.stopListening()
+
+    def connection_terminated(self):
+        if not self.is_master:
+            self.parent.beacon.start_beaconing()
+
+    def run(self):
+        """
+        Checks if the computer is a master, if yes it starts to commect to slave,
+        if no it is thus a slave and starts listening.
+        """
+        if self.is_master:
+            self.connect_to_slave(self.port)
+        else:
+            self.listen_to_master(self.port)
 
     def set_parent(self, parent):
         self.parent = parent

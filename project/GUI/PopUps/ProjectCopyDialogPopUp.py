@@ -1,6 +1,6 @@
 from GUI.PopUps.FileSavingDialogPopUp import FileSavingDialogPopUp
 from kivy.logger import Logger
-from Utils.FileHandler import write_file
+from Utils.FileHandler import write_file, get_filename_only
 
 class ProjectCopyDialogPopUp(FileSavingDialogPopUp):
     FOLDER_NAME = "project folder"
@@ -16,7 +16,7 @@ class ProjectCopyDialogPopUp(FileSavingDialogPopUp):
                                                      dismiss_button_text=self.DISMISS_BTN_TEXT)
 
     def replace_file(self):
-        self.save_source(self.destination)
+        self.save_source(get_filename_only(self.destination))
 
     def create_new_file(self):
         self.save_source(self.ids.save_as.text)

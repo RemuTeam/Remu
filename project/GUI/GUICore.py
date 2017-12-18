@@ -108,7 +108,7 @@ class RemuSM(ScreenManager):
         """
         Removes the master layout from screenmanager's screens
         """
-        #self.remove_widget(self.master_screen)
+        self.master_screen.project_overview.remove_presentations()
         self.master_screen=None
         self.change_screen_to("switch_layout")
 

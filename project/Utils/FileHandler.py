@@ -1,5 +1,6 @@
 import os
 from shutil import copy
+from kivy.logger import Logger
 
 # the string to use when prefilling the name for copied file
 COPY_EXTENSION = "_copy"
@@ -35,6 +36,7 @@ def write_file(path, filename, data):
     :param data: the data to write
     :return: None
     """
+    Logger.debug("FileHandler: filename is %s", filename)
     if check_filename(filename):
         create_directory(path)
         with open(os.path.join(path, filename), "w") as f:

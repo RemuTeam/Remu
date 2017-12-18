@@ -5,6 +5,7 @@ from kivy.properties import ListProperty, NumericProperty
 from kivy.properties import StringProperty, BooleanProperty
 from kivy.uix.screenmanager import Screen
 from kivy.uix.boxlayout import BoxLayout
+from kivy.logger import Logger
 
 from Constants.Command import Notification
 from GUI.PopUps.ImportFilesPopUp import ImportFilesPopUp
@@ -55,7 +56,7 @@ class MasterGUILayout(Screen, EventDispatcher):
         self.master = None
 
     def go_back(self):
-        print("Back method not implemented in MasterGUILayout")
+        Logger.warning("MasterGUILayout: Back method not implemented")
 
     def setup_project(self, project):
         self.project_overview.project = project
@@ -154,7 +155,7 @@ class MasterGUILayout(Screen, EventDispatcher):
             self.master.send_presentations_to_slaves()
             self.change_visibility_of_multiple_elements([self.start_pres_btn, self.back_btn], True)
             self.change_visibility_of_multiple_elements([self.show_next_btn, self.stop_pres_btn], False)
-            self.project_overview.disable_rearrangement_of_buttons()
+            self.project_overview.setup_presentation()
         except Exception as ex:
             ExceptionAlertPopUp("Error sending presentations to slave devices", ex).open()
 
@@ -166,7 +167,7 @@ class MasterGUILayout(Screen, EventDispatcher):
         self.change_visibility_of_multiple_elements([self.show_next_btn, self.stop_pres_btn], True)
         self.change_visibility_of_multiple_elements([self.start_pres_btn, self.back_btn], False)
         self.master.end_presentation()
-        self.project_overview.reset_all_presentations()
+        self.project_overview.end_presentation()
 
     def change_visibility_of_multiple_elements(self, list, hide):
         """
@@ -251,19 +252,19 @@ class MasterGUILayout(Screen, EventDispatcher):
         """
         self.project_overview.update_presentation_state()
 
-    def update_connection_to_gui(self, data):
+    def update_connection_to_gui(self, slave_connection):
         """
-        UNIMPLEMENTED
-        Must be implemented to update the status of a slave connection
-        to GUI
+        If the slave connection is lost, notifies the project.
         """
-        pass
+        if not slave_connection.connected:
+            self.project_overview.notify_connection_lost(slave_connection)
+
 
     def start_presentation_button_disabled(self, is_disabled):
         """
         Enables the start_pres button, enabling starting of the presentation.
         :param is_disabled: a boolean; if True, presenting is disabled, otherwise enabled
-        :return: None
+        :return: Nothing
         """
         self.presenting_disabled = is_disabled
 

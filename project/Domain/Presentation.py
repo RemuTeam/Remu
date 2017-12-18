@@ -17,10 +17,11 @@ class Presentation:
     VIDEO_FORMATS = ["mp4"]
     TEXT_FORMATS = ["txt"]
 
-    def __init__(self):
+    def __init__(self, name=None):
         """
         Construct the presentation
         """
+        self.name = name
         self.presentation_elements = []
         self.presentation_filenames = []
         self.index = -1

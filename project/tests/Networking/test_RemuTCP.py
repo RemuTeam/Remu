@@ -24,7 +24,6 @@ class TestRemuTCPMethods(unittest.TestCase):
     def test_init_slave(self):
         tcp = RemuTCP(None, False, None, 8001)
         self.assertIsNone(tcp.address)
-        self.assertIsNotNone(tcp.listener)
         tcp.stop_listening()
 
     def test_init_master(self):

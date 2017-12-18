@@ -42,6 +42,7 @@ class SlaveConnection:
             ipaddress.ip_address(ip_address)
             self.full_address = ip_address + ":" + str(port)
             self.connection = RemuTCP(self, True, ip_address, int(port))
+            self.connection.run()
             Logger.info("SlaveConnection: Slave added: %s", ip_address)
         except ValueError as e:
             self.connection = None
@@ -138,7 +139,7 @@ class SlaveConnection:
         Forwards the information of connection being established to master and its layout
         """
         self.connected = True
-        self.master.notify(Notification.CONNECTION_ESTABLISHED, full_address)
+        self.master.notify(Notification.CONNECTION_ESTABLISHED, self.slave_name)
 
     handle_responses = {Command.SHOW_NEXT.value: handle_show_next_response,
                         Command.END_PRESENTATION.value: handle_ending_presentation,
@@ -160,4 +161,4 @@ class SlaveConnection:
         Called from RemuTCP when the connection is lost; used to notify GUI of the status
         """
         self.connected = False
-        self.master.notify(Notification.CONNECTION_FAILED, self.full_address)
+        self.master.notify(Notification.CONNECTION_FAILED, self.slave_name)
