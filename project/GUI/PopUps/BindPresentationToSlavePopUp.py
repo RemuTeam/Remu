@@ -45,3 +45,4 @@ class BindPresentationToSlavePopUp(Popup, EventDispatcher):
         if self.selected_slave:
             self.listener.bind_slave_to_presentation(self.presentation, self.selected_slave)
             self.button.text = self.button.text.split("\n")[0] + "\n" + self.selected_slave
+            self.button.background_color = (1, 1, 1, 1)

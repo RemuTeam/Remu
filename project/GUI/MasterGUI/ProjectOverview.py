@@ -136,7 +136,7 @@ class ProjectOverview(BoxLayout):
     def notify_connection_lost(self, slave_connection):
         if slave_connection.presentation is not None:
             button = self.slave_buttons[slave_connection.presentation.name]
-            button.disabled = True
+            button.background_color = (1, 0, 0, 0.8)
 
     def remove_presentation(self, name):
         """
