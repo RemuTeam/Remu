@@ -50,8 +50,7 @@ class RemuProtocol(protocol.Protocol):
             self.transport.write(response.encode('utf-8'))
 
     def connectionLost(self, reason):
-        Logger.info("Apuva")
-        self.factory.connection.MASTERISDEAD()
+        self.factory.connection.connection_terminated()
 
 
 class RemuProtocolFactory(protocol.ClientFactory):
@@ -91,8 +90,7 @@ class RemuTCP:
         if self.listener:
             self.listener.stopListening()
 
-    def MASTERISDEAD(self):
-        Logger.info("AHGFAAAAAAAAAA")
+    def connection_terminated(self):
         if not self.is_master:
             self.parent.beacon.start_beaconing()
 

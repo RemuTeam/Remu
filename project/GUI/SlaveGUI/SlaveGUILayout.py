@@ -64,5 +64,9 @@ class SlaveGUILayout(Screen):
         """
         self.info_text = info_text
 
+    def reset_presentation(self):
+        if self.slave is not None:
+            self.slave.reset_presentation()
+
     def error(self, message, exception):
         ExceptionAlertPopUp(message, exception).open()
